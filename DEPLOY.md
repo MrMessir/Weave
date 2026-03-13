@@ -1,71 +1,95 @@
-# 🚀 Деплой Weave на Railway
+# 🚀 Деплой Weave на Render (бесплатно)
 
 ## Шаг 1 — Залить код на GitHub
 
 ```bash
+cd WeaveAdmin
 git init
 git add .
-git commit -m "Weave v1.0 — готово к деплою"
-git remote add origin https://github.com/ТВО_ИМЯ/weave.git
+git commit -m "Weave v1.0 🚀"
+```
+
+Создай репозиторий на github.com (кнопка «New repository»), затем:
+
+```bash
+git remote add origin https://github.com/ТВОЙник/weave.git
 git push -u origin main
 ```
 
-## Шаг 2 — Railway
+---
 
-1. Зайди на **railway.app** → Sign Up (через GitHub)
-2. New Project → Deploy from GitHub repo → выбери `weave`
-3. Railway автоматически определит Node.js
+## Шаг 2 — Деплой на Render
 
-## Шаг 3 — Переменные окружения
+1. Зайди на **render.com** → Sign Up (через GitHub — бесплатно)
+2. Dashboard → **New +** → **Web Service**
+3. Подключи свой GitHub и выбери репо `weave`
+4. Заполни настройки:
 
-В Railway → Variables добавь:
-```
-NODE_ENV=production
-PORT=3001
-JWT_SECRET=придумай_длинный_секретный_ключ_минимум_32_символа
-ALLOWED_ORIGINS=https://твой-домен.railway.app
-```
+| Поле | Значение |
+|---|---|
+| **Name** | weave |
+| **Root Directory** | `backend` |
+| **Runtime** | Node |
+| **Build Command** | `npm install` |
+| **Start Command** | `node server.js` |
+| **Instance Type** | Free |
 
-## Шаг 4 — Домен
+5. Раздел **Environment Variables** — добавь:
 
-Railway → Settings → Domains → Generate Domain
-Получишь: `weave-production.up.railway.app`
+| Ключ | Значение |
+|---|---|
+| `NODE_ENV` | `production` |
+| `JWT_SECRET` | придумай длинную строку, например: `Weave2024SuperSecretKey_xK9mP3nQ7rT` |
 
-## Шаг 5 — Сбросить БД перед запуском
+6. Нажми **Create Web Service** → ждёшь ~2 минуты
 
-Перед первым запуском в Railway → Terminal:
-```bash
-rm -f backend/data/weave.db
-```
+Получишь ссылку: `https://weave.onrender.com`
 
 ---
 
-## 📱 PWA — как установить пользователям
+## Шаг 3 — Добавить домен в CORS (важно!)
+
+После деплоя → Environment Variables → добавь:
+
+| Ключ | Значение |
+|---|---|
+| `ALLOWED_ORIGINS` | `https://weave.onrender.com` |
+
+→ Manual Deploy → Deploy latest commit
+
+---
+
+## ⚠️ Важно про бесплатный Render
+
+- Сервис **засыпает** через 15 минут неактивности
+- При первом запросе после сна — **задержка ~30 секунд** (cold start)
+- Чтобы не засыпал — используй [UptimeRobot](https://uptimerobot.com) (бесплатно):
+  1. Зарегистрируйся на uptimerobot.com
+  2. New Monitor → HTTP(S)
+  3. URL: `https://weave.onrender.com/api/health`
+  4. Интервал: 5 минут
+  
+  UptimeRobot будет пинговать сервер — он не заснёт.
+
+---
+
+## 📱 Как установить PWA
 
 ### Android (Chrome):
-1. Открыть сайт в Chrome
-2. Меню (⋮) → «Добавить на главный экран»
-3. Или дождаться баннера «Установить Weave»
+1. Открыть сайт → меню **⋮** → «Добавить на главный экран»
+2. Или дождаться баннера «Установить Weave»
 
 ### iOS (Safari):
-1. Открыть сайт в **Safari** (не Chrome!)
-2. Нажать кнопку «Поделиться» (квадрат со стрелкой)
-3. «Добавить на экран «Домой»»
-
-### Компьютер (Chrome/Edge):
-1. Открыть сайт
-2. В адресной строке появится иконка установки (📥)
-3. Нажать → «Установить»
+1. Открыть в **Safari** (не Chrome!)
+2. Кнопка «Поделиться» → «Добавить на экран Домой»
 
 ---
 
-## 💰 Стоимость
+## 💰 Стоимость: 0 рублей
 
-| | Цена |
+| | |
 |---|---|
-| Railway бесплатный план | $0 (5$ кредитов/мес) |
-| Домен railway.app | $0 (встроенный) |
-| Свой домен .ru | ~150₽/год |
-| Google Play (опционально) | $25 разово |
-
-**Итого для старта: 0 рублей.**
+| Render Free план | $0 |
+| Домен onrender.com | $0 (встроенный) |
+| UptimeRobot | $0 |
+| **Итого** | **0 ₽** |

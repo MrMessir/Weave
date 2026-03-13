@@ -363,8 +363,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
   .mob-fab{display:flex!important}
   /* Полноэкранный modal compose */
   .mob-compose-modal{display:none}
-  .mob-compose-modal.open{display:flex}
-}
+  }
 .mob-nav{
   display:none;
   position:fixed;bottom:0;left:0;right:0;z-index:200;
@@ -413,10 +412,14 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
 /* ── Mobile compose modal ── */
 .mob-compose-modal{
+  display:none!important;
   position:fixed;inset:0;z-index:500;
   flex-direction:column;
   background:var(--bg);
   animation:slideUp .25s cubic-bezier(.22,1,.36,1);
+}
+.mob-compose-modal.open{
+  display:flex!important;
 }
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .mob-compose-modal.closing{animation:slideDown .2s ease forwards}
@@ -431,19 +434,20 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .mcm-cancel{background:none;border:none;color:var(--mu);font-size:.9rem;cursor:pointer;padding:6px 10px;font-family:'DM Sans',sans-serif}
 .mcm-post-btn{background:linear-gradient(135deg,var(--v),var(--b));border:none;color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;padding:7px 18px;border-radius:10px;cursor:pointer}
 .mcm-post-btn:disabled{opacity:.35;cursor:default}
-.mcm-body{flex:1;overflow-y:auto;padding:16px}
-.mcm-ava-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:4px}
-.mcm-ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;flex-shrink:0}
-.mcm-ta{width:100%;background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:1rem;line-height:1.6;resize:none;min-height:120px;padding-top:4px}
+.mcm-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column}
+.mcm-ava-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:4px;flex:1}
+.mcm-ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;flex-shrink:0;background-size:cover;background-position:center}
+.mcm-ta{flex:1;width:100%;background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:1.05rem;line-height:1.7;resize:none;min-height:160px;padding-top:4px;caret-color:var(--v)}
 .mcm-ta::placeholder{color:var(--mu2)}
 .mcm-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .mcm-footer{
   border-top:1px solid var(--br);padding:10px 16px;
   display:flex;align-items:center;gap:4px;
   background:var(--s1);flex-shrink:0;
-  padding-bottom:max(10px,env(safe-area-inset-bottom));
+  padding-bottom:max(12px,env(safe-area-inset-bottom));
+  box-shadow:0 -4px 16px rgba(0,0,0,.06);
 }
-.mcm-tool{width:36px;height:36px;border-radius:9px;background:none;border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .15s}
+.mcm-tool{width:40px;height:40px;border-radius:10px;background:rgba(124,58,237,.07);border:none;cursor:pointer;color:var(--v);display:grid;place-items:center;transition:all .15s}
 .mcm-tool:active{background:rgba(124,58,237,.14);color:var(--vl)}
 .mcm-tool svg{width:18px;height:18px}
 .mcm-cnt{margin-left:auto;font-size:.72rem;color:var(--mu2);font-family:'Syne',sans-serif}
@@ -465,8 +469,8 @@ body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
 body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
 
 /* ── PWA Install Banner ── */
-.pwa-banner{position:fixed;bottom:70px;left:12px;right:12px;z-index:300;background:linear-gradient(135deg,var(--v),var(--b));border-radius:16px;padding:14px 16px;display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(124,58,237,.4);animation:slideUp .3s ease}
-@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.pwa-banner{position:fixed;bottom:70px;left:12px;right:12px;z-index:300;background:linear-gradient(135deg,var(--v),var(--b));border-radius:16px;padding:14px 16px;display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(124,58,237,.4);animation:pwaBannerIn .3s ease}
+@keyframes pwaBannerIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .pwa-banner.show{display:flex}
 .pwa-banner-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex-shrink:0;font-size:1.3rem}
 .pwa-banner-text{flex:1;min-width:0}
@@ -476,6 +480,28 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .pwa-banner-btn:hover{background:rgba(255,255,255,.3)}
 .pwa-banner-close{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;padding:4px;font-size:1rem;flex-shrink:0}
 @media(min-width:601px){.pwa-banner{left:auto;right:20px;max-width:340px;bottom:20px}}
+
+/* Десктоп: compose modal как popup, не полный экран */
+@media(min-width:601px){
+  .mob-compose-modal{
+    inset:auto;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:min(580px,94vw);
+    height:auto;
+    max-height:80vh;
+    border-radius:20px;
+    border:1px solid var(--br);
+    box-shadow:0 24px 80px rgba(0,0,0,.35);
+    animation:popIn .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes popIn{from{transform:translate(-50%,-50%) scale(.92);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+  /* Overlay */
+  .mob-compose-modal.open::before{
+    content:'';position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:-1;
+    backdrop-filter:blur(4px);
+  }
+}
 </style>
 </head>
 <body>
@@ -586,7 +612,9 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
         <div class="cmp-top">
           <div class="cmp-ava" id="cmp-ava">?</div>
           <div class="cmp-right">
-            <textarea class="cmp-ta" id="cmp-ta" placeholder="Что у тебя на уме? # для тегов, @ для упоминаний" rows="1"
+            <textarea class="cmp-ta" id="cmp-ta" placeholder="Что у тебя на уме?
+
+# для хэштегов  @ для упоминаний" rows="1"
               oninput="onCmpInput(this)" onkeydown="onCmpKey(event)" maxlength="500"></textarea>
             <div id="ac-wrap" style="display:none;position:absolute;top:calc(100%+4px);left:0;right:0;z-index:60"></div>
             <div class="cmp-imgs" id="cmp-imgs"></div>
@@ -2213,16 +2241,28 @@ function updateCharCount(val){
 let mcmImgs = [];
 
 function openMobCompose() {
+  // На десктопе — фокус на обычный compose вместо модалки
+  if (window.innerWidth > 600) {
+    const ta = document.getElementById('cmp-ta');
+    if (ta) { ta.focus(); ta.scrollIntoView({behavior:'smooth', block:'center'}); }
+    return;
+  }
   const modal = document.getElementById('mob-compose-modal');
   modal.classList.remove('closing');
   modal.style.display = 'flex';
   // Синхронизируем аватар
   const mcmAva = document.getElementById('mcm-ava');
-  const cmpAva = document.getElementById('cmp-ava');
-  if (mcmAva && cmpAva) {
-    mcmAva.style.cssText = cmpAva.style.cssText;
-    mcmAva.textContent = cmpAva.textContent;
-    mcmAva.style.background = cmpAva.style.background;
+  if (mcmAva && ME) {
+    if (ME.avatarUrl) {
+      mcmAva.style.backgroundImage = 'url('+ME.avatarUrl+')';
+      mcmAva.style.backgroundSize = 'cover';
+      mcmAva.textContent = '';
+    } else {
+      mcmAva.style.backgroundImage = '';
+      mcmAva.style.background = avBg(ME.avatarColor);
+      const ini = ((ME.firstName?.[0]||'')+(ME.lastName?.[0]||'')).toUpperCase()||'?';
+      mcmAva.textContent = ini;
+    }
   }
   mcmImgs = [];
   document.getElementById('mcm-imgs').innerHTML = '';
@@ -2332,7 +2372,7 @@ async function publishMob() {
 </button>
 
 <!-- ─── Mobile compose modal ─── -->
-<div class="mob-compose-modal" id="mob-compose-modal">
+<div class="mob-compose-modal" id="mob-compose-modal" style="display:none">
   <div class="mcm-header">
     <button class="mcm-cancel" onclick="closeMobCompose()">Отмена</button>
     <div class="mcm-title">Новый пост</div>
@@ -2341,7 +2381,9 @@ async function publishMob() {
   <div class="mcm-body">
     <div class="mcm-ava-row">
       <div class="mcm-ava" id="mcm-ava">?</div>
-      <textarea class="mcm-ta" id="mcm-ta" placeholder="Что у тебя на уме? # для тегов, @ для упоминаний"
+      <textarea class="mcm-ta" id="mcm-ta" placeholder="Что у тебя на уме?
+
+# для хэштегов  @ для упоминаний"
         oninput="onMcmInput(this)" rows="4" maxlength="500" autocomplete="off"></textarea>
     </div>
     <div class="mcm-imgs" id="mcm-imgs"></div>

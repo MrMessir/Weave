@@ -3,143 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#7C3AED">
-  <meta name="mobile-web-app-capable" content="yes">
-  <!-- iOS Safari -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Weave">
-  <link rel="apple-touch-icon" href="/icons/icon-180.png">
-  <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
-  <link rel="shortcut icon" href="/icons/icon-32.png">
-  <title>Weave — Социальная сеть</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css">
-  <style>
-    /* Базовые стили (можно вынести в css/style.css) */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'DM Sans', sans-serif; background: #09090F; color: #E8E4FF; }
-    .loading-spinner { text-align: center; padding: 50px; color: #6B6B8F; }
-  </style>
-</head>
-<body>
-  <div id="app">
-    <!-- Навигация будет вставлена через JS -->
-    <nav class="sidenav" id="sidenav"></nav>
-    
-    <!-- Основной контент -->
-    <main class="main" id="main-content">
-      <div class="loading-spinner">Загрузка...</div>
-    </main>
-  </div>
-
-  <!-- Глобальные компоненты -->
-  <div class="toast" id="toast"></div>
-
-  <!-- Скрипты в правильном порядке -->
-  <script src="/js/api.js"></script>
-  <script src="/js/store.js"></script>
-  <script src="/js/utils.js"></script>
-  <script src="/js/auth.js"></script>
-  <script src="/js/router.js"></script>
-  <script src="/js/pages/feed.js"></script>
-  <script src="/js/pages/profile.js"></script>
-  <script src="/js/pages/messages.js"></script>
-  <script src="/js/pages/admin.js"></script>
-  <script src="/js/pages/authPage.js"></script>
+  <title>Weave</title>
   <script>
-    // Глобальная инициализация
-    window.addEventListener('DOMContentLoaded', () => {
-      // Рендерим навигацию
-      renderNavigation();
-      
-      // Запускаем роутер
-      router.init();
-    });
-
-    function renderNavigation() {
-      const user = store.state.user;
-      const initials = user ? 
-        ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() : '?';
-      
-      const isPrivileged = !!(user && (user.isAdmin || user.isModerator || user.email === 'gadji4913@gmail.com' || user.username === 'daneda'));
-      document.getElementById('sidenav').innerHTML = `
-        <a class="sn-logo" href="/">
-          <div class="sn-logo-icon">W</div>
-          <span class="sn-logo-text">Weave<span>.</span></span>
-        </a>
-
-        <a class="sn-user" href="/profile">
-          <div class="sn-ava" style="background:${utils.getAvatarColor(user?.avatarColor)}">${initials}</div>
-          <div class="sn-user-info">
-            <div class="sn-user-name">${user ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Гость'}</div>
-            <div class="sn-user-handle">${user ? `@${user.username}` : '@guest'}</div>
-          </div>
-          <div class="sn-online"></div>
-        </a>
-
-        <div class="sn-section">
-          <div class="sn-item" data-href="/feed" onclick="router.navigate('/feed')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span class="sn-item-label">Лента</span>
-          </div>
-          <div class="sn-item" data-href="/explore" onclick="router.navigate('/explore')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <span class="sn-item-label">Поиск</span>
-          </div>
-          <div class="sn-item" data-href="/reels" onclick="router.navigate('/reels')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-            <span class="sn-item-label">Reels</span>
-          </div>
-          <div class="sn-item" data-href="/messages" onclick="router.navigate('/messages')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span class="sn-item-label">Сообщения</span>
-            <span class="sn-badge" id="messages-badge" style="display:none">0</span>
-          </div>
-        </div>
-
-        <div class="sn-divider"></div>
-
-        <div class="sn-section">
-          <div class="sn-label">Профиль</div>
-          <div class="sn-item" data-href="/profile" onclick="router.navigate('/profile')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span class="sn-item-label">Мой профиль</span>
-          </div>
-          ${isPrivileged ? `
-          <div class="sn-item" data-href="/admin" onclick="router.navigate('/admin')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19.4 15z"/>
-            </svg>
-            <span class="sn-item-label">Админка</span>
-          </div>
-          ` : ''}
-          <div class="sn-item" onclick="auth.logout()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            <span class="sn-item-label">Выйти</span>
-          </div>
-        </div>
-      `;
+    // Редирект на основную страницу
+    const token = localStorage.getItem('weave_token') || sessionStorage.getItem('weave_token');
+    if (token) {
+      window.location.replace('/pages/feed.html');
+    } else {
+      window.location.replace('/pages/login.html');
     }
-
-    // Подписываемся на изменения store для обновления навигации
-    store.subscribe(() => {
-      renderNavigation();
-    });
   </script>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW зарегистрирован:', reg.scope))
-      .catch(err => console.warn('SW ошибка:', err));
-  });
-}
-</script>
-</body>
+</head>
+<body></body>
 </html>

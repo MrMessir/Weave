@@ -17,7 +17,7 @@ const db = new DatabaseSync(DB_PATH);
 const app    = express();
 const server = http.createServer(app);
 const wss    = new WebSocket.Server({ server });
-const PORT   = 3001;
+const PORT   = process.env.PORT || 3001;
 
 // SCHEMA
 db.exec(`
@@ -128,10 +128,15 @@ async function seed(){
 
 // MIDDLEWARE
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS 
-    ? process.env.ALLOWED_ORIGINS.split(',') 
-    : ['http://localhost:3000','http://127.0.0.1:3000','http://localhost:3001','http://127.0.0.1:3001','http://localhost:5500','http://127.0.0.1:5500'],
-  credentials:true
+  origin: (origin, cb) => {
+    // В продакшене — разрешаем свой домен и всё что в ALLOWED_ORIGINS
+    if (!origin) return cb(null, true); // curl/postman/mobile
+    if (process.env.NODE_ENV !== 'production') return cb(null, true); // локально всё
+    const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s=>s.trim()).filter(Boolean);
+    if (!allowed.length || allowed.some(o => origin.startsWith(o))) return cb(null, true);
+    cb(new Error('CORS: не разрешён ' + origin));
+  },
+  credentials: true
 }));
 // Health check для Railway/Render
 app.get('/api/health',(req,res)=>res.json({status:'ok',uptime:process.uptime(),time:new Date().toISOString()}));
@@ -622,7 +627,11 @@ app.get('/api/search',(req,res)=>{
   res.json(result);
 });
 
-app.get('*',(req,res)=>{if(!req.path.startsWith('/api'))res.sendFile(path.join(__dirname,'..','frontend','index.html'))});
+app.get('*',(req,res)=>{
+  if(req.path.startsWith('/api')) return res.status(404).json({error:'Not found'});
+  // Для несуществующих страниц — редирект на index
+  res.sendFile(path.join(__dirname,'..','frontend','index.html'));
+});
 
 // WEBSOCKET
 const wsClients=new Map(),userPubKeys=new Map();

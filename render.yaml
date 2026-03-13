@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: weave
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        generateValue: false
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true        # Render сам сгенерирует случайный секрет
+      - key: ALLOWED_ORIGINS
+        sync: false                # Заполнить вручную после деплоя
+    autoDeploy: true

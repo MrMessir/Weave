@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "cd backend && node server.js",
-    "dev": "cd backend && npm run dev",
-    "install": "cd backend && npm install"
+    "build": "cd backend && npm install",
+    "dev": "cd backend && npm run dev"
   }
 }
