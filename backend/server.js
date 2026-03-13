@@ -9,7 +9,10 @@ const http         = require('http');
 const WebSocket    = require('ws');
 
 const { DatabaseSync } = require('node:sqlite');
-const DB_PATH = path.join(__dirname, 'data', 'weave.db');
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'weave.db');
+// Создать директорию если не существует (для Render Disk)
+const dbDir = path.dirname(DB_PATH);
+if (!require('fs').existsSync(dbDir)) require('fs').mkdirSync(dbDir, { recursive: true });
 if (!require('fs').existsSync(path.join(__dirname,'data')))
   require('fs').mkdirSync(path.join(__dirname,'data'),{recursive:true});
 const db = new DatabaseSync(DB_PATH);
@@ -139,7 +142,13 @@ app.use(cors({
   credentials: true
 }));
 // Health check для Railway/Render
-app.get('/api/health',(req,res)=>res.json({status:'ok',uptime:process.uptime(),time:new Date().toISOString()}));
+app.get('/api/health',(req,res)=>res.json({
+  status:'ok',
+  uptime:process.uptime(),
+  time:new Date().toISOString(),
+  dbPath:DB_PATH,
+  persistent:DB_PATH.startsWith('/data')
+}));
 
 // Service Worker — нужен заголовок scope
 app.get('/sw.js', (req,res) => {
@@ -388,6 +397,16 @@ app.get('/api/users/:identifier',(req,res)=>{
   const isFollowing=viewerId?!!S.hasFollow.get(viewerId,u.id):false;
   res.json({...pub(u),isFollowing,stats:{posts:db.prepare(`SELECT COUNT(*) as n FROM posts WHERE authorId=?`).get(u.id).n,followers:S.cntFolrs.get(u.id).n,following:S.cntFolng.get(u.id).n}});
 });
+// Авто-верификация: при 100+ подписчиках
+function checkAutoVerify(userId){
+  try{
+    const followers=db.prepare('SELECT COUNT(*) as n FROM follows WHERE followingId=?').get(userId);
+    if(followers.n>=100){
+      db.prepare('UPDATE users SET isVerified=1 WHERE id=? AND isVerified=0').run(userId);
+    }
+  }catch(e){}
+}
+
 app.post('/api/users/:userId/follow',auth,(req,res)=>{
   const tgt=req.params.userId;
   if(S.hasFollow.get(req.userId,tgt)){S.rmFollow.run(req.userId,tgt);res.json({following:false})}

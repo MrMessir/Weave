@@ -252,7 +252,7 @@ async function loadNotifs(){
   const el=document.getElementById('notifs-list');
   el.innerHTML='<div class="empty-state"><div class="spinner" style="width:20px;height:20px;border:2px solid rgba(255,255,255,.1);border-top-color:var(--vl);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto"></div></div>';
   try{
-    const data=await API.req('/notifications');
+    const data=await API.request('/notifications');
     notifs=data||[];
     renderNotifs();
   }catch(e){
