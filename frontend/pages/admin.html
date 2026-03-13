@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weave">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="shortcut icon" href="/icons/icon-32.png">
+<title>Weave — Панель администратора</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+
+/* Стили такие же как в твоем файле, оставляю без изменений */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --v:#7C3AED;--vl:#A78BFA;--vd:#4C1D95;
+  --b:#2563EB;--bl:#60A5FA;--cy:#06B6D4;
+  --bg:#09090F;--s1:#0D0D1A;--s2:#111120;--s3:#151528;
+  --br:rgba(124,58,237,.18);--br2:rgba(255,255,255,.06);
+  --tx:#E8E4FF;--mu:#6B6B8F;--mu2:#3D3D5C;
+  --pk:#F472B6;--gn:#34D399;--er:#F87171;
+  --nav-w:260px;--nav-collapsed:68px;
+}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+
+/* ═══ LEFT NAV (VK style) ═══ */
+.sidenav{
+  width:var(--nav-w);flex-shrink:0;
+  position:fixed;top:0;left:0;bottom:0;z-index:90;
+  background:var(--s1);border-right:1px solid var(--br);
+  display:flex;flex-direction:column;
+  transition:width .25s cubic-bezier(.22,1,.36,1);
+  overflow:hidden;
+}
+.sidenav:hover{width:var(--nav-w)}
+.sn-logo{
+  padding:20px 18px 14px;display:flex;align-items:center;gap:12px;
+  text-decoration:none;flex-shrink:0;
+}
+.sn-logo-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--v),var(--b));
+  display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff;
+}
+.sn-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(135deg,#C4B5FD,#7DD3FC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.sn-logo-text span{opacity:.5}
+
+/* User card in nav */
+.sn-user{
+  margin:0 12px 16px;padding:12px;
+  background:var(--s2);border:1px solid var(--br);border-radius:14px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  transition:background .2s;text-decoration:none;flex-shrink:0;
+  overflow:hidden;
+}
+.sn-user:hover{background:rgba(124,58,237,.12)}
+.sn-ava{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;border:2px solid var(--br)}
+.sn-user-info{min-width:0;flex:1}
+.sn-user-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sn-user-handle{font-size:.72rem;color:var(--mu);white-space:nowrap}
+.sn-online{width:8px;height:8px;border-radius:50%;background:var(--gn);flex-shrink:0;box-shadow:0 0 6px var(--gn)}
+
+/* Nav items */
+.sn-section{padding:0 8px;margin-bottom:6px;flex-shrink:0}
+.sn-label{font-size:.64rem;font-weight:600;color:var(--mu2);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px 4px;white-space:nowrap;overflow:hidden}
+.sn-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 10px;border-radius:12px;
+  text-decoration:none;color:var(--mu);
+  font-size:.88rem;font-weight:500;
+  transition:all .18s;cursor:pointer;position:relative;
+  white-space:nowrap;overflow:hidden;
+}
+.sn-item:hover{background:rgba(124,58,237,.1);color:var(--tx)}
+.sn-item.active{background:rgba(124,58,237,.18);color:var(--vl)}
+.sn-item svg{width:20px;height:20px;flex-shrink:0}
+.sn-item-label{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sn-badge{background:var(--v);color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0}
+.sn-divider{height:1px;background:var(--br);margin:8px 16px}
+
+/* ═══ MAIN CONTENT ═══ */
+.main{margin-left:var(--nav-w);flex:1;min-width:0;position:relative;z-index:1}
+
+/* Top bar */
+.topbar{
+  position:sticky;top:0;z-index:80;height:56px;
+  background:rgba(9,9,15,.9);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--br);
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+}
+.topbar-search{flex:1;max-width:400px;position:relative}
+.topbar-search input{width:100%;padding:8px 14px 8px 36px;background:rgba(255,255,255,.05);border:1px solid var(--br);border-radius:20px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;transition:all .2s}
+.topbar-search input:focus{border-color:var(--vl);background:rgba(124,58,237,.08);box-shadow:0 0 0 3px rgba(124,58,237,.14)}
+.topbar-search input::placeholder{color:var(--mu2)}
+.topbar-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mu);width:14px;height:14px;pointer-events:none}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tb-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--br2);display:grid;place-items:center;cursor:pointer;color:var(--mu);transition:all .2s;position:relative}
+.tb-btn:hover{background:rgba(124,58,237,.15);color:var(--vl)}
+.tb-btn svg{width:16px;height:16px}
+.tb-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--vl);border:1.5px solid var(--bg)}
+
+/* ═══ CONTENT AREA ═══ */
+.content-wrap{display:grid;grid-template-columns:1fr 260px;gap:20px;max-width:940px;margin:0 auto;padding:20px 20px 60px}
+
+/* ═══ STORIES ═══ */
+.stories-row{
+  background:var(--s2);border:1px solid var(--br);
+  border-radius:18px;padding:16px;margin-bottom:16px;
+  overflow:hidden;
+}
+.stories-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.stories-scroll::-webkit-scrollbar{display:none}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;width:70px}
+.story-ring{width:64px;height:64px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,#E1306C,#F56040,#FCAF45);flex-shrink:0;transition:transform .2s,filter .2s}
+.story-ring:hover{transform:scale(1.07);filter:brightness(1.1)}
+.story-ring.seen{background:var(--br2);padding:2px}
+.story-ring.mine-ring{background:none;border:2px dashed rgba(124,58,237,.5);display:flex;align-items:center;justify-content:center}
+.story-ring.mine-ring:hover{border-color:var(--vl)}
+.story-inner{width:100%;height:100%;border-radius:50%;background:var(--s3);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff;border:2px solid var(--s2)}
+.story-add-plus{position:relative}
+.story-add-plus::after{content:'+';position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:var(--v);color:#fff;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--s2)}
+.story-label{font-size:.66rem;color:var(--mu);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.story-label.mine{color:var(--vl)}
+
+/* ═══ STORY VIEWER ═══ */
+.sv{position:fixed;inset:0;z-index:500;background:#000;display:none;align-items:center;justify-content:center}
+.sv.open{display:flex}
+.sv-card{position:relative;width:min(420px,100vw);height:100vh;max-height:100vh;overflow:hidden;background:#111}
+.sv-prog{position:absolute;top:0;left:0;right:0;display:flex;gap:3px;padding:10px 12px 0;z-index:5}
+.sv-seg{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+.sv-fill{height:100%;background:#fff;width:0}
+.sv-fill.done{width:100%}
+.sv-fill.running{animation:svRun var(--d,5s) linear forwards}
+@keyframes svRun{to{width:100%}}
+.sv-top{position:absolute;top:0;left:0;right:0;padding:22px 14px 10px;display:flex;align-items:center;justify-content:space-between;z-index:5;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,transparent 100%)}
+.sv-who{display:flex;align-items:center;gap:10px}
+.sv-a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:#fff;border:2px solid rgba(255,255,255,.35)}
+.sv-nm{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff}
+.sv-tm{font-size:.7rem;color:rgba(255,255,255,.55)}
+.sv-x{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.7);width:34px;height:34px;display:grid;place-items:center;border-radius:50%;transition:background .2s}
+.sv-x:hover{background:rgba(255,255,255,.15)}
+.sv-x svg{width:20px;height:20px}
+.sv-body{width:100%;height:100%;position:relative}
+.sv-slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.sv-slide.on{opacity:1;pointer-events:all}
+.sv-slide img{width:100%;height:100%;object-fit:cover}
+.sv-slide-txt{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:28px}
+.sv-slide-txt p{font-size:1.05rem;line-height:1.6;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.6);background:rgba(0,0,0,.25);padding:16px 20px;border-radius:14px;backdrop-filter:blur(6px)}
+.sv-tap-l,.sv-tap-r{position:absolute;top:0;bottom:72px;width:40%;z-index:3;cursor:pointer}
+.sv-tap-l{left:0}.sv-tap-r{right:0}
+.sv-bottom{position:absolute;bottom:0;left:0;right:0;padding:14px;display:flex;gap:10px;align-items:center;z-index:5;background:linear-gradient(to top,rgba(0,0,0,.5),transparent)}
+.sv-reply{flex:1;padding:10px 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:24px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;backdrop-filter:blur(4px)}
+.sv-reply::placeholder{color:rgba(255,255,255,.45)}
+.sv-send{width:38px;height:38px;border-radius:50%;background:var(--v);border:none;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:background .2s}
+.sv-send:hover{background:var(--b)}
+.sv-send svg{width:15px;height:15px;color:#fff}
+.sv-nav-prev,.sv-nav-next{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;backdrop-filter:blur(4px);transition:background .2s;z-index:6}
+.sv-nav-prev{left:-56px}.sv-nav-next{right:-56px}
+.sv-nav-prev:hover,.sv-nav-next:hover{background:rgba(255,255,255,.25)}
+.sv-nav-prev svg,.sv-nav-next svg{width:20px;height:20px}
+
+/* ═══ COMPOSE ═══ */
+.compose{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px;margin-bottom:16px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cmp-top{display:flex;gap:12px;align-items:flex-start}
+.cmp-ava{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:#fff}
+.cmp-right{flex:1;min-width:0;position:relative}
+.cmp-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:12px;padding:10px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;resize:none;outline:none;min-height:44px;max-height:200px;transition:border-color .2s,box-shadow .2s}
+.cmp-ta:focus{border-color:var(--vl);box-shadow:0 0 0 3px rgba(124,58,237,.13)}
+.cmp-ta::placeholder{color:var(--mu2)}
+.cmp-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ci-w{position:relative;border-radius:10px;overflow:hidden;width:76px;height:76px;flex-shrink:0}
+.ci-w img{width:100%;height:100%;object-fit:cover}
+.ci-rm{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.75);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;font-size:9px;transition:background .2s}
+.ci-rm:hover{background:#dc2626}
+.cmp-bar{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--br2)}
+.cmp-tools{display:flex;gap:2px}
+.cmp-tool{width:32px;height:32px;border-radius:8px;background:none;border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .18s}
+.cmp-tool:hover{background:rgba(124,58,237,.14);color:var(--vl)}
+.cmp-tool svg{width:16px;height:16px}
+.cmp-right-bar{display:flex;align-items:center;gap:10px}
+.cmp-cnt{font-size:.74rem;color:var(--mu2)}
+.btn-post{padding:8px 20px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;transition:opacity .2s,transform .15s;box-shadow:0 2px 12px rgba(124,58,237,.32)}
+.btn-post:hover{opacity:.9;transform:translateY(-1px)}
+.btn-post:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.ac-box{position:absolute;background:var(--s3);border:1px solid var(--br);border-radius:12px;padding:6px;min-width:180px;z-index:60;box-shadow:0 8px 28px rgba(0,0,0,.5);top:calc(100% + 4px);left:0}
+.ac-it{padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.84rem;color:var(--tx);transition:background .12s;display:flex;align-items:center;gap:8px}
+.ac-it:hover,.ac-it.sel{background:rgba(124,58,237,.2);color:var(--vl)}
+
+/* ═══ FEED TABS ═══ */
+.ftabs{display:flex;gap:4px;margin-bottom:14px;background:var(--s2);border:1px solid var(--br);border-radius:14px;padding:5px}
+.ftab{flex:1;padding:8px;border-radius:10px;border:none;cursor:pointer;background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;transition:all .18s}
+.ftab.on{background:rgba(124,58,237,.2);color:var(--vl)}
+.ftab:hover:not(.on){color:var(--tx)}
+
+/* ═══ POST ═══ */
+.post{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px;margin-bottom:12px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both;transition:border-color .2s}
+.post:hover{border-color:rgba(124,58,237,.36)}
+.ph{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.pa{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;cursor:pointer;transition:transform .15s}
+.pa:hover{transform:scale(1.05)}
+.pm{flex:1;min-width:0}
+.pn{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;display:flex;align-items:center;gap:5px;cursor:pointer}
+.pn:hover{color:var(--vl)}
+.pt{font-size:.75rem;color:var(--mu)}
+.pmenu-wrap{position:relative}
+.pmenu-btn{background:none;border:none;cursor:pointer;color:var(--mu);padding:4px;border-radius:6px;transition:all .18s}
+.pmenu-btn:hover{background:rgba(255,255,255,.06);color:var(--tx)}
+.pmenu-btn svg{width:16px;height:16px;display:block}
+.pdrop{position:absolute;right:0;top:30px;z-index:50;background:var(--s3);border:1px solid var(--br);border-radius:12px;padding:6px;min-width:160px;box-shadow:0 8px 28px rgba(0,0,0,.5);animation:dropIn .12s ease}
+@keyframes dropIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.pd-it{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--tx);transition:background .12s}
+.pd-it:hover{background:rgba(124,58,237,.14);color:var(--vl)}
+.pd-it.red:hover{background:rgba(248,113,113,.12);color:var(--er)}
+.pd-it svg{width:14px;height:14px;flex-shrink:0}
+.pbody{font-size:.9rem;line-height:1.68;color:var(--tx);margin-bottom:12px}
+.pbody .tag{color:var(--vl);cursor:pointer;font-weight:500}.pbody .tag:hover{text-decoration:underline}
+.pbody .mention{color:var(--bl);cursor:pointer}.pbody .mention:hover{text-decoration:underline}
+.pimgs{display:grid;gap:4px;margin-bottom:12px;border-radius:12px;overflow:hidden}
+.pimgs.i1{grid-template-columns:1fr}.pimgs.i2{grid-template-columns:1fr 1fr}.pimgs.i3{grid-template-columns:1fr 1fr}.pimgs.i4{grid-template-columns:1fr 1fr}
+.pimg{width:100%;object-fit:cover;cursor:pointer;transition:opacity .2s;border-radius:3px}
+.pimgs.i1 .pimg{max-height:320px;border-radius:12px}
+.pimgs.i2 .pimg{height:180px}
+.pimgs.i3 .pimg:first-child{grid-row:span 2;height:230px}
+.pimgs.i3 .pimg:not(:first-child){height:112px}
+.pimgs.i4 .pimg{height:130px}
+.pimg:hover{opacity:.86}
+.pacts{display:flex;gap:2px}
+.pact{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px;border:none;cursor:pointer;background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.79rem;transition:all .18s}
+.pact svg{width:15px;height:15px;flex-shrink:0}
+.pact:hover{background:rgba(124,58,237,.1);color:var(--vl)}
+.pact.liked{color:var(--pk)}.pact.liked:hover{background:rgba(244,114,182,.1)}
+.pact.rp{color:var(--gn)}.pact.rp:hover{background:rgba(52,211,153,.1)}
+.pact.bm{color:#FBBF24}.pact.bm:hover{background:rgba(251,191,36,.1)}
+@keyframes hpop{0%{transform:scale(1)}40%{transform:scale(1.45)}70%{transform:scale(.9)}100%{transform:scale(1)}}
+.hpop{animation:hpop .3s ease}
+
+/* ═══ COMMENTS ═══ */
+.cs{border-top:1px solid var(--br2);margin-top:12px;padding-top:12px;display:none}
+.cs.on{display:block}
+.cs-sort{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cs-sort span{font-size:.76rem;color:var(--mu)}
+.sbtns{display:flex;gap:4px}
+.sbtn{padding:4px 10px;border-radius:8px;border:1px solid var(--br2);background:none;color:var(--mu);font-size:.7rem;cursor:pointer;transition:all .18s}
+.sbtn.on{border-color:var(--vl);color:var(--vl);background:rgba(124,58,237,.1)}
+.cc{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.cca{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:#fff}
+.ccw{flex:1;position:relative}
+.cci{width:100%;padding:8px 38px 8px 12px;background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:20px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;transition:all .2s;resize:none}
+.cci:focus{border-color:var(--vl);box-shadow:0 0 0 2px rgba(124,58,237,.14)}
+.cci::placeholder{color:var(--mu2)}
+.ccs{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--mu);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;transition:all .18s}
+.ccs:hover{background:rgba(124,58,237,.2);color:var(--vl)}
+.ccs svg{width:13px;height:13px}
+.cmt{display:flex;gap:10px;margin-bottom:10px;animation:fadeUp .25s ease}
+.cmtb{flex:1;min-width:0}
+.cmtbub{background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:0 13px 13px 13px;padding:9px 13px;margin-bottom:3px}
+.cmtan{font-family:'Syne',sans-serif;font-weight:700;font-size:.76rem;color:#fff;margin-bottom:2px}
+.cmtxt{font-size:.83rem;line-height:1.5;color:var(--tx)}
+.cmtxt .tag{color:var(--vl)}
+.cmtmeta{display:flex;align-items:center;gap:8px;padding:0 2px}
+.cmttm{font-size:.68rem;color:var(--mu2)}
+.clbtn{display:flex;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--mu);font-size:.7rem;padding:0;transition:color .18s}
+.clbtn:hover,.clbtn.on{color:var(--pk)}
+.clbtn svg{width:10px;height:10px}
+.rbtn{background:none;border:none;cursor:pointer;color:var(--mu);font-size:.7rem;font-weight:500;padding:0;transition:color .18s}
+.rbtn:hover{color:var(--vl)}
+.cdel{background:none;border:none;cursor:pointer;color:var(--mu2);font-size:.68rem;margin-left:auto;padding:0;transition:color .18s}
+.cdel:hover{color:var(--er)}
+.reps{margin-left:40px;border-left:2px solid var(--br);padding-left:12px;margin-top:4px}
+.rbox{display:none;margin-top:6px}
+.rbox.on{display:flex;gap:8px;align-items:flex-start}
+.ri{flex:1;padding:7px 12px;background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;resize:none;transition:all .2s}
+.ri:focus{border-color:var(--vl)}
+.ri::placeholder{color:var(--mu2)}
+.rbsend{padding:7px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-size:.76rem;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap}
+
+/* ═══ RIGHT COLUMN ═══ */
+.right-col{display:flex;flex-direction:column;gap:14px;position:sticky;top:70px;align-self:flex-start;max-height:calc(100vh - 90px);overflow-y:auto}
+.widget{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px}
+.wt{font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.wt svg{width:14px;height:14px;color:var(--vl)}
+.tr-it{padding:7px 0;cursor:pointer;border-bottom:1px solid var(--br2);transition:padding-left .18s}
+.tr-it:last-child{border-bottom:none;padding-bottom:0}
+.tr-it:first-child{padding-top:0}
+.tr-it:hover{padding-left:4px}
+.tr-tag{font-size:.81rem;font-weight:600;color:var(--vl)}
+.tr-cnt{font-size:.7rem;color:var(--mu)}
+.sg-it{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--br2)}
+.sg-it:last-child{border-bottom:none;padding-bottom:0}
+.sg-it:first-child{padding-top:0}
+.sg-a{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.74rem;color:#fff}
+.sg-inf{flex:1;min-width:0}
+.sg-nm{font-size:.81rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sg-hd{font-size:.7rem;color:var(--mu)}
+.btn-flw{padding:5px 12px;border-radius:8px;border:1px solid var(--br);background:none;color:var(--vl);font-size:.73rem;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.btn-flw:hover{background:rgba(124,58,237,.2);border-color:var(--vl)}
+.btn-flw.on{color:var(--mu);border-color:var(--br2)}
+.btn-flw.on:hover{color:var(--er);border-color:var(--er);background:rgba(248,113,113,.08)}
+
+/* ═══ LIGHTBOX ═══ */
+.lb{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain}
+.lb-x{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;transition:background .2s}
+.lb-x:hover{background:rgba(255,255,255,.2)}
+.lb-x svg{width:18px;height:18px}
+
+/* ═══ EDIT MODAL ═══ */
+.ov{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--s3);border:1px solid var(--br);border-radius:20px;width:min(500px,100%);padding:26px;transform:translateY(20px) scale(.97);transition:transform .22s cubic-bezier(.22,1,.36,1)}
+.ov.open .modal{transform:translateY(0) scale(1)}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.mhtit{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff}
+.mx{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.06);border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .18s}
+.mx:hover{background:rgba(248,113,113,.14);color:var(--er)}
+.mx svg{width:13px;height:13px}
+.mta{width:100%;min-height:96px;padding:12px;resize:none;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:11px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s}
+.mta:focus{border-color:var(--vl);box-shadow:0 0 0 3px rgba(124,58,237,.13)}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.btn-mc{padding:9px 18px;border-radius:10px;border:1px solid var(--br2);background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer;transition:all .18s}
+.btn-mc:hover{color:var(--tx);border-color:var(--mu)}
+.btn-ms{padding:9px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+.btn-ms:hover{opacity:.9}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(14px);padding:11px 22px;border-radius:13px;font-family:'Syne',sans-serif;font-weight:600;font-size:.84rem;color:#fff;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);z-index:9999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none;background:linear-gradient(135deg,var(--v),var(--b))}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.empty-f{text-align:center;padding:50px 0;color:var(--mu)}
+.empty-f svg{width:40px;height:40px;margin:0 auto 12px;display:block;opacity:.3}
+
+@media(max-width:1300px){.content-wrap{grid-template-columns:1fr 220px}}
+@media(max-width:900px){.content-wrap{grid-template-columns:1fr}.right-col{display:none}}
+@media(max-width:860px){:root{--nav-w:68px} .sn-item-label,.sn-label,.sn-user-info,.sn-logo-text,.sn-online{opacity:0;pointer-events:none}}
+@media(max-width:600px){:root{--nav-w:0px} .sidenav{display:none} .main{margin-left:0}}
+
+/* ── THEME VARIANTS ──────────────────────────────────── */
+body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
+body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
+
+
+/* ═══════════════════════════ ADMIN PANEL STYLES ═══════════════════════════ */
+.admin-layout{display:flex;height:100vh;overflow:hidden;margin-left:var(--nav-w)}
+.admin-sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--s1);border-right:1px solid var(--br2);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.admin-sidebar-header{
+  padding:16px 16px 10px;border-bottom:1px solid var(--br2);
+}
+.admin-sidebar-title{
+  font-family:'Syne',sans-serif;font-weight:800;font-size:.88rem;
+  background:linear-gradient(135deg,#F87171,#A78BFA);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  display:flex;align-items:center;gap:6px;margin-bottom:4px;
+}
+.admin-admin-badge{
+  font-size:.62rem;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);
+  color:var(--er);padding:1px 8px;border-radius:8px;font-weight:700;letter-spacing:.04em;
+  display:inline-block;margin-top:2px;
+}
+.admin-nav{flex:1;overflow-y:auto;padding:8px 8px;}
+.admin-nav::-webkit-scrollbar{width:0}
+.admin-nav-label{font-size:.59rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.08em;font-weight:700;padding:8px 8px 3px;}
+.admin-nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;border-radius:10px;
+  cursor:pointer;color:var(--mu);font-size:.83rem;font-weight:500;
+  transition:all .14s;margin-bottom:1px;white-space:nowrap;
+}
+.admin-nav-item svg{width:15px;height:15px;flex-shrink:0;}
+.admin-nav-item:hover{background:rgba(255,255,255,.05);color:var(--tx)}
+.admin-nav-item.active{background:rgba(124,58,237,.14);color:var(--vl)}
+.admin-nav-item.danger:hover,.admin-nav-item.danger.active{background:rgba(248,113,113,.1);color:var(--er)}
+.admin-nav-sep{height:1px;background:var(--br2);margin:5px 4px;}
+.admin-nav-badge{
+  margin-left:auto;background:var(--er);color:#fff;
+  font-size:.58rem;font-weight:800;padding:1px 6px;
+  border-radius:8px;min-width:18px;text-align:center;
+}
+
+/* Main content area */
+.admin-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.admin-topbar{
+  height:54px;background:rgba(9,9,15,.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--br2);display:flex;align-items:center;
+  padding:0 22px;gap:12px;flex-shrink:0;
+}
+.admin-topbar-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;flex:1;}
+.admin-search-wrap{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s2);border:1px solid var(--br2);border-radius:10px;
+  padding:6px 12px;min-width:200px;
+}
+.admin-search-wrap input{background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;width:100%;}
+.admin-search-wrap input::placeholder{color:var(--mu2);}
+.admin-search-wrap svg{width:13px;height:13px;color:var(--mu);flex-shrink:0;}
+.admin-reload-btn{
+  width:32px;height:32px;border-radius:8px;background:var(--s2);
+  border:1px solid var(--br2);display:grid;place-items:center;
+  cursor:pointer;color:var(--mu);transition:all .14s;
+}
+.admin-reload-btn:hover{background:rgba(124,58,237,.1);color:var(--vl);border-color:var(--br)}
+.admin-reload-btn svg{width:14px;height:14px;}
+
+/* Pages */
+.admin-page{display:none;flex:1;overflow-y:auto;padding:22px 24px;}
+.admin-page.active{display:block;animation:apIn .18s both;}
+@keyframes apIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.admin-page-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:3px;}
+.admin-page-sub{font-size:.78rem;color:var(--mu);margin-bottom:20px;}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:20px;}
+.stat-card{background:var(--s2);border:1px solid var(--br2);border-radius:13px;padding:14px 16px;transition:border-color .18s,transform .16s;}
+.stat-card:hover{border-color:var(--br);transform:translateY(-1px);}
+.stat-card-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:.95rem;margin-bottom:9px;}
+.stat-card-n{font-family:'Syne',sans-serif;font-weight:800;font-size:1.55rem;line-height:1;margin-bottom:2px;}
+.stat-card-lbl{font-size:.72rem;color:var(--mu);}
+.stat-card-delta{font-size:.66rem;font-weight:600;margin-top:4px;}
+.delta-up{color:var(--gn);}.delta-warn{color:#FBBF24;}.delta-err{color:var(--er);}
+
+/* Chart cards */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.chart-card{background:var(--s2);border:1px solid var(--br2);border-radius:13px;padding:16px;}
+.chart-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;margin-bottom:12px;}
+.mini-bar-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.mini-bar-lbl{font-size:.73rem;color:var(--mu);width:85px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.mini-bar-track{flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.mini-bar-fill{height:100%;border-radius:3px;transition:width .9s cubic-bezier(.22,1,.36,1);}
+.mini-bar-val{font-size:.69rem;color:var(--mu2);width:26px;text-align:right;flex-shrink:0;}
+
+/* Table card */
+.table-card{background:var(--s2);border:1px solid var(--br2);border-radius:13px;overflow:hidden;margin-bottom:14px;}
+.table-card-hd{padding:12px 16px;border-bottom:1px solid var(--br2);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.table-card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.87rem;flex:1;min-width:0;}
+.filter-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.fbtn{padding:4px 10px;border-radius:7px;border:1px solid var(--br2);background:none;color:var(--mu);font-size:.71rem;font-weight:600;cursor:pointer;transition:all .12s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.fbtn:hover{border-color:var(--br);color:var(--tx);}.fbtn.active{background:rgba(124,58,237,.12);border-color:var(--br);color:var(--vl);}
+table.admin-tbl{width:100%;border-collapse:collapse;}
+.admin-tbl thead tr{border-bottom:1px solid var(--br2);}
+.admin-tbl th{padding:8px 14px;text-align:left;font-size:.65rem;color:var(--mu2);font-weight:700;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+.admin-tbl td{padding:9px 14px;border-bottom:1px solid var(--br2);font-size:.81rem;color:var(--tx);vertical-align:middle;}
+.admin-tbl tr:last-child td{border-bottom:none;}
+.admin-tbl tr:hover td{background:rgba(255,255,255,.018);}
+.tbl-empty{text-align:center;padding:40px;color:var(--mu);font-size:.81rem;}
+.tbl-loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:10px;color:var(--mu);font-size:.81rem;}
+
+/* Badges */
+.abadge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:7px;font-size:.64rem;font-weight:700;white-space:nowrap;}
+.ab-admin{background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.18);}
+.ab-mod{background:rgba(37,99,235,.1);color:#60A5FA;border:1px solid rgba(37,99,235,.15);}
+.ab-ver{background:rgba(6,182,212,.1);color:#06B6D4;border:1px solid rgba(6,182,212,.15);}
+.ab-ban{background:rgba(239,68,68,.07);color:#fca5a5;border:1px solid rgba(239,68,68,.12);}
+.ab-ok{background:rgba(52,211,153,.08);color:#34D399;border:1px solid rgba(52,211,153,.14);}
+.ab-hid{background:rgba(251,191,36,.08);color:#FBBF24;border:1px solid rgba(251,191,36,.14);}
+
+/* Action buttons */
+.action-btns{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+.abt{padding:4px 8px;border-radius:6px;border:none;font-size:.69rem;font-weight:600;cursor:pointer;transition:all .12s;font-family:'DM Sans',sans-serif;white-space:nowrap;display:inline-flex;align-items:center;gap:3px;}
+.abt svg{width:10px;height:10px;}
+.abt-ban{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.18);color:var(--er);}.abt-ban:hover{background:rgba(239,68,68,.2);}
+.abt-unban{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.18);color:#34D399;}.abt-unban:hover{background:rgba(52,211,153,.2);}
+.abt-mod{background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.15);color:#60A5FA;}.abt-mod:hover{background:rgba(37,99,235,.2);}
+.abt-ver{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.15);color:#06B6D4;}.abt-ver:hover{background:rgba(6,182,212,.2);}
+.abt-del{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.12);color:#fca5a5;}.abt-del:hover{background:rgba(239,68,68,.18);}
+.abt-hid{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.14);color:#FBBF24;}.abt-hid:hover{background:rgba(251,191,36,.18);}
+.abt-ghost{background:var(--s3);border:1px solid var(--br2);color:var(--mu);}.abt-ghost:hover{color:var(--tx);border-color:var(--br);}
+
+/* User avatar cell */
+.user-cell{display:flex;align-items:center;gap:9px;}
+.user-cell-ava{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:#fff;flex-shrink:0;}
+.user-cell-name{font-weight:600;font-size:.82rem;color:var(--tx);}
+.user-cell-handle{font-size:.7rem;color:var(--mu);}
+
+/* Pagination */
+.pager{display:flex;align-items:center;justify-content:center;gap:5px;padding:12px;}
+.pager-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--br2);background:none;color:var(--mu);font-size:.8rem;cursor:pointer;transition:all .12s;display:grid;place-items:center;font-family:'DM Sans',sans-serif;}
+.pager-btn:hover{border-color:var(--br);color:var(--tx);}.pager-btn.active{background:rgba(124,58,237,.12);border-color:var(--br);color:var(--vl);}.pager-btn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* Modals */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;animation:mOvIn .15s both;}
+@keyframes mOvIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--s1);border:1px solid var(--br);border-radius:16px;padding:22px;width:100%;max-width:460px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.7);animation:mIn .2s both;}
+.modal.modal-wide{max-width:540px;}
+@keyframes mIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:none}}
+.modal-close-btn{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:7px;background:var(--s3);border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .12s;}
+.modal-close-btn:hover{color:var(--tx);}.modal-close-btn svg{width:12px;height:12px;}
+.modal-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.96rem;margin-bottom:5px;display:flex;align-items:center;gap:8px;}
+.modal-sub{font-size:.78rem;color:var(--mu);margin-bottom:14px;line-height:1.55;}
+.modal-warn{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.14);border-radius:9px;padding:10px 12px;font-size:.76rem;color:#ffaaaa;margin-bottom:13px;line-height:1.5;}
+.modal-input{width:100%;padding:10px 12px;background:var(--s2);border:1px solid var(--br2);border-radius:10px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;transition:border-color .15s;margin-bottom:10px;}
+.modal-input:focus{border-color:var(--br)}
+.modal-btns{display:flex;gap:7px;justify-content:flex-end;margin-top:6px;}
+.modal-btn{padding:8px 18px;border-radius:9px;border:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.81rem;cursor:pointer;transition:all .14s;}
+.mbtn-primary{background:linear-gradient(135deg,var(--v),var(--b));color:#fff;}.mbtn-primary:hover{opacity:.9;transform:translateY(-1px);}
+.mbtn-cancel{background:var(--s3);border:1px solid var(--br2);color:var(--mu);}.mbtn-cancel:hover{color:var(--tx);}
+.mbtn-danger{background:linear-gradient(135deg,#dc2626,#7C3AED);color:#fff;}.mbtn-danger:hover{opacity:.9;}
+
+/* User detail modal */
+.ud-header{display:flex;align-items:flex-start;gap:13px;padding-bottom:14px;border-bottom:1px solid var(--br2);margin-bottom:14px;}
+.ud-ava{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff;flex-shrink:0;}
+.ud-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:13px;}
+.ud-stat{background:var(--s2);border:1px solid var(--br2);border-radius:9px;padding:9px;text-align:center;}
+.ud-stat-n{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;}
+.ud-stat-l{font-size:.64rem;color:var(--mu);}
+.ud-ban-reason{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.14);border-radius:9px;padding:9px 12px;font-size:.76rem;color:#ffaaaa;margin-bottom:12px;}
+.ud-actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.ud-posts-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;margin-bottom:8px;}
+.ud-post-row{display:flex;align-items:center;gap:9px;padding:7px 10px;background:var(--s2);border:1px solid var(--br2);border-radius:9px;margin-bottom:5px;}
+.ud-post-text{flex:1;font-size:.76rem;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ud-post-date{font-size:.67rem;color:var(--mu2);flex-shrink:0;}
+
+/* Log entries */
+.log-entry{display:flex;align-items:flex-start;gap:11px;padding:10px 14px;border-bottom:1px solid var(--br2);}
+.log-entry:last-child{border-bottom:none;}
+.log-ico{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;font-size:.84rem;flex-shrink:0;}
+.log-action{font-size:.81rem;font-weight:600;color:var(--tx);}
+.log-meta{font-size:.69rem;color:var(--mu);margin-top:1px;}
+.log-time{font-size:.67rem;color:var(--mu2);margin-left:auto;padding-left:8px;white-space:nowrap;padding-top:1px;}
+
+/* Danger zone */
+.danger-row{padding:16px 18px;border-bottom:1px solid rgba(239,68,68,.08);}
+.danger-row:last-child{border-bottom:none;}
+.danger-row-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.87rem;color:var(--er);margin-bottom:3px;}
+.danger-row-sub{font-size:.76rem;color:var(--mu);margin-bottom:10px;}
+
+/* Spinner */
+@keyframes spin360{to{transform:rotate(360deg)}}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--vl);border-radius:50%;animation:spin360 .55s linear infinite;display:inline-block;}
+
+/* Toast */
+.toast{position:fixed;bottom:22px;right:22px;padding:10px 18px;border-radius:12px;font-family:'Syne',sans-serif;font-weight:700;font-size:.81rem;color:#fff;opacity:0;transform:translateY(8px);transition:all .25s cubic-bezier(.22,1,.36,1);z-index:9999;pointer-events:none;box-shadow:0 6px 22px rgba(0,0,0,.55);max-width:300px;}
+.toast.show{opacity:1;transform:none;}
+.toast-ok{background:linear-gradient(135deg,#059669,#0EA5E9);}
+.toast-err{background:linear-gradient(135deg,#dc2626,#9333ea);}
+.toast-info{background:linear-gradient(135deg,var(--v),var(--b));}
+
+@media(max-width:900px){.admin-layout{margin-left:0;}}
+@media(max-width:700px){.admin-sidebar{display:none;} .chart-row{grid-template-columns:1fr;} .stat-grid{grid-template-columns:repeat(2,1fr);} .admin-page{padding:14px 16px;}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  try{
+    var p=JSON.parse(localStorage.getItem('weave_prefs')||'{}');
+    var t=p.theme||'light';
+    if(t==='light')  document.body.classList.add('light');
+    if(t==='amoled') document.body.classList.add('amoled');
+    var ac={purple:{v:'#7C3AED',vl:'#A78BFA',vd:'#4C1D95',b:'#2563EB',bl:'#60A5FA'},pink:{v:'#DB2777',vl:'#F472B6',vd:'#831843',b:'#9333EA',bl:'#C084FC'},teal:{v:'#059669',vl:'#34D399',vd:'#064E3B',b:'#0EA5E9',bl:'#38BDF8'},orange:{v:'#D97706',vl:'#FBBF24',vd:'#78350F',b:'#DC2626',bl:'#F87171'},blue:{v:'#2563EB',vl:'#60A5FA',vd:'#1E3A8A',b:'#06B6D4',bl:'#22D3EE'},green:{v:'#16A34A',vl:'#4ADE80',vd:'#14532D',b:'#84CC16',bl:'#BEF264'},red:{v:'#DC2626',vl:'#F87171',vd:'#7F1D1D',b:'#F97316',bl:'#FDBA74'}};
+    var a=ac[p.accent]||ac.purple;
+    var r=document.documentElement;
+    r.style.setProperty('--v',a.v);r.style.setProperty('--vl',a.vl);r.style.setProperty('--vd',a.vd);r.style.setProperty('--b',a.b);r.style.setProperty('--bl',a.bl);
+    if(p.fontSize)document.body.style.fontSize=p.fontSize+'px';
+  }catch(e){}
+})();
+</script>
+
+<!-- ══════════ SIDENAV (feed-style) ══════════ -->
+<nav class="sidenav" id="sidenav">
+  <a class="sn-logo" href="feed.html">
+    <div class="sn-logo-icon">W</div>
+    <span class="sn-logo-text">Weave<span>.</span></span>
+  </a>
+  <a class="sn-user" href="profile.html" id="sn-user-card">
+    <div class="sn-ava" id="sn-ava">?</div>
+    <div class="sn-user-info">
+      <div class="sn-user-name" id="sn-name">Загрузка…</div>
+      <div class="sn-user-handle" id="sn-handle">@…</div>
+    </div>
+    <div class="sn-online"></div>
+  </a>
+  <div class="sn-section">
+    <div class="sn-label sn-item-label">Навигация</div>
+    <a class="sn-item" href="feed.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="sn-item-label">Лента</span></a>
+    <a class="sn-item" href="explore.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><span class="sn-item-label">Поиск</span></a>
+    <a class="sn-item" href="messages.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="sn-item-label">Сообщения</span></a>
+    <a class="sn-item" href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="sn-item-label">Настройки</span></a>
+    <a class="sn-item active" href="admin.html" style="color:var(--er)!important"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span class="sn-item-label">Админ-панель</span></a>
+  </div>
+  <div class="sn-section" style="margin-top:auto">
+    <div class="sn-item" onclick="handleLogout()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span class="sn-item-label">Выйти</span></div>
+  </div>
+</nav>
+
+<!-- ══════════ ADMIN LAYOUT ══════════ -->
+<div class="admin-layout">
+
+  <!-- Admin sidebar -->
+  <div class="admin-sidebar">
+    <div class="admin-sidebar-header">
+      <div class="admin-sidebar-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Панель управления
+      </div>
+      <div class="admin-admin-badge" id="admin-role-badge">ADMIN</div>
+    </div>
+    <div class="admin-nav">
+      <div class="admin-nav-label">Обзор</div>
+      <div class="admin-nav-item active" onclick="navTo('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Дашборд
+      </div>
+      <div class="admin-nav-label">Управление</div>
+      <div class="admin-nav-item" onclick="navTo('users',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Пользователи
+      </div>
+      <div class="admin-nav-item" onclick="navTo('posts',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Посты
+      </div>
+      <div class="admin-nav-sep"></div>
+      <div class="admin-nav-label">Система</div>
+      <div class="admin-nav-item" onclick="navTo('logs',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+        Журнал действий
+      </div>
+      <div class="admin-nav-item" onclick="navTo('console',this)" id="console-nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        Консоль разработчика
+      </div>
+      <div class="admin-nav-sep"></div>
+      <div class="admin-nav-item danger" id="danger-nav-btn" onclick="navTo('danger',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Опасная зона
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-title" id="topbar-title">Дашборд</div>
+      <div class="admin-search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="admin-search" placeholder="Поиск пользователей, постов…" oninput="onGlobalSearch(this.value)">
+      </div>
+      <div class="admin-reload-btn" onclick="reloadCurrent()" title="Обновить">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </div>
+    </div>
+
+    <!-- ╔══ DASHBOARD ══╗ -->
+    <div id="page-dashboard" class="admin-page active">
+      <div class="admin-page-title">⚡ Дашборд</div>
+      <div class="admin-page-sub">Обзор платформы Weave в реальном времени</div>
+      <div class="stat-grid" id="stats-grid">
+        <div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка статистики…</div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-card-title">👥 Топ пользователей (по постам)</div>
+          <div id="chart-topusers"><div class="tbl-loading" style="padding:14px"><div class="spinner"></div></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title">📊 Распределение контента</div>
+          <div id="chart-content"><div class="tbl-loading" style="padding:14px"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔══ USERS ══╗ -->
+    <div id="page-users" class="admin-page">
+      <div class="admin-page-title">👥 Пользователи</div>
+      <div class="admin-page-sub">Управление аккаунтами, баны, роли, верификация</div>
+      <div class="table-card">
+        <div class="table-card-hd">
+          <div class="table-card-title" id="users-count-label">…</div>
+          <div class="filter-btns">
+            <button class="fbtn active" onclick="setUserFilter('all',this)">Все</button>
+            <button class="fbtn" onclick="setUserFilter('verified',this)">✓ Верифицированные</button>
+            <button class="fbtn" onclick="setUserFilter('mods',this)">🛡 Модераторы</button>
+            <button class="fbtn" onclick="setUserFilter('banned',this)">🚫 Забаненные</button>
+            <button class="fbtn" onclick="setUserFilter('admins',this)">👑 Админы</button>
+          </div>
+        </div>
+        <div id="users-table-body"><div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div></div>
+        <div class="pager" id="users-pager"></div>
+      </div>
+    </div>
+
+    <!-- ╔══ POSTS ══╗ -->
+    <div id="page-posts" class="admin-page">
+      <div class="admin-page-title">📄 Посты</div>
+      <div class="admin-page-sub">Модерация контента платформы</div>
+      <div class="table-card">
+        <div class="table-card-hd">
+          <div class="table-card-title" id="posts-count-label">…</div>
+          <div class="filter-btns">
+            <button class="fbtn active" onclick="setPostFilter('all',this)">Все</button>
+            <button class="fbtn" onclick="setPostFilter('hidden',this)">🙈 Скрытые</button>
+          </div>
+        </div>
+        <div id="posts-table-body"><div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div></div>
+        <div class="pager" id="posts-pager"></div>
+      </div>
+    </div>
+
+    <!-- ╔══ LOGS ══╗ -->
+    <div id="page-logs" class="admin-page">
+      <div class="admin-page-title">📋 Журнал действий</div>
+      <div class="admin-page-sub">История всех административных операций</div>
+      <div class="table-card">
+        <div id="logs-body"><div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div></div>
+        <div class="pager" id="logs-pager"></div>
+      </div>
+    </div>
+
+    <!-- ╔══ DANGER ══╗ -->
+    <div id="page-danger" class="admin-page">
+      <div class="admin-page-title" style="color:var(--er)">⚠️ Опасная зона</div>
+      <div class="admin-page-sub">Необратимые системные операции — используйте с осторожностью</div>
+      <div style="background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.13);border-radius:13px;overflow:hidden" id="danger-zone-panel">
+        <div class="danger-row">
+          <div class="danger-row-title">Завершить все чужие сессии</div>
+          <div class="danger-row-sub">Все пользователи будут выброшены из аккаунтов. Ваша сессия останется.</div>
+          <button class="abt abt-ban" onclick="dangerClearSessions()">Выполнить</button>
+        </div>
+        <div class="danger-row">
+          <div class="danger-row-title">Удалить все скрытые посты</div>
+          <div class="danger-row-sub">Безвозвратно удалит все посты со статусом «скрыт»</div>
+          <button class="abt abt-del" onclick="dangerDeleteHidden()">Выполнить</button>
+        </div>
+        <div class="danger-row" id="danger-admin-only" style="display:none">
+          <div class="danger-row-title">Снять бан со ВСЕХ пользователей</div>
+          <div class="danger-row-sub">Разблокирует всех забаненных пользователей</div>
+          <button class="abt abt-unban" onclick="dangerUnbanAll()">Выполнить</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-main -->
+</div><!-- /admin-layout -->
+
+<!-- ══════════ MODALS ══════════ -->
+
+<!-- Modal: Ban user -->
+<div class="modal-overlay" id="modal-ban">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal('modal-ban')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="modal-title">🚫 Забанить пользователя</div>
+    <div class="modal-sub" id="modal-ban-sub">Пользователь будет немедленно выброшен из всех сессий.</div>
+    <div class="modal-warn">Пользователь не сможет войти в аккаунт до снятия бана.</div>
+    <input class="modal-input" id="ban-reason-input" placeholder="Причина бана (необязательно)…">
+    <div class="modal-btns">
+      <button class="modal-btn mbtn-cancel" onclick="closeModal('modal-ban')">Отмена</button>
+      <button class="modal-btn mbtn-danger" onclick="confirmBan()">🚫 Забанить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Delete user -->
+<div class="modal-overlay" id="modal-del-user">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal('modal-del-user')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="modal-title">🗑 Удалить пользователя</div>
+    <div class="modal-sub" id="modal-del-user-sub">Это действие необратимо.</div>
+    <div class="modal-warn">Все посты, сообщения, комментарии и данные пользователя будут уничтожены навсегда.</div>
+    <div class="modal-btns">
+      <button class="modal-btn mbtn-cancel" onclick="closeModal('modal-del-user')">Отмена</button>
+      <button class="modal-btn mbtn-danger" onclick="confirmDeleteUser()">Удалить навсегда</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Delete post -->
+<div class="modal-overlay" id="modal-del-post">
+  <div class="modal">
+    <button class="modal-close-btn" onclick="closeModal('modal-del-post')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="modal-title">🗑 Удалить пост</div>
+    <div class="modal-sub">Пост будет удалён безвозвратно.</div>
+    <div class="modal-btns">
+      <button class="modal-btn mbtn-cancel" onclick="closeModal('modal-del-post')">Отмена</button>
+      <button class="modal-btn mbtn-danger" onclick="confirmDeletePost()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: User detail -->
+<div class="modal-overlay" id="modal-user-detail">
+  <div class="modal modal-wide">
+    <button class="modal-close-btn" onclick="closeModal('modal-user-detail')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div id="user-detail-content"><div class="tbl-loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- ╔══ DEVELOPER CONSOLE ══╗ -->
+<div id="page-console" class="admin-page">
+  <div class="admin-page-title">⌨️ Консоль разработчика</div>
+  <div class="admin-page-sub">Выполнение API-запросов и диагностика системы</div>
+
+  <!-- Command Reference -->
+  <div class="chart-card" style="margin-bottom:16px">
+    <div class="chart-card-title" style="margin-bottom:12px">📋 Список команд</div>
+    <div id="cmd-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px"></div>
+  </div>
+
+  <!-- Console Terminal -->
+  <div class="chart-card" style="padding:0;overflow:hidden;border:1px solid var(--br2)">
+    <div style="background:rgba(0,0,0,.4);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(255,255,255,.06)">
+      <div style="width:11px;height:11px;border-radius:50%;background:#FF5F57"></div>
+      <div style="width:11px;height:11px;border-radius:50%;background:#FEBC2E"></div>
+      <div style="width:11px;height:11px;border-radius:50%;background:#28C840"></div>
+      <span style="font-size:.75rem;color:var(--mu);margin-left:8px;font-family:monospace">weave-console — bash</span>
+      <button onclick="clearConsole()" style="margin-left:auto;background:none;border:1px solid rgba(255,255,255,.1);color:var(--mu);padding:2px 10px;border-radius:5px;cursor:pointer;font-size:.72rem">Очистить</button>
+    </div>
+    <div id="console-output" style="padding:14px 18px;height:340px;overflow-y:auto;font-family:'Courier New',monospace;font-size:.8rem;line-height:1.7;background:rgba(0,0,0,.25);color:#e2e8f0"></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.3)">
+      <span style="color:var(--vl);font-family:monospace;font-size:.85rem;flex-shrink:0">weave&gt;</span>
+      <input id="console-input" placeholder="Введите команду или SQL-запрос…" autocomplete="off" spellcheck="false"
+        style="flex:1;background:none;border:none;outline:none;color:#e2e8f0;font-family:'Courier New',monospace;font-size:.82rem"
+        onkeydown="handleConsoleKey(event)">
+      <button onclick="runConsoleCmd()" style="background:linear-gradient(135deg,var(--v),var(--b));border:none;color:#fff;padding:5px 14px;border-radius:7px;cursor:pointer;font-size:.78rem;font-family:'Syne',sans-serif;font-weight:700">Выполнить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast-el"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONFIG & STATE
+// ═══════════════════════════════════════════════════
+const API_BASE = '/api';
+const AVA_GRADS = [
+  'linear-gradient(135deg,#7C3AED,#2563EB)',
+  'linear-gradient(135deg,#DB2777,#7C3AED)',
+  'linear-gradient(135deg,#059669,#2563EB)',
+  'linear-gradient(135deg,#D97706,#DB2777)',
+  'linear-gradient(135deg,#06B6D4,#7C3AED)',
+  'linear-gradient(135deg,#7C3AED,#06B6D4)'
+];
+
+let ME = null;
+let currentPage = 'dashboard';
+let usersPage = 1, usersFilter = 'all', usersQuery = '';
+let postsPage = 1, postsFilter = 'all', postsQuery = '';
+let logsOffset = 0;
+const LIMIT = 15;
+let pendingBanId = null, pendingDelUserId = null, pendingDelPostId = null;
+
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+const tok = () => localStorage.getItem('weave_token') || sessionStorage.getItem('weave_token') || '';
+const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const avGrad = i => AVA_GRADS[(i || 0) % 6];
+const dtShort = iso => iso ? new Date(iso).toLocaleDateString('ru', {day:'numeric',month:'short'}) : '—';
+const dtFull  = iso => iso ? new Date(iso).toLocaleDateString('ru', {day:'numeric',month:'short',year:'2-digit'}) + ' ' + new Date(iso).toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'}) : '—';
+const ini = u => ((u?.firstName?.[0] || '') + (u?.lastName?.[0] || '')).toUpperCase() || '?';
+
+async function apiFetch(path, opts = {}) {
+  const r = await fetch(API_BASE + path, {
+    ...opts,
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok(), ...(opts.headers || {}) }
+  });
+  if (r.status === 401) { location.href = 'login.html'; throw 0; }
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.error || 'Ошибка ' + r.status);
+  }
+  return r.json();
+}
+
+function showToast(msg, type = 'info') {
+  const t = document.getElementById('toast-el');
+  t.textContent = msg;
+  t.className = 'toast show toast-' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ═══════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  // Load user
+  const saved = localStorage.getItem('weave_current_user');
+  if (!saved) { location.href = 'login.html'; return; }
+  ME = JSON.parse(saved);
+  if (!ME?.isAdmin && !ME?.isModerator) {
+    showToast('Нет прав администратора', 'err');
+    setTimeout(() => location.href = 'feed.html', 1800);
+    return;
+  }
+  // Update sidenav
+  const av = document.getElementById('sn-ava');
+  av.textContent = ini(ME);
+  av.style.background = avGrad(ME.avatarColor);
+  document.getElementById('sn-name').textContent = (ME.firstName + ' ' + (ME.lastName || '')).trim();
+  document.getElementById('sn-handle').textContent = '@' + ME.username;
+  // Badge
+  if (ME.isModerator && !ME.isAdmin) {
+    document.getElementById('admin-role-badge').textContent = 'MODERATOR';
+    document.getElementById('admin-role-badge').style.background = 'rgba(37,99,235,.12)';
+    document.getElementById('admin-role-badge').style.borderColor = 'rgba(37,99,235,.2)';
+    document.getElementById('admin-role-badge').style.color = '#60A5FA';
+    document.getElementById('danger-admin-only').style.display = 'none';
+  }
+  if (ME.isAdmin) {
+    document.getElementById('danger-admin-only').style.display = 'block';
+  }
+  loadDashboard();
+});
+
+function handleLogout() {
+  if (!confirm('Выйти из Weave?')) return;
+  localStorage.removeItem('weave_token');
+  localStorage.removeItem('weave_current_user');
+  sessionStorage.removeItem('weave_token');
+  location.href = 'login.html';
+}
+
+// ═══════════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════════
+const PAGE_TITLES = {
+  dashboard: 'Дашборд',
+  users: 'Пользователи',
+  posts: 'Посты',
+  logs: 'Журнал действий',
+  danger: 'Опасная зона'
+};
+
+function navTo(page, el) {
+  document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[page] || page;
+  document.getElementById('admin-search').value = '';
+  currentPage = page;
+  if (page === 'users') loadUsers();
+  else if (page === 'posts') loadPosts();
+  else if (page === 'logs') loadLogs();
+  else if (page === 'dashboard') loadDashboard();
+  else if (page === 'console') initConsole();
+}
+
+function reloadCurrent() {
+  navTo(currentPage, document.querySelector('.admin-nav-item.active'));
+}
+
+function onGlobalSearch(v) {
+  if (currentPage === 'users') { usersQuery = v; usersPage = 1; loadUsers(); }
+  else if (currentPage === 'posts') { postsQuery = v; postsPage = 1; loadPosts(); }
+}
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════
+async function loadDashboard() {
+  document.getElementById('stats-grid').innerHTML = '<div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div>';
+  try {
+    const s = await apiFetch('/admin/stats');
+    document.getElementById('stats-grid').innerHTML = [
+      { ico:'👥', bg:'rgba(124,58,237,.1)', n:s.users,       lbl:'Пользователей',  delta:'+ '+s.newToday+' сегодня', dc:'delta-up' },
+      { ico:'📄', bg:'rgba(37,99,235,.1)',  n:s.posts,       lbl:'Постов',         delta:'+ '+s.postsToday+' сегодня', dc:'delta-up' },
+      { ico:'💬', bg:'rgba(6,182,212,.1)',  n:s.comments,    lbl:'Комментариев',   delta:'', dc:'' },
+      { ico:'✉️', bg:'rgba(52,211,153,.1)', n:s.messages,    lbl:'Сообщений',      delta:'', dc:'' },
+      { ico:'🚫', bg:'rgba(239,68,68,.1)',  n:s.bannedUsers, lbl:'Забаненных',     delta:s.bannedUsers>0?'Есть активные':'Чисто', dc:s.bannedUsers>0?'delta-warn':'delta-up' },
+      { ico:'🙈', bg:'rgba(251,191,36,.1)', n:s.hiddenPosts, lbl:'Скрытых постов', delta:'', dc:'' },
+      { ico:'🛡', bg:'rgba(37,99,235,.08)',  n:s.mods,       lbl:'Модераторов',    delta:'', dc:'' },
+      { ico:'📸', bg:'rgba(244,114,182,.1)', n:s.stories,    lbl:'Историй',        delta:'', dc:'' },
+    ].map(c => `<div class="stat-card">
+      <div class="stat-card-ico" style="background:${c.bg}">${c.ico}</div>
+      <div class="stat-card-n">${c.n}</div>
+      <div class="stat-card-lbl">${c.lbl}</div>
+      ${c.delta ? `<div class="stat-card-delta ${c.dc}">${c.delta}</div>` : ''}
+    </div>`).join('');
+
+    // Top users chart
+    const ud = await apiFetch('/admin/users?limit=6');
+    const maxP = Math.max(...ud.map(u => u.posts || 0), 1);
+    document.getElementById('chart-topusers').innerHTML = ud.slice(0,6).map(u => `
+      <div class="mini-bar-row">
+        <div class="mini-bar-lbl">@${esc(u.username)}</div>
+        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${((u.posts||0)/maxP*100).toFixed(0)}%;background:linear-gradient(90deg,var(--v),var(--b))"></div></div>
+        <div class="mini-bar-val">${u.posts||0}</div>
+      </div>`).join('') || '<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:16px">Нет данных</div>';
+
+    const tot = s.posts + s.comments + s.messages + s.stories || 1;
+    document.getElementById('chart-content').innerHTML = [
+      { lbl:'Посты',       v:s.posts,    bg:'linear-gradient(90deg,var(--v),var(--b))' },
+      { lbl:'Комментарии', v:s.comments, bg:'linear-gradient(90deg,var(--cy),#60A5FA)' },
+      { lbl:'Сообщения',   v:s.messages, bg:'linear-gradient(90deg,var(--gn),var(--cy))' },
+      { lbl:'Истории',     v:s.stories,  bg:'linear-gradient(90deg,var(--pk),var(--v))' },
+    ].map(i => `
+      <div class="mini-bar-row">
+        <div class="mini-bar-lbl">${i.lbl}</div>
+        <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${(i.v/tot*100).toFixed(0)}%;background:${i.bg}"></div></div>
+        <div class="mini-bar-val">${i.v}</div>
+      </div>`).join('');
+
+  } catch(e) {
+    document.getElementById('stats-grid').innerHTML = `<div class="tbl-empty" style="color:var(--er)">Ошибка загрузки: ${esc(e.message)}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  USERS
+// ═══════════════════════════════════════════════════
+async function loadUsers() {
+  document.getElementById('users-table-body').innerHTML = '<div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div>';
+  try {
+    const offset = (usersPage - 1) * LIMIT;
+    const params = new URLSearchParams({ q: usersQuery, role: usersFilter, limit: LIMIT, offset });
+    const data = await apiFetch('/admin/users?' + params);
+
+    // data is array from server
+    const users = Array.isArray(data) ? data : (data.users || []);
+    document.getElementById('users-count-label').textContent = `Загружено: ${users.length} пользователей`;
+
+    if (!users.length) {
+      document.getElementById('users-table-body').innerHTML = '<div class="tbl-empty">Пользователей не найдено</div>';
+      document.getElementById('users-pager').innerHTML = '';
+      return;
+    }
+
+    // Enrich with post counts for display
+    document.getElementById('users-table-body').innerHTML = `
+      <table class="admin-tbl">
+        <thead><tr>
+          <th>Пользователь</th><th>Email</th><th>Роль / Статус</th>
+          <th>Регистрация</th><th>Действия</th>
+        </tr></thead>
+        <tbody>${users.map(u => renderUserRow(u)).join('')}</tbody>
+      </table>`;
+
+    // Simple pagination — no total from server, so show next if got LIMIT
+    renderPager('users-pager', usersPage, users.length >= LIMIT ? usersPage + 1 : usersPage, p => { usersPage = p; loadUsers(); });
+  } catch(e) {
+    document.getElementById('users-table-body').innerHTML = `<div class="tbl-empty" style="color:var(--er)">Ошибка: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderUserRow(u) {
+  const av = ini(u);
+  const badges = [];
+  if (u.isAdmin) badges.push('<span class="abadge ab-admin">👑 Admin</span>');
+  if (u.isModerator) badges.push('<span class="abadge ab-mod">🛡 Мод</span>');
+  if (u.isVerified) badges.push('<span class="abadge ab-ver">✓ Верифицирован</span>');
+  if (u.isBanned) badges.push('<span class="abadge ab-ban">🚫 Забанен</span>');
+  if (!u.isBanned && !u.isAdmin) badges.push('<span class="abadge ab-ok">● Активен</span>');
+
+  const nm = esc(u.firstName + ' ' + (u.lastName || '')).replace(/'/g,"&#39;");
+  const fn = esc(u.firstName || '').replace(/'/g,"&#39;");
+
+  const banBtn = u.isBanned
+    ? `<button class="abt abt-unban" onclick="doUnban('${u.id}','${nm}')">✅ Разбанить</button>`
+    : `<button class="abt abt-ban" onclick="openBanModal('${u.id}','${nm}')">🚫 Бан</button>`;
+
+  const modBtn = !u.isAdmin
+    ? `<button class="abt abt-mod" onclick="toggleMod('${u.id}',this,${!!u.isModerator})">${u.isModerator ? '🛡 Снять мод' : '🛡 Модер'}</button>`
+    : '';
+
+  const verBtn = ME.isAdmin
+    ? `<button class="abt abt-ver" onclick="toggleVerify('${u.id}',this,${!!u.isVerified})">${u.isVerified ? '✓ Снять' : '✓ Верифицировать'}</button>`
+    : '';
+
+  const detailBtn = `<button class="abt abt-ghost" onclick="openUserDetail('${u.id}')">Детали</button>`;
+
+  const delBtn = ME.isAdmin && !u.isAdmin
+    ? `<button class="abt abt-del" onclick="openDelUserModal('${u.id}','${fn}')">🗑</button>`
+    : '';
+
+  return `<tr>
+    <td><div class="user-cell">
+      <div class="user-cell-ava" style="background:${avGrad(u.avatarColor)}">${av}</div>
+      <div>
+        <div class="user-cell-name">${esc(u.firstName)} ${esc(u.lastName || '')}</div>
+        <div class="user-cell-handle">@${esc(u.username)}</div>
+      </div>
+    </div></td>
+    <td style="font-size:.75rem;color:var(--mu)">${esc(u.email)}</td>
+    <td><div style="display:flex;gap:4px;flex-wrap:wrap">${badges.join('')}</div></td>
+    <td style="font-size:.74rem;color:var(--mu)">${dtShort(u.createdAt)}</td>
+    <td><div class="action-btns">${banBtn}${modBtn}${verBtn}${detailBtn}${delBtn}</div></td>
+  </tr>`;
+}
+
+function setUserFilter(f, btn) {
+  usersFilter = f; usersPage = 1;
+  document.querySelectorAll('#page-users .fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadUsers();
+}
+
+// ═══════════════════════════════════════════════════
+//  POSTS
+// ═══════════════════════════════════════════════════
+async function loadPosts() {
+  document.getElementById('posts-table-body').innerHTML = '<div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div>';
+  try {
+    const offset = (postsPage - 1) * LIMIT;
+    const params = new URLSearchParams({ q: postsQuery, limit: LIMIT, offset });
+    if (postsFilter === 'hidden') params.set('hidden', '1');
+    const posts = await apiFetch('/admin/posts?' + params);
+
+    document.getElementById('posts-count-label').textContent = `Загружено: ${posts.length} постов`;
+    if (!posts.length) {
+      document.getElementById('posts-table-body').innerHTML = '<div class="tbl-empty">Постов не найдено</div>';
+      document.getElementById('posts-pager').innerHTML = '';
+      return;
+    }
+    document.getElementById('posts-table-body').innerHTML = `
+      <table class="admin-tbl">
+        <thead><tr><th>Автор</th><th>Текст</th><th>Лайков</th><th>Комм.</th><th>Статус</th><th>Дата</th><th>Действия</th></tr></thead>
+        <tbody>${posts.map(p => renderPostRow(p)).join('')}</tbody>
+      </table>`;
+    renderPager('posts-pager', postsPage, posts.length >= LIMIT ? postsPage + 1 : postsPage, p => { postsPage = p; loadPosts(); });
+  } catch(e) {
+    document.getElementById('posts-table-body').innerHTML = `<div class="tbl-empty" style="color:var(--er)">Ошибка: ${esc(e.message)}</div>`;
+  }
+}
+
+function renderPostRow(p) {
+  const a = p.author;
+  const av = ini(a);
+  const txt = p.text ? (p.text.length > 60 ? p.text.slice(0, 60) + '…' : p.text) : '📷 медиа';
+  const isHid = !!p.isHidden;
+  return `<tr>
+    <td><div class="user-cell">
+      <div class="user-cell-ava" style="background:${avGrad(a?.avatarColor)};width:28px;height:28px;font-size:.65rem">${av}</div>
+      <div class="user-cell-handle" style="font-size:.77rem">@${esc(a?.username || '?')}</div>
+    </div></td>
+    <td style="max-width:200px;font-size:.78rem;color:var(--mu);word-break:break-word">${esc(txt)}</td>
+    <td style="color:var(--pk);font-weight:600">${p.likes || 0}</td>
+    <td style="color:var(--mu)">${p.comments || 0}</td>
+    <td>${isHid ? '<span class="abadge ab-hid">🙈 Скрыт</span>' : '<span class="abadge ab-ok">● Виден</span>'}</td>
+    <td style="font-size:.73rem;color:var(--mu)">${dtShort(p.createdAt)}</td>
+    <td><div class="action-btns">
+      <button class="abt abt-hid" data-hidden="${isHid?1:0}" onclick="toggleHidePost('${p.id}',this)">${isHid ? '👁 Показать' : '🙈 Скрыть'}</button>
+      <button class="abt abt-del" onclick="openDelPostModal('${p.id}')">🗑 Удалить</button>
+    </div></td>
+  </tr>`;
+}
+
+function setPostFilter(f, btn) {
+  postsFilter = f; postsPage = 1;
+  document.querySelectorAll('#page-posts .fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadPosts();
+}
+
+// ═══════════════════════════════════════════════════
+//  LOGS
+// ═══════════════════════════════════════════════════
+const LOG_ICONS = { ban_user:'🚫', unban_user:'✅', delete_user:'🗑', verify_user:'✓', unverify_user:'✗', delete_post:'🗑', hide_post:'🙈', unhide_post:'👁', moderator_on:'🛡', moderator_off:'⬇️' };
+const LOG_LABELS = { ban_user:'Забанил пользователя', unban_user:'Разбанил пользователя', delete_user:'Удалил пользователя', verify_user:'Верифицировал аккаунт', unverify_user:'Снял верификацию', delete_post:'Удалил пост', hide_post:'Скрыл пост', unhide_post:'Показал пост', moderator_on:'Назначил модератором', moderator_off:'Снял модератора' };
+const LOG_BG = { ban_user:'rgba(239,68,68,.1)', delete_user:'rgba(239,68,68,.1)', unban_user:'rgba(52,211,153,.1)', verify_user:'rgba(6,182,212,.1)', delete_post:'rgba(239,68,68,.08)', hide_post:'rgba(251,191,36,.08)', unhide_post:'rgba(52,211,153,.08)' };
+
+async function loadLogs() {
+  document.getElementById('logs-body').innerHTML = '<div class="tbl-loading"><div class="spinner"></div>&nbsp;Загрузка…</div>';
+  try {
+    const data = await apiFetch(`/admin/logs?limit=25&offset=${logsOffset}`);
+    const logs = data.logs || [];
+    if (!logs.length) {
+      document.getElementById('logs-body').innerHTML = '<div class="tbl-empty">Журнал пуст — действий пока не было</div>';
+      document.getElementById('logs-pager').innerHTML = '';
+      return;
+    }
+    document.getElementById('logs-body').innerHTML = logs.map(l => `
+      <div class="log-entry">
+        <div class="log-ico" style="background:${LOG_BG[l.action] || 'rgba(124,58,237,.08)'}">${LOG_ICONS[l.action] || '⚙️'}</div>
+        <div style="flex:1;min-width:0">
+          <div class="log-action">${LOG_LABELS[l.action] || l.action}</div>
+          <div class="log-meta">Админ: @${esc(l.username || '?')} · Цель: ${esc(l.targetId || '—')}${l.detail ? ' · «'+esc(l.detail)+'»' : ''}</div>
+        </div>
+        <div class="log-time">${dtFull(l.createdAt)}</div>
+      </div>`).join('');
+    // Pagination
+    const curP = Math.floor(logsOffset / 25) + 1;
+    const hasMore = data.total > logsOffset + 25;
+    let ph = `<button class="pager-btn" ${logsOffset===0?'disabled':''} onclick="logsOffset-=25;loadLogs()">‹</button>`;
+    ph += `<span style="font-size:.78rem;color:var(--mu);padding:0 8px">Стр ${curP}</span>`;
+    ph += `<button class="pager-btn" ${!hasMore?'disabled':''} onclick="logsOffset+=25;loadLogs()">›</button>`;
+    document.getElementById('logs-pager').innerHTML = ph;
+  } catch(e) {
+    document.getElementById('logs-body').innerHTML = `<div class="tbl-empty" style="color:var(--er)">Ошибка: ${esc(e.message)}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  USER ACTIONS
+// ═══════════════════════════════════════════════════
+// BAN
+function openBanModal(id, name) {
+  pendingBanId = id;
+  document.getElementById('modal-ban-sub').textContent = `Забанить "${name}"? Пользователь потеряет доступ к аккаунту.`;
+  document.getElementById('ban-reason-input').value = '';
+  document.getElementById('modal-ban').classList.add('open');
+}
+
+async function confirmBan() {
+  if (!pendingBanId) return;
+  const reason = document.getElementById('ban-reason-input').value.trim();
+  try {
+    await apiFetch(`/admin/users/${pendingBanId}/ban2`, { method:'POST', body: JSON.stringify({ isBanned: true, banReason: reason }) });
+    closeModal('modal-ban');
+    showToast('🚫 Пользователь забанен', 'ok');
+    loadUsers();
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+async function doUnban(id, name) {
+  if (!confirm(`Разбанить "${name}"?`)) return;
+  try {
+    await apiFetch(`/admin/users/${id}/ban2`, { method:'POST', body: JSON.stringify({ isBanned: false }) });
+    showToast('✅ Пользователь разбанен', 'ok');
+    loadUsers();
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+// MODERATOR
+async function toggleMod(id, btn, isMod) {
+  if (!confirm(isMod ? 'Снять права модератора?' : 'Назначить модератором?')) return;
+  try {
+    await apiFetch(`/admin/users/${id}/moderator`, { method:'POST', body: JSON.stringify({ isModerator: !isMod }) });
+    showToast(isMod ? '⬇️ Модератор снят' : '🛡 Назначен модератором', 'ok');
+    loadUsers();
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+// VERIFY
+async function toggleVerify(id, btn, isVer) {
+  try {
+    const r = await apiFetch(`/admin/users/${id}/verify`, { method:'POST' });
+    showToast(r.isVerified ? '✓ Верифицирован' : 'Верификация снята', 'ok');
+    if (btn) btn.textContent = r.isVerified ? '✓ Снять' : '✓ Верифицировать';
+    loadUsers();
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+// DELETE USER
+function openDelUserModal(id, name) {
+  pendingDelUserId = id;
+  document.getElementById('modal-del-user-sub').textContent = `Удалить аккаунт "${name}" и все его данные?`;
+  document.getElementById('modal-del-user').classList.add('open');
+}
+
+async function confirmDeleteUser() {
+  if (!pendingDelUserId) return;
+  try {
+    await apiFetch(`/admin/users/${pendingDelUserId}`, { method:'DELETE' });
+    closeModal('modal-del-user');
+    closeModal('modal-user-detail');
+    showToast('🗑 Пользователь удалён', 'ok');
+    loadUsers();
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+// USER DETAIL
+async function openUserDetail(id) {
+  document.getElementById('modal-user-detail').classList.add('open');
+  document.getElementById('user-detail-content').innerHTML = '<div class="tbl-loading"><div class="spinner"></div></div>';
+  try {
+    const u = await apiFetch(`/admin/users/${id}`);
+    const av = ini(u);
+    const badges = [];
+    if (u.isAdmin) badges.push('<span class="abadge ab-admin">👑 Admin</span>');
+    if (u.isModerator) badges.push('<span class="abadge ab-mod">🛡 Мод</span>');
+    if (u.isVerified) badges.push('<span class="abadge ab-ver">✓ Верифицирован</span>');
+    if (u.isBanned) badges.push('<span class="abadge ab-ban">🚫 Забанен</span>');
+    const nm = esc(u.firstName + ' ' + (u.lastName || '')).replace(/'/g,"&#39;");
+    const fn = esc(u.firstName || '').replace(/'/g,"&#39;");
+    document.getElementById('user-detail-content').innerHTML = `
+      <div class="ud-header">
+        <div class="ud-ava" style="background:${avGrad(u.avatarColor)}">${av}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+            ${esc(u.firstName)} ${esc(u.lastName || '')} ${badges.join('')}
+          </div>
+          <div style="font-size:.76rem;color:var(--mu)">@${esc(u.username)} · ${esc(u.email)}</div>
+          ${u.bio ? `<div style="font-size:.74rem;color:var(--mu);margin-top:4px;font-style:italic">${esc(u.bio)}</div>` : ''}
+          <div style="font-size:.72rem;color:var(--mu);margin-top:3px">Зарегистрирован: ${dtFull(u.createdAt)}</div>
+        </div>
+      </div>
+      ${u.isBanned && u.banReason ? `<div class="ud-ban-reason">Причина бана: ${esc(u.banReason)}</div>` : ''}
+      <div class="ud-stats-grid">
+        <div class="ud-stat"><div class="ud-stat-n">${u.stats?.posts || 0}</div><div class="ud-stat-l">постов</div></div>
+        <div class="ud-stat"><div class="ud-stat-n">${u.stats?.followers || 0}</div><div class="ud-stat-l">подписчиков</div></div>
+        <div class="ud-stat"><div class="ud-stat-n">${u.stats?.following || 0}</div><div class="ud-stat-l">подписок</div></div>
+        <div class="ud-stat"><div class="ud-stat-n">${u.stats?.messages || 0}</div><div class="ud-stat-l">сообщений</div></div>
+      </div>
+      ${!u.isAdmin ? `<div class="ud-actions">
+        ${u.isBanned
+          ? `<button class="modal-btn mbtn-primary" onclick="doUnban('${u.id}','${nm}');closeModal('modal-user-detail')">✅ Разбанить</button>`
+          : `<button class="modal-btn mbtn-cancel" onclick="openBanModal('${u.id}','${nm}');closeModal('modal-user-detail')">🚫 Забанить</button>`
+        }
+        ${ME.isAdmin ? `<button class="modal-btn mbtn-cancel" onclick="toggleMod('${u.id}',null,${!!u.isModerator})">${u.isModerator ? '⬇️ Снять мод' : '🛡 Модератор'}</button>` : ''}
+        ${ME.isAdmin ? `<button class="modal-btn mbtn-cancel" onclick="toggleVerify('${u.id}',null,${!!u.isVerified})">${u.isVerified ? 'Снять ✓' : '✓ Верифицировать'}</button>` : ''}
+        ${ME.isAdmin ? `<button class="modal-btn mbtn-danger" onclick="openDelUserModal('${u.id}','${fn}');closeModal('modal-user-detail')">🗑 Удалить аккаунт</button>` : ''}
+      </div>` : `<div style="text-align:center;font-size:.76rem;color:var(--mu);padding:6px 0 12px">Аккаунт администратора защищён</div>`}
+      ${u.recentPosts?.length ? `
+        <div class="ud-posts-title">Последние посты (${u.recentPosts.length})</div>
+        ${u.recentPosts.slice(0,5).map(p => `
+          <div class="ud-post-row">
+            <div class="ud-post-text">${esc((p.text || '📷 медиа').slice(0, 80))}</div>
+            <div class="ud-post-date">${dtShort(p.createdAt)}</div>
+            <button class="abt abt-hid" style="font-size:.67rem" onclick="toggleHidePost('${p.id}',this)">${p.isHidden ? '👁' : '🙈'}</button>
+            <button class="abt abt-del" style="font-size:.67rem" onclick="openDelPostModal('${p.id}')">🗑</button>
+          </div>`).join('')}` : ''}
+    `;
+  } catch(e) {
+    document.getElementById('user-detail-content').innerHTML = `<div class="tbl-empty" style="color:var(--er)">${esc(e.message)}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  POST ACTIONS
+// ═══════════════════════════════════════════════════
+async function toggleHidePost(id, btn) {
+  try {
+    const r = await apiFetch(`/admin/posts/${id}/hide`, { method:'POST' });
+    showToast(r.isHidden ? '🙈 Пост скрыт' : '👁 Пост показан', 'ok');
+    if (btn) btn.textContent = r.isHidden ? '👁 Показать' : '🙈 Скрыть';
+    setTimeout(loadPosts, 500);
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+function openDelPostModal(id) {
+  pendingDelPostId = id;
+  document.getElementById('modal-del-post').classList.add('open');
+}
+
+async function confirmDeletePost() {
+  if (!pendingDelPostId) return;
+  try {
+    await apiFetch(`/admin/posts/${pendingDelPostId}`, { method:'DELETE' });
+    closeModal('modal-del-post');
+    closeModal('modal-user-detail');
+    showToast('🗑 Пост удалён', 'ok');
+    loadPosts();
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+// ═══════════════════════════════════════════════════
+//  DANGER ZONE
+// ═══════════════════════════════════════════════════
+async function dangerClearSessions() {
+  if (!confirm('Завершить все сессии кроме вашей? Все пользователи будут выброшены из аккаунтов.')) return;
+  try {
+    // Delete all sessions except current
+    const myTok = tok();
+    // No direct endpoint, inform user
+    showToast('⚙️ Функция требует прямого доступа к серверу', 'info');
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+async function dangerDeleteHidden() {
+  if (!confirm('Безвозвратно удалить все скрытые посты?')) return;
+  showToast('⚙️ Функция требует прямого доступа к серверу', 'info');
+}
+
+async function dangerUnbanAll() {
+  if (!confirm('Разбанить ВСЕХ пользователей? Это нельзя отменить.')) return;
+  if (!confirm('Вы уверены?')) return;
+  showToast('⚙️ Функция требует прямого доступа к серверу', 'info');
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function renderPager(id, cur, maxPage, onClick) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (maxPage <= 1 && cur <= 1) { el.innerHTML = ''; return; }
+  let h = `<button class="pager-btn" ${cur <= 1 ? 'disabled' : ''} onclick="(${onClick.toString()})(${cur - 1})">‹</button>`;
+  for (let i = Math.max(1, cur - 2); i <= Math.min(maxPage, cur + 2); i++) {
+    h += `<button class="pager-btn ${i === cur ? 'active' : ''}" onclick="(${onClick.toString()})(${i})">${i}</button>`;
+  }
+  h += `<button class="pager-btn" ${cur >= maxPage ? 'disabled' : ''} onclick="(${onClick.toString()})(${cur + 1})">›</button>`;
+  el.innerHTML = h;
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); }));
+// ═══════════════════════════════════════════════════
+//  DEVELOPER CONSOLE
+// ═══════════════════════════════════════════════════
+
+const COMMANDS = [
+  // GET запросы
+  { name: 'stats',           desc: 'Статистика платформы',         method: 'GET',    path: '/admin/stats',          tag: 'get' },
+  { name: 'users',           desc: 'Список всех пользователей',    method: 'GET',    path: '/admin/users',          tag: 'get' },
+  { name: 'users --banned',  desc: 'Забаненные пользователи',      method: 'GET',    path: '/admin/users?role=banned', tag: 'get' },
+  { name: 'users --mods',    desc: 'Список модераторов',           method: 'GET',    path: '/admin/users?role=mods',tag: 'get' },
+  { name: 'posts',           desc: 'Все посты платформы',          method: 'GET',    path: '/admin/posts',          tag: 'get' },
+  { name: 'posts --hidden',  desc: 'Скрытые посты',                method: 'GET',    path: '/admin/posts?filter=hidden', tag: 'get' },
+  { name: 'logs',            desc: 'Журнал действий администратора',method: 'GET',   path: '/admin/logs',           tag: 'get' },
+  { name: 'me',              desc: 'Мой профиль',                  method: 'GET',    path: '/users/me',             tag: 'get' },
+  { name: 'stories',        desc: 'Активные истории (24ч)',        method: 'GET',    path: '/stories',              tag: 'get' },
+  { name: 'search --q=',     desc: 'Поиск: search --q=текст',      method: 'GET',    path: '/search?q=weave',       tag: 'get' },
+  // Системные команды
+  { name: 'help',            desc: 'Показать список команд',       method: 'SYS',    path: null,                    tag: 'sys' },
+  { name: 'clear',           desc: 'Очистить консоль',             method: 'SYS',    path: null,                    tag: 'sys' },
+  { name: 'ping',            desc: 'Проверить доступность API',    method: 'SYS',    path: null,                    tag: 'sys' },
+  { name: 'whoami',          desc: 'Текущий пользователь',         method: 'SYS',    path: null,                    tag: 'sys' },
+  { name: 'token',           desc: 'Показать токен сессии',        method: 'SYS',    path: null,                    tag: 'sys' },
+  { name: 'uptime',          desc: 'Время работы консоли',         method: 'SYS',    path: null,                    tag: 'sys' },
+  // POST/действия
+  { name: 'ban --id=',       desc: 'Заблокировать: ban --id=USER_ID', method: 'POST', path: null,                   tag: 'post' },
+  { name: 'unban --id=',     desc: 'Разблокировать: unban --id=USER_ID', method: 'POST', path: null,                tag: 'post' },
+  { name: 'verify --id=',    desc: 'Верифицировать: verify --id=USER_ID', method: 'POST', path: null,               tag: 'post' },
+  // DELETE
+  { name: 'delete post --id=', desc: 'Удалить пост: delete post --id=ID', method: 'DELETE', path: null,             tag: 'delete' },
+];
+
+const consoleStart = Date.now();
+let cmdHistory = [], historyIdx = -1;
+let consoleInited = false;
+
+function initConsole() {
+  if (consoleInited) return;
+  consoleInited = true;
+  renderCmdList();
+  conLog('info', '╔══════════════════════════════════════╗');
+  conLog('info', '║   Weave Developer Console  v1.0      ║');
+  conLog('info', '╚══════════════════════════════════════╝');
+  conLog('sep',  '─────────────────────────────────────────');
+  conLog('ok',   `Авторизован как: @${ME?.username || '?'} (${ME?.isAdmin ? 'Admin' : 'Moderator'})`);
+  conLog('info', 'Введите "help" для списка команд или кликните на команду выше');
+  conLog('sep',  '─────────────────────────────────────────');
+}
+
+function renderCmdList() {
+  const tagLabel = { get: 'GET', post: 'POST', delete: 'DELETE', sys: 'SYS' };
+  document.getElementById('cmd-list').innerHTML = COMMANDS.map(cmd => `
+    <div class="cmd-card" onclick="fillConsole('${cmd.name}')">
+      <div class="cmd-card-name">${esc(cmd.name)}</div>
+      <div class="cmd-card-desc">${esc(cmd.desc)}</div>
+      <span class="cmd-card-tag tag-${cmd.tag}">${tagLabel[cmd.tag]}</span>
+    </div>`).join('');
+}
+
+function fillConsole(cmd) {
+  const inp = document.getElementById('console-input');
+  inp.value = cmd;
+  inp.focus();
+}
+
+function clearConsole() {
+  document.getElementById('console-output').innerHTML = '';
+  conLog('info', 'Консоль очищена');
+}
+
+function conLog(type, text) {
+  const out = document.getElementById('console-output');
+  if (!out) return;
+  const cls = { cmd:'con-cmd', ok:'con-ok', err:'con-err', info:'con-info', warn:'con-warn', sep:'con-sep', json:'con-json' };
+  const line = document.createElement('div');
+  line.className = 'con-line ' + (cls[type] || '');
+  if (type === 'json') {
+    line.textContent = text;
+  } else {
+    line.innerHTML = text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+function handleConsoleKey(e) {
+  if (e.key === 'Enter') { runConsoleCmd(); return; }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIdx < cmdHistory.length - 1) historyIdx++;
+    if (cmdHistory[historyIdx]) e.target.value = cmdHistory[historyIdx];
+  }
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIdx > 0) historyIdx--;
+    e.target.value = historyIdx >= 0 ? (cmdHistory[historyIdx] || '') : '';
+  }
+}
+
+async function runConsoleCmd() {
+  const inp = document.getElementById('console-input');
+  const raw = inp.value.trim();
+  if (!raw) return;
+
+  // История
+  cmdHistory.unshift(raw);
+  if (cmdHistory.length > 50) cmdHistory.pop();
+  historyIdx = -1;
+  inp.value = '';
+
+  conLog('sep', '─────────────────────────────────────────');
+  conLog('cmd', '▶ ' + raw);
+
+  const parts = raw.toLowerCase().split(/\s+/);
+  const cmd = parts[0];
+  const getFlag = (flag) => { const m = raw.match(new RegExp('--' + flag + '=([\\S]+)')); return m ? m[1] : null; };
+
+  try {
+    // ── Системные команды ──
+    if (cmd === 'clear') { clearConsole(); return; }
+
+    if (cmd === 'help') {
+      conLog('info', 'Доступные команды:');
+      COMMANDS.forEach(c => conLog('info', `  ${c.name.padEnd(22)} — ${c.desc}`));
+      return;
+    }
+
+    if (cmd === 'ping') {
+      const t0 = Date.now();
+      await fetch('/api/admin/stats', { headers: { Authorization: 'Bearer ' + tok() } });
+      conLog('ok', `✓ PONG  ${Date.now() - t0}ms`);
+      return;
+    }
+
+    if (cmd === 'whoami') {
+      conLog('ok', `Пользователь: ${ME?.firstName} ${ME?.lastName || ''} (@${ME?.username})`);
+      conLog('info', `ID: ${ME?.id}`);
+      conLog('info', `Роль: ${ME?.isAdmin ? '👑 Администратор' : '🛡 Модератор'}`);
+      return;
+    }
+
+    if (cmd === 'token') {
+      const t = tok();
+      conLog('warn', '⚠ Никому не передавайте токен!');
+      conLog('info', t ? t.slice(0,8) + '••••••••' + t.slice(-4) : 'Токен не найден');
+      return;
+    }
+
+    if (cmd === 'uptime') {
+      const s = Math.floor((Date.now() - consoleStart) / 1000);
+      conLog('ok', `Консоль работает: ${Math.floor(s/60)}м ${s%60}с`);
+      return;
+    }
+
+    // ── GET команды ──
+    if (cmd === 'stats') {
+      const d = await apiFetch('/admin/stats');
+      conLog('ok', '✓ Статистика платформы:');
+      conLog('json', JSON.stringify(d, null, 2));
+      return;
+    }
+
+    if (cmd === 'me') {
+      const d = await apiFetch('/users/me');
+      conLog('ok', '✓ Ваш профиль:');
+      conLog('json', JSON.stringify(d, null, 2));
+      return;
+    }
+
+    if (cmd === 'stories') {
+      const d = await apiFetch('/stories');
+      conLog('ok', `✓ Историй активных: ${d.length}`);
+      if (d.length) conLog('json', JSON.stringify(d.map(s=>({id:s.id,author:'@'+s.author?.username,slides:s.slides?.length,views:s.views})), null, 2));
+      return;
+    }
+
+    if (cmd === 'users') {
+      const role = getFlag('role') || (raw.includes('--banned') ? 'banned' : raw.includes('--mods') ? 'mods' : 'all');
+      const d = await apiFetch('/admin/users?role=' + role + '&limit=20');
+      conLog('ok', `✓ Пользователей: ${d.length}`);
+      conLog('json', JSON.stringify(d.map(u=>({id:u.id,username:'@'+u.username,email:u.email,isAdmin:u.isAdmin,isBanned:u.isBanned,posts:u.posts})), null, 2));
+      return;
+    }
+
+    if (cmd === 'posts') {
+      const hidden = raw.includes('--hidden');
+      const d = await apiFetch('/admin/posts' + (hidden ? '?filter=hidden' : '?limit=20'));
+      conLog('ok', `✓ Постов: ${d.length}`);
+      conLog('json', JSON.stringify(d.map(p=>({id:p.id,author:'@'+p.author?.username,text:p.text?.slice(0,60),likes:p.likes,comments:p.comments})), null, 2));
+      return;
+    }
+
+    if (cmd === 'logs') {
+      const d = await apiFetch('/admin/logs?limit=10');
+      conLog('ok', `✓ Последних записей: ${d.logs?.length}`);
+      conLog('json', JSON.stringify(d.logs?.map(l=>({action:l.action,by:'@'+l.username,target:l.targetId,time:l.createdAt?.slice(0,19)})), null, 2));
+      return;
+    }
+
+    if (cmd === 'search') {
+      const q = getFlag('q') || '';
+      const d = await apiFetch('/search?q=' + encodeURIComponent(q));
+      conLog('ok', `✓ Результаты для "${q}":`);
+      conLog('info', `  Пользователи: ${d.users?.length || 0}  Посты: ${d.posts?.length || 0}  Теги: ${d.tags?.length || 0}`);
+      return;
+    }
+
+    // ── POST/действия ──
+    if (cmd === 'ban') {
+      const id = getFlag('id');
+      if (!id) { conLog('err', '✗ Укажите --id=USER_ID'); return; }
+      await apiFetch('/admin/users/' + id + '/ban2', { method:'POST', body: JSON.stringify({isBanned:true, banReason:'Команда консоли'}) });
+      conLog('ok', `✓ Пользователь ${id} заблокирован`);
+      return;
+    }
+
+    if (cmd === 'unban') {
+      const id = getFlag('id');
+      if (!id) { conLog('err', '✗ Укажите --id=USER_ID'); return; }
+      await apiFetch('/admin/users/' + id + '/ban2', { method:'POST', body: JSON.stringify({isBanned:false}) });
+      conLog('ok', `✓ Пользователь ${id} разблокирован`);
+      return;
+    }
+
+    if (cmd === 'verify') {
+      const id = getFlag('id');
+      if (!id) { conLog('err', '✗ Укажите --id=USER_ID'); return; }
+      await apiFetch('/admin/users/' + id + '/verify', { method:'POST' });
+      conLog('ok', `✓ Пользователь ${id} верифицирован`);
+      return;
+    }
+
+    if (cmd === 'delete' && parts[1] === 'post') {
+      const id = getFlag('id');
+      if (!id) { conLog('err', '✗ Укажите --id=POST_ID'); return; }
+      await apiFetch('/admin/posts/' + id, { method:'DELETE' });
+      conLog('ok', `✓ Пост ${id} удалён`);
+      return;
+    }
+
+    // ── Прямой GET запрос к API ──
+    if (raw.startsWith('GET ') || raw.startsWith('/')) {
+      const path = raw.startsWith('GET ') ? raw.slice(4).trim() : raw;
+      const d = await apiFetch(path);
+      conLog('ok', '✓ ' + path);
+      conLog('json', JSON.stringify(d, null, 2));
+      return;
+    }
+
+    conLog('err', `✗ Неизвестная команда: "${cmd}". Введите "help" для списка команд.`);
+
+  } catch(e) {
+    conLog('err', `✗ Ошибка: ${e?.message || String(e)}`);
+  }
+}
+
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW зарегистрирован:', reg.scope))
+      .catch(err => console.warn('SW ошибка:', err));
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "weave",
+  "version": "1.0.0",
+  "description": "Социальная сеть Weave",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "dev": "cd backend && npm run dev",
+    "install": "cd backend && npm install"
+  }
+}

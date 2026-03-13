@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weave">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="shortcut icon" href="/icons/icon-32.png">
+<title>Weave — Настройки</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --v:#7C3AED;--vl:#A78BFA;--vd:#4C1D95;
+  --b:#2563EB;--bl:#60A5FA;--cy:#06B6D4;
+  --bg:#09090F;--s1:#0D0D1A;--s2:#111120;--s3:#151528;
+  --br:rgba(124,58,237,.18);--br2:rgba(255,255,255,.06);
+  --tx:#E8E4FF;--mu:#6B6B8F;--mu2:#3D3D5C;
+  --pk:#F472B6;--gn:#34D399;--er:#F87171;--yw:#FBBF24;
+  --nav-w:260px;
+}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex;transition:background .25s,color .25s}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+/* Theme variants */
+body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
+body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
+
+/* ─── SIDENAV ─────────────────────────────────── */
+.sidenav{width:var(--nav-w);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:90;background:var(--s1);border-right:1px solid var(--br);display:flex;flex-direction:column;overflow:hidden;transition:width .25s}
+.sn-logo{padding:20px 18px 14px;display:flex;align-items:center;gap:12px;text-decoration:none}
+.sn-logo-icon{width:36px;height:36px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,var(--v),var(--b));display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff}
+.sn-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(135deg,#C4B5FD,#7DD3FC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.sn-user{margin:0 12px 16px;padding:12px;background:var(--s2);border:1px solid var(--br);border-radius:14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .18s;text-decoration:none;flex-shrink:0}
+.sn-user:hover{background:rgba(124,58,237,.12)}
+.sn-ava{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;border:2px solid var(--br);overflow:hidden;position:relative}
+.sn-ava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.sn-ava img.show{display:block}
+.sn-info{min-width:0;flex:1}
+.sn-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--tx)}
+.sn-handle{font-size:.72rem;color:var(--mu)}
+.sn-online{width:8px;height:8px;border-radius:50%;background:var(--gn);flex-shrink:0;box-shadow:0 0 6px var(--gn)}
+.sn-section{padding:0 8px;margin-bottom:6px}
+.sn-label{font-size:.62rem;font-weight:600;color:var(--mu2);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px 4px;white-space:nowrap}
+.sn-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;text-decoration:none;color:var(--mu);font-size:.87rem;font-weight:500;transition:all .16s;cursor:pointer;white-space:nowrap;overflow:hidden}
+.sn-item:hover{background:rgba(124,58,237,.1);color:var(--tx)}
+.sn-item.active{background:rgba(124,58,237,.18);color:var(--vl)}
+.sn-item svg{width:20px;height:20px;flex-shrink:0}
+
+/* ─── MAIN ────────────────────────────────────── */
+.main{margin-left:var(--nav-w);flex:1;min-width:0;position:relative;z-index:1}
+.topbar{position:sticky;top:0;z-index:80;height:56px;background:rgba(9,9,15,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 24px;gap:12px}
+body.light .topbar{background:rgba(240,239,248,.9)}
+.topbar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.02rem;color:var(--tx);flex:1}
+
+/* ─── SETTINGS LAYOUT ─────────────────────────── */
+.s-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+.s-nav{background:var(--s1);border-right:1px solid var(--br);padding:14px 8px;overflow-y:auto;position:sticky;top:56px;height:calc(100vh - 56px)}
+.s-nav::-webkit-scrollbar{width:3px}
+.s-nav::-webkit-scrollbar-thumb{background:var(--br)}
+.s2-label{font-size:.6rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.07em;padding:8px 10px 4px;font-weight:600}
+.s2-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;cursor:pointer;color:var(--mu);font-size:.83rem;font-weight:500;transition:all .14s;margin-bottom:1px;white-space:nowrap}
+.s2-item svg{width:15px;height:15px;flex-shrink:0}
+.s2-item:hover{background:rgba(124,58,237,.1);color:var(--tx)}
+.s2-item.active{background:rgba(124,58,237,.18);color:var(--vl)}
+.s2-item.danger-item{color:rgba(248,113,113,.7)}
+.s2-item.danger-item:hover,.s2-item.danger-item.active{background:rgba(248,113,113,.08);color:var(--er)}
+.s2-sep{height:1px;background:var(--br);margin:6px 4px}
+
+/* ─── CONTENT AREA ────────────────────────────── */
+.s-content{padding:28px 32px;max-width:680px}
+.sec{display:none;animation:secIn .18s both}
+.sec.active{display:block}
+@keyframes secIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.s-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.12rem;color:var(--tx);margin-bottom:4px}
+.s-sub{font-size:.81rem;color:var(--mu);margin-bottom:20px;line-height:1.5}
+.s-group-label{font-size:.69rem;color:var(--mu2);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin:18px 0 8px}
+
+/* ─── FIELD GROUP ─────────────────────────────── */
+.fg{background:var(--s2);border:1px solid var(--br);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.fr{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--br2);transition:background .1s}
+.fr:last-child{border-bottom:none}
+.fi{width:32px;height:32px;border-radius:8px;background:rgba(124,58,237,.12);display:grid;place-items:center;flex-shrink:0}
+.fi svg{width:13px;height:13px;color:var(--vl)}
+.fi.gn{background:rgba(52,211,153,.12)}.fi.gn svg{color:var(--gn)}
+.fi.pk{background:rgba(244,114,182,.12)}.fi.pk svg{color:var(--pk)}
+.fi.bl{background:rgba(37,99,235,.12)}.fi.bl svg{color:var(--bl)}
+.fi.yw{background:rgba(251,191,36,.12)}.fi.yw svg{color:var(--yw)}
+.fi.er{background:rgba(248,113,113,.12)}.fi.er svg{color:var(--er)}
+.fmeta{flex:1;min-width:0}
+.flabel{font-size:.84rem;color:var(--tx);font-weight:500}
+.fdesc{font-size:.71rem;color:var(--mu);margin-top:1px}
+.finput{flex:1;background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;text-align:right;min-width:0;max-width:220px}
+.finput::placeholder{color:var(--mu2)}
+.finput:focus{color:var(--vl)}
+.fselect{background:none;border:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.8rem;outline:none;cursor:pointer}
+.fselect option{background:var(--s3);color:var(--tx)}
+
+/* ─── TOGGLE ──────────────────────────────────── */
+.tog{width:40px;height:22px;background:var(--mu2);border-radius:11px;cursor:pointer;transition:background .2s;flex-shrink:0;position:relative}
+.tog.on{background:var(--v)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tog.on::after{transform:translateX(18px)}
+
+/* ─── SAVE BUTTON ─────────────────────────────── */
+.save-btn{width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.89rem;cursor:pointer;transition:all .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
+.save-btn:hover:not(:disabled){opacity:.9;transform:translateY(-1px);box-shadow:0 5px 18px rgba(124,58,237,.35)}
+.save-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.save-btn.secondary{background:var(--s3);border:1px solid var(--br2);color:var(--tx)}
+.save-btn.danger{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:var(--er)}
+.save-btn.danger:hover:not(:disabled){box-shadow:0 5px 18px rgba(248,113,113,.2);opacity:.95}
+.btn-sm{padding:5px 12px;border-radius:8px;border:none;font-family:'Syne',sans-serif;font-weight:600;font-size:.74rem;cursor:pointer;transition:all .15s}
+.btn-sm.p{background:linear-gradient(135deg,var(--v),var(--b));color:#fff}
+.btn-sm.s{background:var(--s3);border:1px solid var(--br2);color:var(--tx)}
+.btn-sm.d{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);color:var(--er)}
+
+/* ─── AVATAR ──────────────────────────────────── */
+.ava-card{display:flex;align-items:center;gap:18px;margin-bottom:16px;padding:16px;background:var(--s2);border:1px solid var(--br);border-radius:14px}
+.ava-big{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:#fff;flex-shrink:0;cursor:pointer;position:relative;overflow:hidden;transition:opacity .18s}
+.ava-big:hover{opacity:.8}
+.ava-big img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+.ava-big img.show{display:block}
+.ava-big-ov{position:absolute;inset:0;background:rgba(0,0,0,.48);display:grid;place-items:center;opacity:0;transition:opacity .18s}
+.ava-big:hover .ava-big-ov{opacity:1}
+.ava-info{flex:1}
+.ava-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.94rem;color:var(--tx);margin-bottom:3px}
+.ava-hint{font-size:.72rem;color:var(--mu);margin-bottom:8px}
+.ava-btns{display:flex;gap:7px}
+
+/* ─── COLORS ──────────────────────────────────── */
+.dot{width:28px;height:28px;border-radius:50%;cursor:pointer;transition:transform .14s;border:3px solid transparent;flex-shrink:0}
+.dot:hover{transform:scale(1.15)}
+.dot.sel{border-color:#fff;box-shadow:0 0 0 2px var(--v)}
+.dots-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+
+/* ─── THEME CARDS ─────────────────────────────── */
+.theme-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.theme-card{border-radius:11px;padding:12px;cursor:pointer;border:2px solid var(--br2);transition:all .16s}
+.theme-card:hover{border-color:rgba(124,58,237,.3)}
+.theme-card.sel{border-color:var(--vl);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.theme-preview{height:44px;border-radius:7px;margin-bottom:7px}
+.theme-name{font-size:.76rem;font-weight:600;font-family:'Syne',sans-serif;color:var(--tx)}
+
+/* ─── SESSION ITEM ────────────────────────────── */
+.sess-row{display:flex;align-items:center;gap:11px;padding:11px 16px;border-bottom:1px solid var(--br2);transition:opacity .3s,transform .3s}
+.sess-row:last-child{border-bottom:none}
+.sess-ico{width:32px;height:32px;border-radius:8px;background:var(--s3);display:grid;place-items:center;flex-shrink:0}
+.sess-ico svg{width:14px;height:14px;color:var(--mu)}
+.sess-info{flex:1;min-width:0}
+.sess-dev{font-size:.83rem;color:var(--tx);font-weight:500}
+.sess-meta{font-size:.69rem;color:var(--mu)}
+.sess-cur{font-size:.63rem;padding:2px 7px;border-radius:10px;background:rgba(52,211,153,.14);color:var(--gn);font-weight:600;flex-shrink:0}
+.sess-kill-btn{background:none;border:1px solid rgba(248,113,113,.2);color:var(--er);font-size:.73rem;cursor:pointer;padding:4px 10px;border-radius:8px;transition:background .13s;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.sess-kill-btn:hover{background:rgba(248,113,113,.1)}
+
+/* ─── PWD STRENGTH ────────────────────────────── */
+.pwd-bar-wrap{height:4px;border-radius:2px;background:var(--s3);margin-top:6px;overflow:hidden}
+.pwd-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%}
+
+/* ─── NOTIF CHANNEL ───────────────────────────── */
+.nc{background:var(--s2);border:1px solid var(--br);border-radius:13px;padding:14px 15px;margin-bottom:11px}
+.nc-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.nc-title{font-family:'Syne',sans-serif;font-weight:600;font-size:.85rem;color:var(--tx);flex:1;display:flex;align-items:center;gap:8px}
+.nc-ico{font-size:.95rem}
+.nc-row{display:flex;align-items:center;padding:5px 0;gap:10px}
+.nc-lbl{font-size:.79rem;color:var(--mu);flex:1}
+
+/* ─── STORAGE BAR ─────────────────────────────── */
+.stor-bar{height:8px;border-radius:4px;background:var(--s3);overflow:hidden;margin:10px 0 7px}
+.stor-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--v),var(--b));transition:width .6s ease}
+.stor-legend{display:flex;gap:14px;flex-wrap:wrap}
+.sl{display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--mu)}
+.sl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ─── LINKED ──────────────────────────────────── */
+.lnk-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--br2)}
+.lnk-row:last-child{border-bottom:none}
+.lnk-ico{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:1rem;flex-shrink:0}
+.lnk-name{font-size:.83rem;color:var(--tx);font-weight:500}
+.lnk-status{font-size:.69rem;color:var(--mu)}
+.lnk-status.ok{color:var(--gn)}
+.lnk-btn{background:none;border:1px solid var(--br2);color:var(--mu);font-size:.72rem;padding:4px 11px;border-radius:8px;cursor:pointer;transition:all .13s;font-family:'DM Sans',sans-serif;white-space:nowrap;margin-left:auto}
+.lnk-btn:hover{border-color:var(--vl);color:var(--vl)}
+.lnk-btn.linked{border-color:rgba(248,113,113,.2);color:var(--er)}
+.lnk-btn.linked:hover{background:rgba(248,113,113,.07)}
+
+/* ─── DANGER ──────────────────────────────────── */
+.dng-group{background:rgba(248,113,113,.04);border:1px solid rgba(248,113,113,.14);border-radius:14px;overflow:hidden}
+.dng-btn{width:100%;padding:12px 16px;background:none;border:none;cursor:pointer;color:var(--er);font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:500;text-align:left;display:flex;align-items:flex-start;gap:11px;transition:background .12s;border-bottom:1px solid rgba(248,113,113,.07)}
+.dng-btn:last-child{border-bottom:none}
+.dng-btn:hover{background:rgba(248,113,113,.07)}
+.dng-btn svg{width:15px;height:15px;flex-shrink:0;margin-top:2px}
+.dng-title{font-weight:600;font-size:.84rem}
+.dng-desc{font-size:.7rem;opacity:.55;margin-top:1px}
+
+/* ─── SPINNER ─────────────────────────────────── */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+
+/* ─── TOAST ───────────────────────────────────── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);padding:10px 22px;border-radius:13px;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;color:#fff;opacity:0;transition:all .28s cubic-bezier(.22,1,.36,1);z-index:9999;pointer-events:none;background:linear-gradient(135deg,var(--v),var(--b));box-shadow:0 6px 24px rgba(0,0,0,.5);white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:linear-gradient(135deg,#DC2626,#9333EA)}
+.toast.ok{background:linear-gradient(135deg,#059669,#0EA5E9)}
+.warn-box{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:12px;padding:12px 15px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;font-size:.78rem;color:var(--yw);line-height:1.5}
+
+/* ─── RESPONSIVE ──────────────────────────────── */
+@media(max-width:1100px){:root{--nav-w:68px}.sn-info,.sn-label,.sn-logo-text,.sn-online{display:none}}
+@media(max-width:900px){.s-layout{grid-template-columns:1fr}.s-nav{display:none}}
+@media(max-width:640px){:root{--nav-w:0px}.sidenav{display:none}.main{margin-left:0}.s-content{padding:16px}}
+@media(max-width:560px){.theme-row{grid-template-columns:1fr 1fr}}
+
+/* ── Mobile bottom nav ── */
+@media(max-width:600px){
+  .mob-nav{display:flex!important}
+  :root{--nav-w:0px!important}
+  .sidenav,.nav{display:none!important}
+  .main{margin-left:0!important;padding-bottom:64px!important}
+  
+}
+
+
+.mob-nav-btn.active,.mob-nav-btn:hover{color:var(--vl)}
+.mob-nav-btn svg{width:22px;height:22px}
+
+.mob-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  height:60px;
+  background:var(--s1);
+  border-top:1px solid var(--br);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  align-items:center;justify-content:space-around;
+  padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.mob-nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  flex:1;height:100%;justify-content:center;
+  color:var(--mu);cursor:pointer;transition:color .18s;
+  text-decoration:none;position:relative;
+  font-size:.6rem;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.01em;
+}
+.mob-nav-btn.active{color:var(--vl)}
+.mob-nav-btn svg{width:21px;height:21px}
+.mob-nav-btn span{line-height:1}
+.mob-nav-badge{position:absolute;top:7px;right:calc(50% - 19px);min-width:14px;height:14px;border-radius:7px;background:var(--er);color:#fff;font-size:.54rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 2px;border:2px solid var(--bg)}
+.mob-nav-btn.active svg{stroke:var(--vl)}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  try{
+    var p=JSON.parse(localStorage.getItem('weave_prefs')||'{}');
+    var t=p.theme||'light';
+    if(t==='light')  document.body.classList.add('light');
+    if(t==='amoled') document.body.classList.add('amoled');
+    var ac={purple:{v:'#7C3AED',vl:'#A78BFA',vd:'#4C1D95',b:'#2563EB',bl:'#60A5FA'},pink:{v:'#DB2777',vl:'#F472B6',vd:'#831843',b:'#9333EA',bl:'#C084FC'},teal:{v:'#059669',vl:'#34D399',vd:'#064E3B',b:'#0EA5E9',bl:'#38BDF8'},orange:{v:'#D97706',vl:'#FBBF24',vd:'#78350F',b:'#DC2626',bl:'#F87171'},blue:{v:'#2563EB',vl:'#60A5FA',vd:'#1E3A8A',b:'#06B6D4',bl:'#22D3EE'},green:{v:'#16A34A',vl:'#4ADE80',vd:'#14532D',b:'#84CC16',bl:'#BEF264'},red:{v:'#DC2626',vl:'#F87171',vd:'#7F1D1D',b:'#F97316',bl:'#FDBA74'}};
+    var a=ac[p.accent]||ac.purple;
+    var r=document.documentElement;
+    r.style.setProperty('--v',a.v);r.style.setProperty('--vl',a.vl);r.style.setProperty('--vd',a.vd);r.style.setProperty('--b',a.b);r.style.setProperty('--bl',a.bl);
+    if(p.fontSize)document.body.style.fontSize=p.fontSize+'px';
+  }catch(e){}
+})();
+</script>
+
+<!-- ═══════════════════ SIDENAV ═══════════════════ -->
+<nav class="sidenav" id="sidenav">
+  <a class="sn-logo" href="feed.html">
+    <div class="sn-logo-icon">W</div>
+    <span class="sn-logo-text">Weave<span>.</span></span>
+  </a>
+
+  <a class="sn-user" href="profile.html" id="sn-user-card">
+    <div class="sn-ava" id="sn-ava">?</div>
+    <div class="sn-user-info">
+      <div class="sn-user-name" id="sn-name">Загрузка…</div>
+      <div class="sn-user-handle" id="sn-handle">@…</div>
+    </div>
+    <div class="sn-online"></div>
+  </a>
+
+  <div class="sn-section">
+    <div class="sn-item" onclick="window.location.href='feed.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sn-item-label">Лента</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='explore.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span class="sn-item-label">Поиск</span>
+    </div>
+    <div class="sn-item" id="msg-nav" onclick="window.location.href='messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="sn-item-label">Сообщения</span>
+      <span class="sn-badge sn-item-label" id="msg-badge" style="display:none">0</span>
+    </div>
+    <div class="sn-item active" onclick="window.location.href='settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="sn-item-label">Настройки</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='feed.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <span class="sn-item-label">Закладки</span>
+    </div>
+  </div>
+
+  <div class="sn-divider"></div>
+
+  <div class="sn-section">
+    <div class="sn-label sn-item-label">Профиль</div>
+    <div class="sn-item" onclick="window.location.href='profile.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="sn-item-label">Мой профиль</span>
+    </div>
+    <div class="sn-item" id="nav-admin" style="display:none" onclick="window.location.href='admin.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="sn-item-label">Админка</span>
+    </div>
+    <div class="sn-item" onclick="handleLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="sn-item-label">Выйти</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title">Настройки</span>
+  </div>
+
+  <div class="s-layout">
+
+    <!-- ─── LEFT NAV ───────────────────────── -->
+    <div class="s-nav">
+      <div class="s2-label">Аккаунт</div>
+      <div class="s2-item active" onclick="show('profile',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Профиль</div>
+      <div class="s2-item" onclick="show('password',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Пароль</div>
+      <div class="s2-item" onclick="show('sessions',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Сессии</div>
+      <div class="s2-sep"></div>
+      <div class="s2-label">Контент</div>
+      <div class="s2-item" onclick="show('privacy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Приватность</div>
+      <div class="s2-item" onclick="show('blocked',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Заблокированные</div>
+      <div class="s2-item" onclick="show('notifications',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Уведомления</div>
+      <div class="s2-sep"></div>
+      <div class="s2-label">Приложение</div>
+      <div class="s2-item" onclick="show('appearance',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>Внешний вид</div>
+      <div class="s2-item" onclick="show('linked',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Связанные аккаунты</div>
+      <div class="s2-item" onclick="show('storage',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Хранилище</div>
+      <div class="s2-sep"></div>
+      <div class="s2-item danger-item" onclick="show('danger',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Опасная зона</div>
+    </div>
+
+    <!-- ─── CONTENT ───────────────────────── -->
+    <div class="s-content">
+
+      <!-- ╔══ PROFILE ══╗ -->
+      <div id="sec-profile" class="sec active">
+        <div class="s-title">Профиль</div>
+        <div class="s-sub">Ваши данные видят другие пользователи</div>
+
+        <div class="ava-card">
+          <div class="ava-big" id="ava-big" onclick="$('ava-file').click()">
+            <img id="ava-img" src="" alt="">
+            <div id="ava-ini">?</div>
+            <div class="ava-big-ov"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="18"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+          </div>
+          <input type="file" id="ava-file" accept="image/*" style="display:none" onchange="onAvaFile(this)">
+          <div class="ava-info">
+            <div class="ava-name" id="ava-fullname">Загрузка…</div>
+            <div class="ava-hint">JPG, PNG, GIF — до 5 МБ</div>
+            <div class="ava-btns">
+              <button class="btn-sm p" onclick="$('ava-file').click()">Загрузить фото</button>
+              <button class="btn-sm s" onclick="removeAva()">Удалить</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="fg">
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="fmeta"><div class="flabel">Имя</div></div><input class="finput" id="p-first" placeholder="Имя"></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="fmeta"><div class="flabel">Фамилия</div></div><input class="finput" id="p-last" placeholder="Фамилия"></div>
+          <div class="fr">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/></svg></div>
+            <div class="fmeta"><div class="flabel">Имя пользователя</div><div class="fdesc">@<span id="un-preview">username</span></div></div>
+            <input class="finput" id="p-username" placeholder="username" oninput="$('un-preview').textContent=this.value||'username'">
+          </div>
+          <div class="fr"><div class="fi bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div class="fmeta"><div class="flabel">Email</div></div><input class="finput" id="p-email" type="email" placeholder="email@example.com"></div>
+          <div class="fr"><div class="fi pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div class="fmeta"><div class="flabel">Телефон</div></div><input class="finput" id="p-phone" type="tel" placeholder="+7 999 000-00-00"></div>
+          <div class="fr" style="align-items:flex-start">
+            <div class="fi gn" style="margin-top:2px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+            <div class="fmeta"><div class="flabel">О себе</div><div class="fdesc" id="bio-cnt">0 / 160</div></div>
+            <textarea id="p-bio" maxlength="160" rows="2" placeholder="Биография…" oninput="$('bio-cnt').textContent=this.value.length+' / 160'" style="background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;resize:none;max-height:80px;text-align:right;width:200px"></textarea>
+          </div>
+          <div class="fr"><div class="fi yw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="fmeta"><div class="flabel">Сайт</div></div><input class="finput" id="p-website" placeholder="https://…"></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="fmeta"><div class="flabel">Город</div></div><input class="finput" id="p-city" placeholder="Москва"></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="fmeta"><div class="flabel">Дата рождения</div></div><input class="finput" id="p-birthday" type="date" style="color-scheme:dark"></div>
+        </div>
+
+        <div class="s-group-label">Цвет аватарки</div>
+        <div class="dots-row" id="ava-color-dots">
+          <div class="dot" style="background:linear-gradient(135deg,#7C3AED,#2563EB)" onclick="pickAvaColor(0,this)"></div>
+          <div class="dot" style="background:linear-gradient(135deg,#DB2777,#7C3AED)" onclick="pickAvaColor(1,this)"></div>
+          <div class="dot" style="background:linear-gradient(135deg,#059669,#2563EB)" onclick="pickAvaColor(2,this)"></div>
+          <div class="dot" style="background:linear-gradient(135deg,#D97706,#DB2777)" onclick="pickAvaColor(3,this)"></div>
+          <div class="dot" style="background:linear-gradient(135deg,#06B6D4,#7C3AED)" onclick="pickAvaColor(4,this)"></div>
+          <div class="dot" style="background:linear-gradient(135deg,#7C3AED,#06B6D4)" onclick="pickAvaColor(5,this)"></div>
+        </div>
+
+        <button class="save-btn" id="btn-profile" onclick="saveProfile()">Сохранить изменения</button>
+      </div>
+
+      <!-- ╔══ PASSWORD ══╗ -->
+      <div id="sec-password" class="sec">
+        <div class="s-title">Смена пароля</div>
+        <div class="s-sub">Надёжный пароль защищает ваш аккаунт</div>
+        <div class="fg">
+          <div class="fr">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div class="fmeta"><div class="flabel">Текущий пароль</div></div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input class="finput" id="pwd-cur" type="password" placeholder="••••••••">
+              <button onclick="togglePwd('pwd-cur',this)" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:.85rem">👁</button>
+            </div>
+          </div>
+          <div class="fr">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div class="fmeta"><div class="flabel">Новый пароль</div></div>
+            <input class="finput" id="pwd-new" type="password" placeholder="••••••••" oninput="checkPwdStr(this.value)">
+          </div>
+          <div style="padding:0 16px 12px">
+            <div class="pwd-bar-wrap"><div class="pwd-bar" id="pwd-bar"></div></div>
+            <div id="pwd-hint" style="font-size:.69rem;margin-top:3px;color:var(--mu)"></div>
+          </div>
+          <div class="fr">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+            <div class="fmeta"><div class="flabel">Подтвердите пароль</div></div>
+            <input class="finput" id="pwd-conf" type="password" placeholder="••••••••">
+          </div>
+        </div>
+        <button class="save-btn" id="btn-pwd" onclick="savePassword()">Изменить пароль</button>
+      </div>
+
+      <!-- ╔══ SESSIONS ══╗ -->
+      <div id="sec-sessions" class="sec">
+        <div class="s-title">Активные сессии</div>
+        <div class="s-sub">Все устройства из которых выполнен вход</div>
+        <div class="fg" id="sess-list">
+          <div class="sess-row"><div class="sess-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="sess-info"><div class="sess-dev">Chrome · Windows 11</div><div class="sess-meta">Активно сейчас</div></div><span class="sess-cur">Текущая</span></div>
+          <div class="sess-row"><div class="sess-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div class="sess-info"><div class="sess-dev">Safari · iPhone 15 Pro</div><div class="sess-meta">4 ч назад · Москва</div></div><button class="sess-kill-btn" onclick="killSess(this)">Завершить</button></div>
+          <div class="sess-row"><div class="sess-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div class="sess-info"><div class="sess-dev">Firefox · macOS</div><div class="sess-meta">2 дня назад · Санкт-Петербург</div></div><button class="sess-kill-btn" onclick="killSess(this)">Завершить</button></div>
+        </div>
+        <button class="save-btn danger" style="margin-top:10px" onclick="killAllSess()">Завершить все кроме текущей</button>
+      </div>
+
+      <!-- ╔══ PRIVACY ══╗ -->
+      <div id="sec-privacy" class="sec">
+        <div class="s-title">Приватность</div>
+        <div class="s-sub">Кто и что может видеть в вашем профиле</div>
+        <div class="s-group-label">Видимость профиля</div>
+        <div class="fg">
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="fmeta"><div class="flabel">Приватный аккаунт</div><div class="fdesc">Посты видят только подписчики</div></div><div class="tog" id="tog-private" onclick="togPref('private',this)"></div></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="fmeta"><div class="flabel">Список подписчиков</div><div class="fdesc">Виден всем пользователям</div></div><div class="tog on" id="tog-show-fol" onclick="togPref('show-fol',this)"></div></div>
+          <div class="fr"><div class="fi bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="fmeta"><div class="flabel">Показывать лайки</div></div><div class="tog on" id="tog-show-likes" onclick="togPref('show-likes',this)"></div></div>
+          <div class="fr"><div class="fi gn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="fmeta"><div class="flabel">Онлайн-статус</div><div class="fdesc">Показывать когда вы в сети</div></div><div class="tog on" id="tog-online" onclick="togPref('online',this)"></div></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="fmeta"><div class="flabel">Отметки о прочтении</div><div class="fdesc">Двойные галочки в чатах</div></div><div class="tog on" id="tog-read" onclick="togPref('read',this)"></div></div>
+        </div>
+        <div class="s-group-label">Взаимодействия</div>
+        <div class="fg">
+          <div class="fr"><div class="fi pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="fmeta"><div class="flabel">Личные сообщения</div><div class="fdesc">Кто может писать вам</div></div><select class="fselect" id="pref-dm" onchange="savePref('dm',this.value)"><option value="all">Все</option><option value="followers">Подписчики</option><option value="nobody">Никто</option></select></div>
+          <div class="fr"><div class="fi yw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="fmeta"><div class="flabel">Комментарии</div><div class="fdesc">Кто может комментировать</div></div><select class="fselect" id="pref-comments" onchange="savePref('comments',this.value)"><option value="all">Все</option><option value="followers">Подписчики</option><option value="nobody">Отключить</option></select></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><div class="fmeta"><div class="flabel">Видимость в поиске</div></div><div class="tog on" id="tog-search" onclick="togPref('search',this)"></div></div>
+          <div class="fr"><div class="fi gn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div><div class="fmeta"><div class="flabel">Разрешить репосты</div></div><div class="tog on" id="tog-reposts" onclick="togPref('reposts',this)"></div></div>
+        </div>
+        <button class="save-btn" onclick="toast('✓ Приватность сохранена','ok')">Сохранить</button>
+      </div>
+
+      <!-- ╔══ BLOCKED ══╗ -->
+      <div id="sec-blocked" class="sec">
+        <div class="s-title">Заблокированные</div>
+        <div class="s-sub">Они не видят вас и не могут писать вам</div>
+        <div class="fg" id="blocked-list">
+          <div class="blk-row" style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--br2)">
+            <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#059669,#2563EB);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;color:#fff;flex-shrink:0">АО</div>
+            <div style="flex:1"><div style="font-size:.83rem;color:var(--tx);font-weight:500">Антон Орехов</div><div style="font-size:.69rem;color:var(--mu)">@orekhov_a · Заблокирован 3 дня назад</div></div>
+            <button class="btn-sm s" onclick="unblock(this,'Антон Орехов')">Разблокировать</button>
+          </div>
+        </div>
+        <div id="blocked-empty" style="display:none;text-align:center;padding:40px;color:var(--mu);font-size:.83rem">Список пуст</div>
+      </div>
+
+      <!-- ╔══ NOTIFICATIONS ══╗ -->
+      <div id="sec-notifications" class="sec">
+        <div class="s-title">Уведомления</div>
+        <div class="s-sub">Настройте что и как вам приходит</div>
+
+        <div class="nc">
+          <div class="nc-head"><div class="nc-title"><span class="nc-ico">🔔</span> Push-уведомления</div><div class="tog on" id="tog-push" onclick="togPref('push',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Лайки</span><div class="tog on" id="tog-n-like" onclick="togPref('n-like',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Комментарии</span><div class="tog on" id="tog-n-comment" onclick="togPref('n-comment',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Новые подписчики</span><div class="tog on" id="tog-n-follow" onclick="togPref('n-follow',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Сообщения</span><div class="tog on" id="tog-n-msg" onclick="togPref('n-msg',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Упоминания</span><div class="tog on" id="tog-n-mention" onclick="togPref('n-mention',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Репосты</span><div class="tog" id="tog-n-repost" onclick="togPref('n-repost',this)"></div></div>
+        </div>
+
+        <div class="nc">
+          <div class="nc-head"><div class="nc-title"><span class="nc-ico">📧</span> Email-уведомления</div><div class="tog on" id="tog-email-n" onclick="togPref('email-n',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Еженедельный дайджест</span><div class="tog on" id="tog-e-digest" onclick="togPref('e-digest',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Новые подписчики</span><div class="tog" id="tog-e-follow" onclick="togPref('e-follow',this)"></div></div>
+          <div class="nc-row"><span class="nc-lbl">Новости Weave</span><div class="tog on" id="tog-e-news" onclick="togPref('e-news',this)"></div></div>
+        </div>
+
+        <div class="fg">
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="fmeta"><div class="flabel">Тихие часы</div><div class="fdesc">Не беспокоить ночью</div></div><div class="tog" id="tog-quiet" onclick="toggleQuiet(this)"></div></div>
+          <div class="fr" id="quiet-times" style="display:none">
+            <div class="fi yw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div class="fmeta"><div class="flabel">Период</div></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="time" id="q-from" value="23:00" style="background:none;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;color-scheme:dark" onchange="savePref('q-from',this.value)">
+              <span style="color:var(--mu);font-size:.78rem">—</span>
+              <input type="time" id="q-to" value="08:00" style="background:none;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;color-scheme:dark" onchange="savePref('q-to',this.value)">
+            </div>
+          </div>
+        </div>
+        <button class="save-btn" onclick="toast('✓ Настройки уведомлений сохранены','ok')">Сохранить</button>
+      </div>
+
+      <!-- ╔══ APPEARANCE ══╗ -->
+      <div id="sec-appearance" class="sec">
+        <div class="s-title">Внешний вид</div>
+        <div class="s-sub">Тема применяется на всех страницах сайта сразу</div>
+
+        <div class="s-group-label">Тема оформления</div>
+        <div class="theme-row">
+          <div class="theme-card" id="theme-dark" onclick="applyTheme('dark',this)">
+            <div class="theme-preview" style="background:linear-gradient(135deg,#09090F,#111120);border:1px solid rgba(124,58,237,.2)"></div>
+            <div class="theme-name">🌙 Тёмная</div>
+          </div>
+          <div class="theme-card" id="theme-amoled" onclick="applyTheme('amoled',this)">
+            <div class="theme-preview" style="background:#000;border:1px solid rgba(255,255,255,.05)"></div>
+            <div class="theme-name">⚫ AMOLED</div>
+          </div>
+          <div class="theme-card" id="theme-light" onclick="applyTheme('light',this)">
+            <div class="theme-preview" style="background:linear-gradient(135deg,#f0eff8,#e0ddf5);border:1px solid rgba(0,0,0,.08)"></div>
+            <div class="theme-name">☀️ Светлая</div>
+          </div>
+        </div>
+
+        <div class="s-group-label">Акцентный цвет</div>
+        <div class="dots-row" id="accent-dots">
+          <div class="dot" data-a="purple" style="background:linear-gradient(135deg,#7C3AED,#2563EB)" onclick="applyAccent('purple',this)" title="Фиолетовый"></div>
+          <div class="dot" data-a="pink"   style="background:linear-gradient(135deg,#DB2777,#9333EA)" onclick="applyAccent('pink',this)"   title="Розовый"></div>
+          <div class="dot" data-a="teal"   style="background:linear-gradient(135deg,#059669,#0EA5E9)" onclick="applyAccent('teal',this)"   title="Бирюзовый"></div>
+          <div class="dot" data-a="orange" style="background:linear-gradient(135deg,#D97706,#DC2626)" onclick="applyAccent('orange',this)" title="Оранжевый"></div>
+          <div class="dot" data-a="blue"   style="background:linear-gradient(135deg,#2563EB,#06B6D4)" onclick="applyAccent('blue',this)"   title="Синий"></div>
+          <div class="dot" data-a="green"  style="background:linear-gradient(135deg,#16A34A,#84CC16)" onclick="applyAccent('green',this)"  title="Зелёный"></div>
+          <div class="dot" data-a="red"    style="background:linear-gradient(135deg,#DC2626,#F97316)" onclick="applyAccent('red',this)"    title="Красный"></div>
+        </div>
+
+        <div class="fg">
+          <div class="fr">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></div>
+            <div class="fmeta"><div class="flabel">Размер текста</div><div class="fdesc" id="fs-label">14px</div></div>
+            <input type="range" id="fs-range" min="12" max="20" value="14" style="width:90px;accent-color:var(--v)" oninput="applyFontSize(this.value)">
+          </div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div class="fmeta"><div class="flabel">Анимации</div><div class="fdesc">Плавные переходы интерфейса</div></div><div class="tog on" id="tog-anim" onclick="togAppear('anim',this)"></div></div>
+          <div class="fr"><div class="fi bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div class="fmeta"><div class="flabel">Автовоспроизведение видео</div></div><div class="tog on" id="tog-autoplay" onclick="togAppear('autoplay',this)"></div></div>
+          <div class="fr"><div class="fi gn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div class="fmeta"><div class="flabel">Компактный режим</div><div class="fdesc">Уменьшить отступы</div></div><div class="tog" id="tog-compact" onclick="togAppear('compact',this)"></div></div>
+        </div>
+        <button class="save-btn" onclick="toast('✓ Внешний вид применён','ok')">Применить</button>
+      </div>
+
+      <!-- ╔══ LINKED ══╗ -->
+      <div id="sec-linked" class="sec">
+        <div class="s-title">Связанные аккаунты</div>
+        <div class="s-sub">Подключите соцсети для входа и кросс-постинга</div>
+        <div class="fg">
+          <div class="lnk-row"><div class="lnk-ico" style="background:rgba(0,100,255,.1)">🔵</div><div style="flex:1"><div class="lnk-name">VK</div><div class="lnk-status" id="lnk-vk-st">Не подключено</div></div><button class="lnk-btn" id="lnk-vk-btn" onclick="linkAcct('VK','lnk-vk')">Подключить</button></div>
+          <div class="lnk-row"><div class="lnk-ico" style="background:rgba(0,136,204,.1)">✈️</div><div style="flex:1"><div class="lnk-name">Telegram</div><div class="lnk-status" id="lnk-tg-st">Не подключено</div></div><button class="lnk-btn" id="lnk-tg-btn" onclick="linkAcct('Telegram','lnk-tg')">Подключить</button></div>
+          <div class="lnk-row"><div class="lnk-ico" style="background:rgba(219,39,119,.1)">📷</div><div style="flex:1"><div class="lnk-name">Instagram</div><div class="lnk-status" id="lnk-ig-st">Не подключено</div></div><button class="lnk-btn" id="lnk-ig-btn" onclick="linkAcct('Instagram','lnk-ig')">Подключить</button></div>
+          <div class="lnk-row"><div class="lnk-ico" style="background:rgba(0,0,0,.06)">𝕏</div><div style="flex:1"><div class="lnk-name">X (Twitter)</div><div class="lnk-status" id="lnk-x-st">Не подключено</div></div><button class="lnk-btn" id="lnk-x-btn" onclick="linkAcct('X','lnk-x')">Подключить</button></div>
+          <div class="lnk-row"><div class="lnk-ico" style="background:rgba(88,101,242,.1)">👾</div><div style="flex:1"><div class="lnk-name">Discord</div><div class="lnk-status" id="lnk-dc-st">Не подключено</div></div><button class="lnk-btn" id="lnk-dc-btn" onclick="linkAcct('Discord','lnk-dc')">Подключить</button></div>
+        </div>
+      </div>
+
+      <!-- ╔══ STORAGE ══╗ -->
+      <div id="sec-storage" class="sec">
+        <div class="s-title">Хранилище</div>
+        <div class="s-sub">Управление медиафайлами и кешем</div>
+        <div class="fg" style="display:block;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:.85rem;font-weight:500;color:var(--tx)">Использовано</span>
+            <span style="font-size:.85rem;color:var(--vl);font-weight:600" id="stor-label">2.4 ГБ из 5 ГБ</span>
+          </div>
+          <div class="stor-bar"><div class="stor-fill" id="stor-fill" style="width:48%"></div></div>
+          <div class="stor-legend">
+            <div class="sl"><div class="sl-dot" style="background:var(--v)"></div>Фото — 1.2 ГБ</div>
+            <div class="sl"><div class="sl-dot" style="background:var(--b)"></div>Видео — 0.8 ГБ</div>
+            <div class="sl"><div class="sl-dot" style="background:var(--cy)"></div>Кеш — 0.4 ГБ</div>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="fr"><div class="fi bl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div class="fmeta"><div class="flabel">Качество фото</div></div><select class="fselect" onchange="savePref('photo-q',this.value)"><option value="original">Оригинал</option><option value="high" selected>Высокое</option><option value="medium">Среднее</option></select></div>
+          <div class="fr"><div class="fi gn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><div class="fmeta"><div class="flabel">Качество видео</div></div><select class="fselect" onchange="savePref('video-q',this.value)"><option value="auto" selected>Авто</option><option value="1080p">1080p</option><option value="720p">720p</option></select></div>
+          <div class="fr"><div class="fi pk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/></svg></div><div class="fmeta"><div class="flabel">Экономия данных</div><div class="fdesc">Не загружать медиа в мобильной сети</div></div><div class="tog" id="tog-datasave" onclick="togAppear('datasave',this)"></div></div>
+        </div>
+        <button class="save-btn danger" onclick="clearCache()">🗑 Очистить кеш (400 МБ)</button>
+      </div>
+
+      <!-- ╔══ DANGER ══╗ -->
+      <div id="sec-danger" class="sec">
+        <div class="s-title" style="color:var(--er)">Опасная зона</div>
+        <div class="s-sub">Необратимые действия — выполняйте осторожно</div>
+        <div class="warn-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Действия в этом разделе необратимы. Рекомендуем сначала скачать копию данных.
+        </div>
+        <div class="dng-group">
+          <button class="dng-btn" onclick="exportData()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <div><div class="dng-title">Скачать мои данные</div><div class="dng-desc">Экспорт профиля, постов и настроек в JSON-архив</div></div>
+          </button>
+          <button class="dng-btn" onclick="killAllSess()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <div><div class="dng-title">Выйти со всех устройств</div><div class="dng-desc">Завершить все активные сессии</div></div>
+          </button>
+          <button class="dng-btn" onclick="deactivateAccount()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            <div><div class="dng-title">Деактивировать аккаунт</div><div class="dng-desc">Временно скрыть профиль, можно восстановить позже</div></div>
+          </button>
+          <button class="dng-btn" onclick="deleteAccount()" style="color:#ff6b6b">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            <div><div class="dng-title">Удалить аккаунт навсегда</div><div class="dng-desc">Все данные будут уничтожены без возможности восстановления</div></div>
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /s-content -->
+  </div><!-- /s-layout -->
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CORE UTILS
+// ═══════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const go = url => location.href = url;
+
+const API = {
+  base: '/api',
+  tok(){ return localStorage.getItem('weave_token') || sessionStorage.getItem('weave_token') || ''; },
+  async req(url, opts = {}){
+    const r = await fetch(this.base + url, {
+      ...opts,
+      headers: { 'Content-Type': 'application/json', ...(this.tok() && { Authorization: 'Bearer ' + this.tok() }), ...(opts.headers||{}) }
+    });
+    if(r.status === 401){ logout(); throw 0; }
+    if(!r.ok){ const e = await r.json().catch(() => ({})); throw new Error(e.error || 'Ошибка'); }
+    return r.json();
+  }
+};
+
+const PREFS_KEY = 'weave_prefs';
+function getPrefs(){ try{ return JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'); }catch{ return {}; } }
+function savePrefs(obj){ localStorage.setItem(PREFS_KEY, JSON.stringify({...getPrefs(),...obj})); }
+function savePref(k,v){ savePrefs({[k]:v}); }
+
+function toast(msg, type=''){
+  const t=$('toast');
+  if(!t) return;
+  t.textContent=msg;
+  t.className='toast show'+(type?' '+type:'');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.className='toast',3200);
+}
+function logout(){
+  localStorage.removeItem('weave_token');
+  localStorage.removeItem('weave_current_user');
+  sessionStorage.removeItem('weave_token');
+  location.href='login.html';
+}
+function setBusy(btn,loading,label){
+  if(!btn)return;
+  btn.disabled=loading;
+  btn.innerHTML=loading?'<div class="spin"></div> '+label:label;
+}
+
+let ME=null;
+const AVA_GRADS=[
+  'linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)',
+  'linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)',
+  'linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'
+];
+let selAvaColor=0, pendAvaSrc=null;
+
+// ═══════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  const s=localStorage.getItem('weave_current_user');
+  if(!s){ location.href='login.html'; return; }
+  ME=JSON.parse(s);
+  if(!ME){ location.href='login.html'; return; }
+
+  // Refresh from server to get latest data
+  try {
+    const fresh = await API.req('/users/me');
+    ME = {...ME, ...fresh};
+    localStorage.setItem('weave_current_user', JSON.stringify(ME));
+  } catch(e){}
+
+  bootNav();
+  fillProfile();
+  restoreAppearance();
+  restoreToggles();
+  loadSessions();
+
+  const hash=location.hash.slice(1);
+  if(hash){
+    const navBtn=document.querySelector('.s2-item[onclick*="\''+hash+'\'"]');
+    if(navBtn) show(hash, navBtn);
+  }
+});
+
+function bootNav(){
+  if(!ME) return;
+  const ini=((ME.firstName?.[0]||'')+(ME.lastName?.[0]||'')).toUpperCase()||'?';
+  const ava=$('sn-ava'); if(ava) ava.style.background=AVA_GRADS[ME.avatarColor||0];
+  const iniEl=$('sn-ava-ini'); if(iniEl) iniEl.textContent=ini;
+  const avaData=ME.avatarUrl||ME.avatarBase64;
+  if(avaData){ const img=$('sn-ava-img'); if(img){img.src=avaData;img.className='show';} }
+  const nm=$('sn-name'); if(nm) nm.textContent=(ME.firstName+' '+(ME.lastName||'')).trim();
+  const hn=$('sn-handle'); if(hn) hn.textContent='@'+ME.username;
+  const adm=document.getElementById('nav-admin');if(adm&&(ME.isAdmin||ME.isModerator))adm.style.display='flex';
+}
+
+// ═══════════════════════════════════════════════════════
+//  SECTION SWITCH
+// ═══════════════════════════════════════════════════════
+function show(id, btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.s2-item').forEach(s=>s.classList.remove('active'));
+  const sec=$('sec-'+id);
+  if(sec) sec.classList.add('active');
+  if(btn) btn.classList.add('active');
+  history.replaceState(null,'','#'+id);
+}
+
+// ═══════════════════════════════════════════════════════
+//  PROFILE
+// ═══════════════════════════════════════════════════════
+function fillProfile(){
+  if(!ME) return;
+  const set=(id,v)=>{ const el=$(id); if(el) el.value=v||''; };
+  set('p-first', ME.firstName);
+  set('p-last',  ME.lastName);
+  set('p-username', ME.username);
+  set('p-email',    ME.email);
+  set('p-phone',    ME.phone);
+  set('p-bio',      ME.bio);
+  set('p-website',  ME.website);
+  set('p-city',     ME.city);
+  set('p-birthday', ME.birthday);
+
+  const unPrev=$('un-preview'); if(unPrev) unPrev.textContent=ME.username||'username';
+  const bioCnt=$('bio-cnt'); if(bioCnt) bioCnt.textContent=(ME.bio||'').length+' / 160';
+
+  selAvaColor=ME.avatarColor||0;
+  const ini=((ME.firstName?.[0]||'')+(ME.lastName?.[0]||'')).toUpperCase()||'?';
+  const avaBig=$('ava-big'); if(avaBig) avaBig.style.background=AVA_GRADS[selAvaColor];
+  const avaIni=$('ava-ini'); if(avaIni) avaIni.textContent=ini;
+  // Показать фото профиля если есть
+  const avaData2=ME.avatarUrl||ME.avatarBase64;
+  if(avaData2){ const img=$('ava-img'); if(img){img.src=avaData2;img.classList.add('show');} const ini2=$('ava-ini'); if(ini2) ini2.style.display='none'; }
+  const avaFull=$('ava-fullname'); if(avaFull) avaFull.textContent=(ME.firstName+' '+(ME.lastName||'')).trim();
+
+  if(ME.avatarBase64){
+    const img=$('ava-img');
+    if(img){ img.src=ME.avatarBase64; img.classList.add('show'); }
+    if(avaIni) avaIni.style.display='none';
+  }
+  document.querySelectorAll('#ava-color-dots .dot').forEach((d,i)=>d.classList.toggle('sel',i===selAvaColor));
+}
+
+function onAvaFile(inp){
+  const f=inp.files[0]; if(!f) return;
+  if(f.size>5*1024*1024){ toast('Файл слишком большой (макс 5 МБ)','err'); return; }
+  const r=new FileReader();
+  r.onload=e=>{
+    pendAvaSrc=e.target.result;
+    const img=$('ava-img'); if(img){ img.src=pendAvaSrc; img.classList.add('show'); }
+    const ini=$('ava-ini'); if(ini) ini.style.display='none';
+    const snImg=$('sn-ava-img'); if(snImg){ snImg.src=pendAvaSrc; snImg.className='show'; }
+  };
+  r.readAsDataURL(f);
+}
+
+function removeAva(){
+  const img=$('ava-img'); if(img) img.classList.remove('show');
+  const ini=$('ava-ini'); if(ini) ini.style.display='';
+  const snImg=$('sn-ava-img'); if(snImg) snImg.className='';
+  pendAvaSrc=null;
+  if(ME){ delete ME.avatarBase64; ME.avatarUrl=null; localStorage.setItem('weave_current_user',JSON.stringify(ME)); }
+  toast('Фото удалено');
+}
+
+function pickAvaColor(idx, el){
+  document.querySelectorAll('#ava-color-dots .dot').forEach(d=>d.classList.remove('sel'));
+  el.classList.add('sel');
+  selAvaColor=idx;
+  const avaBig=$('ava-big'); if(avaBig) avaBig.style.background=AVA_GRADS[idx];
+  const snAva=$('sn-ava'); if(snAva) snAva.style.background=AVA_GRADS[idx];
+}
+
+// Сжатие изображения
+async function compressImage(dataUrl, maxPx=400, quality=0.75){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      let w=img.width,h=img.height;
+      if(w>maxPx||h>maxPx){
+        if(w>h){h=Math.round(h*maxPx/w);w=maxPx;}
+        else{w=Math.round(w*maxPx/h);h=maxPx;}
+      }
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      res(c.toDataURL('image/jpeg',quality));
+    };
+    img.src=dataUrl;
+  });
+}
+
+async function saveProfile(){
+  const btn=$('btn-profile');
+  const firstName=($('p-first')?.value||'').trim();
+  const lastName =($('p-last')?.value||'').trim();
+  const username =($('p-username')?.value||'').trim();
+  const bio      =($('p-bio')?.value||'').trim();
+  const website  =($('p-website')?.value||'').trim();
+  const city     =($('p-city')?.value||'').trim();
+  const phone    =($('p-phone')?.value||'').trim();
+  const birthday =($('p-birthday')?.value||'');
+
+  if(!firstName){ toast('Укажите имя','err'); return; }
+  if(!username){  toast('Укажите ник','err'); return; }
+  if(!/^[a-zA-Z0-9_]{2,32}$/.test(username)){ toast('Ник: только латиница, цифры и _','err'); return; }
+
+  setBusy(btn,true,'Сохранение…');
+  try {
+    // Сжимаем фото если есть (max 400px, quality 0.75)
+    let avatarUrl = ME.avatarUrl || null;
+    if (pendAvaSrc) {
+      avatarUrl = await compressImage(pendAvaSrc, 400, 0.75);
+    } else if (pendAvaSrc === null && !$('ava-img')?.classList.contains('show')) {
+      avatarUrl = null; // удалено
+    }
+    const updated=await API.req('/users/profile',{
+      method:'PUT',
+      body:JSON.stringify({firstName,lastName,username,bio,website,city,phone,birthday,avatarColor:selAvaColor,avatarUrl})
+    });
+    Object.assign(ME, updated, {avatarColor:selAvaColor, avatarUrl});
+    if(avatarUrl) ME.avatarBase64=avatarUrl;
+    localStorage.setItem('weave_current_user',JSON.stringify(ME));
+    bootNav();
+    const avaFull=$('ava-fullname'); if(avaFull) avaFull.textContent=(firstName+' '+lastName).trim();
+    const unPrev=$('un-preview'); if(unPrev) unPrev.textContent=username;
+    toast('✓ Профиль сохранён','ok');
+  } catch(e){
+    toast('Ошибка: '+e.message,'err');
+  }
+  setBusy(btn,false,'Сохранить изменения');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PASSWORD
+// ═══════════════════════════════════════════════════════
+function togglePwd(id, btn){
+  const inp=$(id); if(!inp) return;
+  inp.type=inp.type==='password'?'text':'password';
+  btn.textContent=inp.type==='password'?'👁':'🙈';
+}
+
+function checkPwdStr(pwd){
+  let score=0;
+  if(pwd.length>=8) score++;
+  if(/[A-Z]/.test(pwd)) score++;
+  if(/[0-9]/.test(pwd)) score++;
+  if(/[^A-Za-z0-9]/.test(pwd)) score++;
+  const bar=$('pwd-bar'), hint=$('pwd-hint');
+  const cl=['','#ef4444','#f97316','#eab308','#22c55e'];
+  const lb=['','Очень слабый','Слабый','Хороший','Надёжный ✓'];
+  if(bar){ bar.style.width=(score*25)+'%'; bar.style.background=cl[score]||''; }
+  if(hint){ hint.textContent=lb[score]||''; hint.style.color=cl[score]||''; }
+}
+
+async function savePassword(){
+  const btn=$('btn-pwd');
+  const cur=$('pwd-cur')?.value;
+  const np =$('pwd-new')?.value;
+  const conf=$('pwd-conf')?.value;
+  if(!cur||!np||!conf){ toast('Заполните все поля','err'); return; }
+  if(np!==conf){ toast('Пароли не совпадают','err'); return; }
+  if(np.length<8){ toast('Минимум 8 символов','err'); return; }
+
+  setBusy(btn,true,'Сохранение…');
+  try {
+    await API.req('/auth/change-password',{method:'POST',body:JSON.stringify({currentPassword:cur,newPassword:np})});
+    ['pwd-cur','pwd-new','pwd-conf'].forEach(id=>{ const el=$(id); if(el) el.value=''; });
+    const bar=$('pwd-bar'); if(bar) bar.style.width='0';
+    const hint=$('pwd-hint'); if(hint) hint.textContent='';
+    toast('✓ Пароль изменён','ok');
+  } catch(e){
+    toast('Ошибка: '+e.message,'err');
+  }
+  setBusy(btn,false,'Изменить пароль');
+}
+
+// ═══════════════════════════════════════════════════════
+//  SESSIONS
+// ═══════════════════════════════════════════════════════
+async function loadSessions(){
+  const list=$('sess-list'); if(!list) return;
+  // Show current session as active, add demo entries
+  const now=new Date();
+  const fmt=d=>d.toLocaleDateString('ru',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});
+  const agents=[
+    {icon:'💻',name:'Chrome на Windows',loc:'Москва, RU',time:'Сейчас',cur:true},
+    {icon:'📱',name:'Weave iOS App',loc:'Москва, RU',time:fmt(new Date(now-3600000)),cur:false},
+    {icon:'🖥',name:'Firefox на macOS',loc:'Санкт-Петербург, RU',time:fmt(new Date(now-86400000)),cur:false},
+  ];
+  list.innerHTML=agents.map(a=>`
+    <div class="sess-row">
+      <div class="sess-icon">${a.icon}</div>
+      <div class="sess-info">
+        <div class="sess-name">${a.name}${a.cur?' <span class="sess-cur">Текущая</span>':''}</div>
+        <div class="sess-meta">${a.loc} · ${a.time}</div>
+      </div>
+      ${!a.cur?'<button class="sess-kill-btn" onclick="killSess(this)">Завершить</button>':''}
+    </div>`).join('');
+}
+
+function killSess(btn){
+  const row=btn.closest('.sess-row');
+  row.style.opacity='0'; row.style.transform='translateX(14px)'; row.style.transition='all .28s';
+  setTimeout(()=>row.remove(),280);
+  toast('Сессия завершена');
+}
+function killAllSess(){
+  if(!confirm('Завершить все сессии кроме текущей?')) return;
+  document.querySelectorAll('.sess-kill-btn').forEach(b=>b.closest('.sess-row').remove());
+  toast('✓ Все сессии завершены','ok');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PRIVACY TOGGLES
+// ═══════════════════════════════════════════════════════
+function togPref(key, el){
+  el.classList.toggle('on');
+  savePref('p_'+key, el.classList.contains('on'));
+}
+
+function restoreToggles(){
+  const p=getPrefs();
+  const defs={
+    'p_private':false,'p_show-fol':true,'p_show-likes':true,
+    'p_online':true,'p_read':true,'p_search':true,'p_reposts':true,
+    'p_push':true,'p_n-like':true,'p_n-comment':true,'p_n-follow':true,
+    'p_n-msg':true,'p_n-mention':true,'p_n-repost':false,
+    'p_email-n':true,'p_e-digest':true,'p_e-follow':false,'p_e-news':true,
+    'p_quiet':false
+  };
+  Object.entries(defs).forEach(([k,def])=>{
+    const id='tog-'+k.slice(2);
+    const el=$(id); if(!el) return;
+    const val=p[k]!==undefined?p[k]:def;
+    el.classList.toggle('on',val);
+  });
+  const dm=$('pref-dm'); if(dm&&p.dm) dm.value=p.dm;
+  const cm=$('pref-comments'); if(cm&&p.comments) cm.value=p.comments;
+  if(p.p_quiet){ const qt=$('quiet-times'); if(qt) qt.style.display='flex'; }
+  const qf=$('q-from'); if(qf&&p['q-from']) qf.value=p['q-from'];
+  const qt=$('q-to');   if(qt&&p['q-to'])   qt.value=p['q-to'];
+}
+
+function toggleQuiet(el){
+  el.classList.toggle('on');
+  const on=el.classList.contains('on');
+  const qt=$('quiet-times'); if(qt) qt.style.display=on?'flex':'none';
+  savePref('p_quiet',on);
+}
+
+// ═══════════════════════════════════════════════════════
+//  BLOCKED
+// ═══════════════════════════════════════════════════════
+function unblock(btn, name){
+  const row=btn.closest('.blk-row');
+  row.style.opacity='0'; row.style.transition='opacity .25s';
+  setTimeout(()=>{
+    row.remove();
+    if(!document.querySelector('.blk-row')){
+      const bl=$('blocked-list'); if(bl) bl.style.display='none';
+      const be=$('blocked-empty'); if(be) be.style.display='block';
+    }
+  },250);
+  toast('✓ '+name+' разблокирован','ok');
+}
+
+// ═══════════════════════════════════════════════════════
+//  APPEARANCE — full live sync to all pages via theme.js
+// ═══════════════════════════════════════════════════════
+const ACCENT_VARS = {
+  purple:{ v:'#7C3AED',vl:'#A78BFA',vd:'#4C1D95',b:'#2563EB',bl:'#60A5FA' },
+  pink:  { v:'#DB2777',vl:'#F472B6',vd:'#831843',b:'#9333EA',bl:'#C084FC' },
+  teal:  { v:'#059669',vl:'#34D399',vd:'#064E3B',b:'#0EA5E9',bl:'#38BDF8' },
+  orange:{ v:'#D97706',vl:'#FBBF24',vd:'#78350F',b:'#DC2626',bl:'#F87171' },
+  blue:  { v:'#2563EB',vl:'#60A5FA',vd:'#1E3A8A',b:'#06B6D4',bl:'#22D3EE' },
+  green: { v:'#16A34A',vl:'#4ADE80',vd:'#14532D',b:'#84CC16',bl:'#BEF264' },
+  red:   { v:'#DC2626',vl:'#F87171',vd:'#7F1D1D',b:'#F97316',bl:'#FDBA74' },
+};
+
+function applyTheme(theme, el){
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('sel'));
+  if(el) el.classList.add('sel');
+  // Use classList so other classes (if any) are preserved
+  document.body.classList.remove('light','amoled');
+  if(theme==='light')  document.body.classList.add('light');
+  if(theme==='amoled') document.body.classList.add('amoled');
+  // Save — theme.js reads this on every page load
+  savePrefs({theme});
+  const nm=el?.querySelector('.theme-name')?.textContent||theme;
+  toast('🎨 Тема «'+nm+'» применена','ok');
+}
+
+function applyAccent(accent, el){
+  document.querySelectorAll('#accent-dots .dot').forEach(d=>d.classList.remove('sel'));
+  if(el) el.classList.add('sel');
+  const v=ACCENT_VARS[accent]; if(!v) return;
+  const root=document.documentElement;
+  root.style.setProperty('--v', v.v);
+  root.style.setProperty('--vl',v.vl);
+  root.style.setProperty('--vd',v.vd);
+  root.style.setProperty('--b', v.b);
+  root.style.setProperty('--bl',v.bl);
+  savePrefs({accent});
+  toast('🎨 Цвет изменён','ok');
+}
+
+function applyFontSize(val){
+  document.body.style.fontSize=val+'px';
+  const lbl=$('fs-label'); if(lbl) lbl.textContent=val+'px';
+  savePrefs({fontSize:Number(val)});
+}
+
+function togAppear(key, el){
+  el.classList.toggle('on');
+  const on=el.classList.contains('on');
+  savePrefs({['ap_'+key]:on});
+  if(key==='anim'){
+    savePrefs({app_anim:on});
+    document.documentElement.style.setProperty('--anim-dur',on?'':'0s');
+  }
+}
+
+function restoreAppearance(){
+  const p=getPrefs();
+  // Theme card
+  const theme=p.theme||'light';
+  const tc=$('theme-'+theme);
+  if(tc){ document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('sel')); tc.classList.add('sel'); }
+  // Accent dot
+  const accent=p.accent||'purple';
+  const ad=document.querySelector('[data-a="'+accent+'"]');
+  if(ad){ document.querySelectorAll('#accent-dots .dot').forEach(d=>d.classList.remove('sel')); ad.classList.add('sel'); }
+  // Font size
+  const fs=p.fontSize||14;
+  const fsr=$('fs-range'); if(fsr) fsr.value=fs;
+  const fsl=$('fs-label'); if(fsl) fsl.textContent=fs+'px';
+  // Toggles
+  const defs={anim:true,autoplay:true,compact:false,datasave:false};
+  Object.entries(defs).forEach(([k,def])=>{
+    const val=p['ap_'+k]!==undefined?p['ap_'+k]:def;
+    const el=$('tog-'+k); if(el) el.classList.toggle('on',val);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  LINKED ACCOUNTS
+// ═══════════════════════════════════════════════════════
+function linkAcct(name, prefix){
+  const btn=$(prefix+'-btn'), st=$(prefix+'-st');
+  if(!btn) return;
+  btn.textContent='…'; btn.disabled=true;
+  setTimeout(()=>{
+    if(st){ st.textContent='Подключено · @'+(ME?.username||'user'); st.className='lnk-status ok'; }
+    btn.textContent='Отключить'; btn.className='lnk-btn linked'; btn.disabled=false;
+    btn.onclick=()=>unlinkAcct(name,prefix);
+    savePref('lnk_'+name,true);
+    toast('✓ '+name+' подключён','ok');
+  },900);
+}
+function unlinkAcct(name, prefix){
+  if(!confirm('Отключить '+name+'?')) return;
+  const btn=$(prefix+'-btn'), st=$(prefix+'-st');
+  if(st){ st.textContent='Не подключено'; st.className='lnk-status'; }
+  if(btn){ btn.textContent='Подключить'; btn.className='lnk-btn'; btn.onclick=()=>linkAcct(name,prefix); }
+  savePref('lnk_'+name,false);
+  toast(name+' отключён');
+}
+
+// ═══════════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════════
+function clearCache(){
+  if(!confirm('Очистить кеш (400 МБ)?')) return;
+  toast('🗑 Очищаем кеш…');
+  setTimeout(()=>{
+    const fill=$('stor-fill'); if(fill) fill.style.width='32%';
+    const lbl=$('stor-label'); if(lbl) lbl.textContent='1.6 ГБ из 5 ГБ';
+    toast('✓ Кеш очищен, освобождено 400 МБ','ok');
+  },1200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT DATA
+// ═══════════════════════════════════════════════════════
+function exportData(){
+  toast('📦 Подготовка архива…');
+  setTimeout(()=>{
+    const data={exportDate:new Date().toISOString(),user:{
+      id:ME.id,firstName:ME.firstName,lastName:ME.lastName,
+      username:ME.username,email:ME.email,bio:ME.bio,website:ME.website,
+      city:ME.city,createdAt:ME.createdAt
+    },prefs:getPrefs()};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='weave-export-'+Date.now()+'.json'; a.click();
+    URL.revokeObjectURL(url);
+    toast('✓ Данные скачаны','ok');
+  },1200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  DANGER ZONE
+// ═══════════════════════════════════════════════════════
+function deactivateAccount(){
+  if(!confirm('Деактивировать аккаунт?\nПрофиль будет скрыт — его можно восстановить позже.')) return;
+  toast('⏸ Деактивация…');
+  setTimeout(logout,1800);
+}
+
+async function deleteAccount(){
+  if(!confirm('Удалить аккаунт навсегда?\nВсе данные будут уничтожены — это НЕОБРАТИМО.')) return;
+  if(!confirm('Вы абсолютно уверены? Отменить это действие невозможно.')) return;
+  const inp=prompt('Введите слово УДАЛИТЬ для подтверждения:');
+  if(inp!=='УДАЛИТЬ'){ toast('Отменено','err'); return; }
+  try { await API.req('/users/me',{method:'DELETE'}); } catch(e){}
+  toast('Аккаунт удалён');
+  setTimeout(logout,1500);
+}
+</script>
+<script src="theme.js"></script>
+
+<nav class="mob-nav">
+  <a class="mob-nav-btn " href="feed.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Лента</span>
+  </a>
+  <a class="mob-nav-btn " href="explore.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span>Поиск</span>
+  </a>
+  <a class="mob-nav-btn " href="messages.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="mob-nav-badge" id="mob-msg-badge"></span><span>Чаты</span>
+  </a>
+  <a class="mob-nav-btn active" href="profile.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Профиль</span>
+  </a>
+</nav>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW зарегистрирован:', reg.scope))
+      .catch(err => console.warn('SW ошибка:', err));
+  });
+}
+</script>
+</body>
+</html>

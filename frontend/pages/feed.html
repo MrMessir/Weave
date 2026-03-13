@@ -1,0 +1,2434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weave">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="shortcut icon" href="/icons/icon-32.png">
+<title>Weave — Лента</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+/* Стили такие же как в твоем файле, оставляю без изменений */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --v:#7C3AED;--vl:#A78BFA;--vd:#4C1D95;
+  --b:#2563EB;--bl:#60A5FA;--cy:#06B6D4;
+  --bg:#09090F;--s1:#0D0D1A;--s2:#111120;--s3:#151528;
+  --br:rgba(124,58,237,.18);--br2:rgba(255,255,255,.06);
+  --tx:#E8E4FF;--mu:#6B6B8F;--mu2:#3D3D5C;
+  --pk:#F472B6;--gn:#34D399;--er:#F87171;
+  --nav-w:260px;--nav-collapsed:68px;
+}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+
+/* ═══ LEFT NAV (VK style) ═══ */
+.sidenav{
+  width:var(--nav-w);flex-shrink:0;
+  position:fixed;top:0;left:0;bottom:0;z-index:90;
+  background:var(--s1);border-right:1px solid var(--br);
+  display:flex;flex-direction:column;
+  transition:width .25s cubic-bezier(.22,1,.36,1);
+  overflow:hidden;
+}
+.sidenav:hover{width:var(--nav-w)}
+.sn-logo{
+  padding:20px 18px 14px;display:flex;align-items:center;gap:12px;
+  text-decoration:none;flex-shrink:0;
+}
+.sn-logo-icon{
+  width:36px;height:36px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--v),var(--b));
+  display:grid;place-items:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff;
+}
+.sn-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(135deg,#C4B5FD,#7DD3FC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.sn-logo-text span{opacity:.5}
+
+/* User card in nav */
+.sn-user{
+  margin:0 12px 16px;padding:12px;
+  background:var(--s2);border:1px solid var(--br);border-radius:14px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  transition:background .2s;text-decoration:none;flex-shrink:0;
+  overflow:hidden;
+}
+.sn-user:hover{background:rgba(124,58,237,.12)}
+.sn-ava{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;border:2px solid var(--br)}
+.sn-user-info{min-width:0;flex:1}
+.sn-user-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sn-user-handle{font-size:.72rem;color:var(--mu);white-space:nowrap}
+.sn-online{width:8px;height:8px;border-radius:50%;background:var(--gn);flex-shrink:0;box-shadow:0 0 6px var(--gn)}
+
+/* Nav items */
+.sn-section{padding:0 8px;margin-bottom:6px;flex-shrink:0}
+.sn-label{font-size:.64rem;font-weight:600;color:var(--mu2);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px 4px;white-space:nowrap;overflow:hidden}
+.sn-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 10px;border-radius:12px;
+  text-decoration:none;color:var(--mu);
+  font-size:.88rem;font-weight:500;
+  transition:all .18s;cursor:pointer;position:relative;
+  white-space:nowrap;overflow:hidden;
+}
+.sn-item:hover{background:rgba(124,58,237,.1);color:var(--tx)}
+.sn-item.active{background:rgba(124,58,237,.18);color:var(--vl)}
+.sn-item svg{width:20px;height:20px;flex-shrink:0}
+.sn-item-label{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sn-badge{background:var(--v);color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0}
+.sn-divider{height:1px;background:var(--br);margin:8px 16px}
+
+/* ═══ MAIN CONTENT ═══ */
+.main{margin-left:var(--nav-w);flex:1;min-width:0;position:relative;z-index:1}
+
+/* Top bar */
+.topbar{
+  position:sticky;top:0;z-index:80;height:56px;
+  background:rgba(9,9,15,.9);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--br);
+  display:flex;align-items:center;padding:0 20px;gap:14px;
+}
+.topbar-search{flex:1;max-width:400px;position:relative}
+.topbar-search input{width:100%;padding:8px 14px 8px 36px;background:rgba(255,255,255,.05);border:1px solid var(--br);border-radius:20px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;transition:all .2s}
+.topbar-search input:focus{border-color:var(--vl);background:rgba(124,58,237,.08);box-shadow:0 0 0 3px rgba(124,58,237,.14)}
+.topbar-search input::placeholder{color:var(--mu2)}
+.topbar-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mu);width:14px;height:14px;pointer-events:none}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tb-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--br2);display:grid;place-items:center;cursor:pointer;color:var(--mu);transition:all .2s;position:relative}
+.tb-btn:hover{background:rgba(124,58,237,.15);color:var(--vl)}
+.tb-btn svg{width:16px;height:16px}
+.tb-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--vl);border:1.5px solid var(--bg)}
+
+/* ═══ CONTENT AREA ═══ */
+.content-wrap{display:grid;grid-template-columns:1fr 260px;gap:20px;max-width:940px;margin:0 auto;padding:20px 20px 60px}
+
+/* ═══ STORIES ═══ */
+.stories-row{
+  background:var(--s2);border:1px solid var(--br);
+  border-radius:18px;padding:16px;margin-bottom:16px;
+  overflow:hidden;
+}
+.stories-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.stories-scroll::-webkit-scrollbar{display:none}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;width:70px}
+.story-ring{width:64px;height:64px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,#E1306C,#F56040,#FCAF45);flex-shrink:0;transition:transform .2s,filter .2s}
+.story-ring:hover{transform:scale(1.07);filter:brightness(1.1)}
+.story-ring.seen{background:var(--br2);padding:2px}
+.story-ring.mine-ring{background:none;border:2px dashed rgba(124,58,237,.5);display:flex;align-items:center;justify-content:center}
+.story-ring.mine-ring:hover{border-color:var(--vl)}
+.story-inner{width:100%;height:100%;border-radius:50%;background:var(--s3);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff;border:2px solid var(--s2)}
+.story-add-plus{position:relative}
+.story-add-plus::after{content:'+';position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;border-radius:50%;background:var(--v);color:#fff;font-size:.75rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--s2)}
+.story-label{font-size:.66rem;color:var(--mu);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.story-label.mine{color:var(--vl)}
+
+/* ═══ STORY VIEWER ═══ */
+.sv{position:fixed;inset:0;z-index:500;background:#000;display:none;align-items:center;justify-content:center}
+.sv.open{display:flex}
+.sv-card{position:relative;width:min(420px,100vw);height:100vh;max-height:100vh;overflow:hidden;background:#111}
+.sv-prog{position:absolute;top:0;left:0;right:0;display:flex;gap:3px;padding:10px 12px 0;z-index:5}
+.sv-seg{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.3);overflow:hidden}
+.sv-fill{height:100%;background:#fff;width:0}
+.sv-fill.done{width:100%}
+.sv-fill.running{animation:svRun var(--d,5s) linear forwards}
+@keyframes svRun{to{width:100%}}
+.sv-top{position:absolute;top:0;left:0;right:0;padding:22px 14px 10px;display:flex;align-items:center;justify-content:space-between;z-index:5;background:linear-gradient(to bottom,rgba(0,0,0,.55) 0%,transparent 100%)}
+.sv-who{display:flex;align-items:center;gap:10px}
+.sv-a{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;color:#fff;border:2px solid rgba(255,255,255,.35)}
+.sv-nm{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff}
+.sv-tm{font-size:.7rem;color:rgba(255,255,255,.55)}
+.sv-x{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.7);width:34px;height:34px;display:grid;place-items:center;border-radius:50%;transition:background .2s}
+.sv-x:hover{background:rgba(255,255,255,.15)}
+.sv-x svg{width:20px;height:20px}
+.sv-body{width:100%;height:100%;position:relative}
+.sv-slide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .15s}
+.sv-slide.on{opacity:1;pointer-events:all}
+.sv-slide img{width:100%;height:100%;object-fit:cover}
+.sv-slide-txt{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:28px}
+.sv-slide-txt p{font-size:1.05rem;line-height:1.6;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.6);background:rgba(0,0,0,.25);padding:16px 20px;border-radius:14px;backdrop-filter:blur(6px)}
+.sv-tap-l,.sv-tap-r{position:absolute;top:0;bottom:72px;width:40%;z-index:3;cursor:pointer}
+.sv-tap-l{left:0}.sv-tap-r{right:0}
+.sv-bottom{position:absolute;bottom:0;left:0;right:0;padding:14px;display:flex;gap:10px;align-items:center;z-index:5;background:linear-gradient(to top,rgba(0,0,0,.5),transparent)}
+.sv-reply{flex:1;padding:10px 16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:24px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none;backdrop-filter:blur(4px)}
+.sv-reply::placeholder{color:rgba(255,255,255,.45)}
+.sv-send{width:38px;height:38px;border-radius:50%;background:var(--v);border:none;cursor:pointer;display:grid;place-items:center;flex-shrink:0;transition:background .2s}
+.sv-send:hover{background:var(--b)}
+.sv-send svg{width:15px;height:15px;color:#fff}
+.sv-nav-prev,.sv-nav-next{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;backdrop-filter:blur(4px);transition:background .2s;z-index:6}
+.sv-nav-prev{left:-56px}.sv-nav-next{right:-56px}
+.sv-nav-prev:hover,.sv-nav-next:hover{background:rgba(255,255,255,.25)}
+.sv-nav-prev svg,.sv-nav-next svg{width:20px;height:20px}
+
+/* ═══ COMPOSE ═══ */
+.compose{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px;margin-bottom:16px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cmp-top{display:flex;gap:12px;align-items:flex-start}
+.cmp-ava{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:#fff}
+.cmp-right{flex:1;min-width:0;position:relative}
+.cmp-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:12px;padding:10px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;resize:none;outline:none;min-height:44px;max-height:200px;transition:border-color .2s,box-shadow .2s}
+.cmp-ta:focus{border-color:var(--vl);box-shadow:0 0 0 3px rgba(124,58,237,.13)}
+.cmp-ta::placeholder{color:var(--mu2)}
+.cmp-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.ci-w{position:relative;border-radius:10px;overflow:hidden;width:76px;height:76px;flex-shrink:0}
+.ci-w img{width:100%;height:100%;object-fit:cover}
+.ci-rm{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.75);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;font-size:9px;transition:background .2s}
+.ci-rm:hover{background:#dc2626}
+.cmp-bar{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--br2)}
+.cmp-tools{display:flex;gap:2px}
+.cmp-tool{width:32px;height:32px;border-radius:8px;background:none;border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .18s}
+.cmp-tool:hover{background:rgba(124,58,237,.14);color:var(--vl)}
+.cmp-tool svg{width:16px;height:16px}
+.cmp-right-bar{display:flex;align-items:center;gap:10px}
+.cmp-cnt{font-size:.74rem;color:var(--mu2)}
+.btn-post{padding:8px 20px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;transition:opacity .2s,transform .15s;box-shadow:0 2px 12px rgba(124,58,237,.32)}
+.btn-post:hover{opacity:.9;transform:translateY(-1px)}
+.btn-post:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.ac-box{position:absolute;background:var(--s3);border:1px solid var(--br);border-radius:12px;padding:6px;min-width:180px;z-index:60;box-shadow:0 8px 28px rgba(0,0,0,.5);top:calc(100% + 4px);left:0}
+.ac-it{padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.84rem;color:var(--tx);transition:background .12s;display:flex;align-items:center;gap:8px}
+.ac-it:hover,.ac-it.sel{background:rgba(124,58,237,.2);color:var(--vl)}
+
+/* ═══ FEED TABS ═══ */
+.ftabs{display:flex;gap:4px;margin-bottom:14px;background:var(--s2);border:1px solid var(--br);border-radius:14px;padding:5px}
+.ftab{flex:1;padding:8px;border-radius:10px;border:none;cursor:pointer;background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;transition:all .18s}
+.ftab.on{background:rgba(124,58,237,.2);color:var(--vl)}
+.ftab:hover:not(.on){color:var(--tx)}
+
+/* ═══ POST ═══ */
+.post{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px;margin-bottom:12px;animation:fadeUp .4s cubic-bezier(.22,1,.36,1) both;transition:border-color .2s}
+.post:hover{border-color:rgba(124,58,237,.36)}
+.ph{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.pa{width:42px;height:42px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;cursor:pointer;transition:transform .15s}
+.pa:hover{transform:scale(1.05)}
+.pm{flex:1;min-width:0}
+.pn{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;display:flex;align-items:center;gap:5px;cursor:pointer}
+.pn:hover{color:var(--vl)}
+.pt{font-size:.75rem;color:var(--mu)}
+.pmenu-wrap{position:relative}
+.pmenu-btn{background:none;border:none;cursor:pointer;color:var(--mu);padding:4px;border-radius:6px;transition:all .18s}
+.pmenu-btn:hover{background:rgba(255,255,255,.06);color:var(--tx)}
+.pmenu-btn svg{width:16px;height:16px;display:block}
+.pdrop{position:absolute;right:0;top:30px;z-index:50;background:var(--s3);border:1px solid var(--br);border-radius:12px;padding:6px;min-width:160px;box-shadow:0 8px 28px rgba(0,0,0,.5);animation:dropIn .12s ease}
+@keyframes dropIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.pd-it{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--tx);transition:background .12s}
+.pd-it:hover{background:rgba(124,58,237,.14);color:var(--vl)}
+.pd-it.red:hover{background:rgba(248,113,113,.12);color:var(--er)}
+.pd-it svg{width:14px;height:14px;flex-shrink:0}
+.pbody{font-size:.9rem;line-height:1.68;color:var(--tx);margin-bottom:12px}
+.pbody .tag{color:var(--vl);cursor:pointer;font-weight:500}.pbody .tag:hover{text-decoration:underline}
+.pbody .mention{color:var(--bl);cursor:pointer}.pbody .mention:hover{text-decoration:underline}
+.pimgs{display:grid;gap:4px;margin-bottom:12px;border-radius:12px;overflow:hidden}
+.pimgs.i1{grid-template-columns:1fr}.pimgs.i2{grid-template-columns:1fr 1fr}.pimgs.i3{grid-template-columns:1fr 1fr}.pimgs.i4{grid-template-columns:1fr 1fr}
+.pimg{width:100%;object-fit:cover;cursor:pointer;transition:opacity .2s;border-radius:3px}
+.pimgs.i1 .pimg{max-height:320px;border-radius:12px}
+.pimgs.i2 .pimg{height:180px}
+.pimgs.i3 .pimg:first-child{grid-row:span 2;height:230px}
+.pimgs.i3 .pimg:not(:first-child){height:112px}
+.pimgs.i4 .pimg{height:130px}
+.pimg:hover{opacity:.86}
+.pacts{display:flex;gap:2px}
+.pact{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:8px;border:none;cursor:pointer;background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.79rem;transition:all .18s}
+.pact svg{width:15px;height:15px;flex-shrink:0}
+.pact:hover{background:rgba(124,58,237,.1);color:var(--vl)}
+.pact.liked{color:var(--pk)}.pact.liked:hover{background:rgba(244,114,182,.1)}
+.pact.rp{color:var(--gn)}.pact.rp:hover{background:rgba(52,211,153,.1)}
+.pact.bm{color:#FBBF24}.pact.bm:hover{background:rgba(251,191,36,.1)}
+@keyframes hpop{0%{transform:scale(1)}40%{transform:scale(1.45)}70%{transform:scale(.9)}100%{transform:scale(1)}}
+.hpop{animation:hpop .3s ease}
+
+/* ═══ COMMENTS ═══ */
+.cs{border-top:1px solid var(--br2);margin-top:12px;padding-top:12px;display:none}
+.cs.on{display:block}
+.cs-sort{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cs-sort span{font-size:.76rem;color:var(--mu)}
+.sbtns{display:flex;gap:4px}
+.sbtn{padding:4px 10px;border-radius:8px;border:1px solid var(--br2);background:none;color:var(--mu);font-size:.7rem;cursor:pointer;transition:all .18s}
+.sbtn.on{border-color:var(--vl);color:var(--vl);background:rgba(124,58,237,.1)}
+.cc{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.cca{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.68rem;color:#fff}
+.ccw{flex:1;position:relative}
+.cci{width:100%;padding:8px 38px 8px 12px;background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:20px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;transition:all .2s;resize:none}
+.cci:focus{border-color:var(--vl);box-shadow:0 0 0 2px rgba(124,58,237,.14)}
+.cci::placeholder{color:var(--mu2)}
+.ccs{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--mu);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;transition:all .18s}
+.ccs:hover{background:rgba(124,58,237,.2);color:var(--vl)}
+.ccs svg{width:13px;height:13px}
+.cmt{display:flex;gap:10px;margin-bottom:10px;animation:fadeUp .25s ease}
+.cmtb{flex:1;min-width:0}
+.cmtbub{background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:0 13px 13px 13px;padding:9px 13px;margin-bottom:3px}
+.cmtan{font-family:'Syne',sans-serif;font-weight:700;font-size:.76rem;color:#fff;margin-bottom:2px}
+.cmtxt{font-size:.83rem;line-height:1.5;color:var(--tx)}
+.cmtxt .tag{color:var(--vl)}
+.cmtmeta{display:flex;align-items:center;gap:8px;padding:0 2px}
+.cmttm{font-size:.68rem;color:var(--mu2)}
+.clbtn{display:flex;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--mu);font-size:.7rem;padding:0;transition:color .18s}
+.clbtn:hover,.clbtn.on{color:var(--pk)}
+.clbtn svg{width:10px;height:10px}
+.rbtn{background:none;border:none;cursor:pointer;color:var(--mu);font-size:.7rem;font-weight:500;padding:0;transition:color .18s}
+.rbtn:hover{color:var(--vl)}
+.cdel{background:none;border:none;cursor:pointer;color:var(--mu2);font-size:.68rem;margin-left:auto;padding:0;transition:color .18s}
+.cdel:hover{color:var(--er)}
+.reps{margin-left:40px;border-left:2px solid var(--br);padding-left:12px;margin-top:4px}
+.rbox{display:none;margin-top:6px}
+.rbox.on{display:flex;gap:8px;align-items:flex-start}
+.ri{flex:1;padding:7px 12px;background:rgba(255,255,255,.04);border:1px solid var(--br2);border-radius:14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;resize:none;transition:all .2s}
+.ri:focus{border-color:var(--vl)}
+.ri::placeholder{color:var(--mu2)}
+.rbsend{padding:7px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-size:.76rem;font-weight:600;cursor:pointer;font-family:'Syne',sans-serif;white-space:nowrap}
+
+/* ═══ RIGHT COLUMN ═══ */
+.right-col{display:flex;flex-direction:column;gap:14px;position:sticky;top:70px;align-self:flex-start;max-height:calc(100vh - 90px);overflow-y:auto}
+.widget{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px}
+.wt{font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.wt svg{width:14px;height:14px;color:var(--vl)}
+.tr-it{padding:7px 0;cursor:pointer;border-bottom:1px solid var(--br2);transition:padding-left .18s}
+.tr-it:last-child{border-bottom:none;padding-bottom:0}
+.tr-it:first-child{padding-top:0}
+.tr-it:hover{padding-left:4px}
+.tr-tag{font-size:.81rem;font-weight:600;color:var(--vl)}
+.tr-cnt{font-size:.7rem;color:var(--mu)}
+.sg-it{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--br2)}
+.sg-it:last-child{border-bottom:none;padding-bottom:0}
+.sg-it:first-child{padding-top:0}
+.sg-a{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.74rem;color:#fff}
+.sg-inf{flex:1;min-width:0}
+.sg-nm{font-size:.81rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sg-hd{font-size:.7rem;color:var(--mu)}
+.btn-flw{padding:5px 12px;border-radius:8px;border:1px solid var(--br);background:none;color:var(--vl);font-size:.73rem;font-weight:600;cursor:pointer;transition:all .18s;white-space:nowrap}
+.btn-flw:hover{background:rgba(124,58,237,.2);border-color:var(--vl)}
+.btn-flw.on{color:var(--mu);border-color:var(--br2)}
+.btn-flw.on:hover{color:var(--er);border-color:var(--er);background:rgba(248,113,113,.08)}
+
+/* ═══ LIGHTBOX ═══ */
+.lb{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.92);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain}
+.lb-x{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;transition:background .2s}
+.lb-x:hover{background:rgba(255,255,255,.2)}
+.lb-x svg{width:18px;height:18px}
+
+/* ═══ EDIT MODAL ═══ */
+.ov{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
+.ov.open{opacity:1;pointer-events:all}
+.modal{background:var(--s3);border:1px solid var(--br);border-radius:20px;width:min(500px,100%);padding:26px;transform:translateY(20px) scale(.97);transition:transform .22s cubic-bezier(.22,1,.36,1)}
+.ov.open .modal{transform:translateY(0) scale(1)}
+.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.mhtit{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff}
+.mx{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.06);border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .18s}
+.mx:hover{background:rgba(248,113,113,.14);color:var(--er)}
+.mx svg{width:13px;height:13px}
+.mta{width:100%;min-height:96px;padding:12px;resize:none;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:11px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:all .2s}
+.mta:focus{border-color:var(--vl);box-shadow:0 0 0 3px rgba(124,58,237,.13)}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.btn-mc{padding:9px 18px;border-radius:10px;border:1px solid var(--br2);background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer;transition:all .18s}
+.btn-mc:hover{color:var(--tx);border-color:var(--mu)}
+.btn-ms{padding:9px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+.btn-ms:hover{opacity:.9}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(14px);padding:11px 22px;border-radius:13px;font-family:'Syne',sans-serif;font-weight:600;font-size:.84rem;color:#fff;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);z-index:9999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none;background:linear-gradient(135deg,var(--v),var(--b))}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.empty-f{text-align:center;padding:50px 0;color:var(--mu)}
+.empty-f svg{width:40px;height:40px;margin:0 auto 12px;display:block;opacity:.3}
+
+@media(max-width:1300px){.content-wrap{grid-template-columns:1fr 220px}}
+@media(max-width:900px){.content-wrap{grid-template-columns:1fr}.right-col{display:none}}
+@media(max-width:860px){:root{--nav-w:68px} .sn-item-label,.sn-label,.sn-user-info,.sn-logo-text,.sn-online{opacity:0;pointer-events:none}}
+@media(max-width:600px){
+  :root{--nav-w:0px}
+  .sidenav{display:none}
+  .main{margin-left:0}
+  .topbar{padding:0 12px}
+  .topbar-search input{font-size:.85rem}
+  .content-wrap{padding:0}
+  .feed-col{padding:0}
+  .pcard{border-radius:0;border-left:none;border-right:none;margin-bottom:1px}
+  .stories-row{padding:10px 12px}
+  .main{padding-bottom:64px}
+  .mob-nav{display:flex!important}
+  /* Скрыть десктопный compose, показать FAB */
+  .compose{display:none}
+  .mob-fab{display:flex!important}
+  /* Полноэкранный modal compose */
+  .mob-compose-modal{display:none}
+  .mob-compose-modal.open{display:flex}
+}
+.mob-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  height:60px;
+  background:var(--s1);
+  border-top:1px solid var(--br);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  align-items:center;justify-content:space-around;
+  padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.mob-nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  flex:1;height:100%;justify-content:center;
+  color:var(--mu);cursor:pointer;transition:color .18s;
+  text-decoration:none;position:relative;
+  font-size:.6rem;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.01em;
+}
+.mob-nav-btn.active{color:var(--vl)}
+.mob-nav-btn svg{width:21px;height:21px}
+.mob-nav-btn span{line-height:1}
+.mob-nav-badge{position:absolute;top:7px;right:calc(50% - 19px);min-width:14px;height:14px;border-radius:7px;background:var(--er);color:#fff;font-size:.54rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 2px;border:2px solid var(--bg)}
+.mob-nav-btn.active svg{stroke:var(--vl)}
+
+
+
+/* ── Двойной тап: анимация сердечка ── */
+@keyframes heartPop{0%{transform:translate(-50%,-50%) scale(0);opacity:1}50%{transform:translate(-50%,-50%) scale(1.3);opacity:1}80%{transform:translate(-50%,-50%) scale(1);opacity:.9}100%{transform:translate(-50%,-50%) scale(1.5);opacity:0}}
+.heart-anim{position:absolute;font-size:64px;pointer-events:none;z-index:99;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);animation:heartPop .65s ease forwards;user-select:none}
+.pcard{position:relative}
+
+
+/* ── FAB кнопка (мобиле) ── */
+.mob-fab{
+  display:none;
+  position:fixed;bottom:76px;right:18px;z-index:190;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--v),var(--b));
+  border:none;cursor:pointer;color:#fff;
+  align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(124,58,237,.45);
+  transition:transform .2s,box-shadow .2s;
+}
+.mob-fab:active{transform:scale(.92)}
+.mob-fab svg{width:22px;height:22px}
+
+/* ── Mobile compose modal ── */
+.mob-compose-modal{
+  position:fixed;inset:0;z-index:500;
+  flex-direction:column;
+  background:var(--bg);
+  animation:slideUp .25s cubic-bezier(.22,1,.36,1);
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mob-compose-modal.closing{animation:slideDown .2s ease forwards}
+@keyframes slideDown{from{transform:translateY(0)}to{transform:translateY(100%)}}
+.mcm-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;
+  border-bottom:1px solid var(--br);
+  flex-shrink:0;
+}
+.mcm-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem}
+.mcm-cancel{background:none;border:none;color:var(--mu);font-size:.9rem;cursor:pointer;padding:6px 10px;font-family:'DM Sans',sans-serif}
+.mcm-post-btn{background:linear-gradient(135deg,var(--v),var(--b));border:none;color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;padding:7px 18px;border-radius:10px;cursor:pointer}
+.mcm-post-btn:disabled{opacity:.35;cursor:default}
+.mcm-body{flex:1;overflow-y:auto;padding:16px}
+.mcm-ava-row{display:flex;gap:12px;align-items:flex-start;margin-bottom:4px}
+.mcm-ava{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;flex-shrink:0}
+.mcm-ta{width:100%;background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:1rem;line-height:1.6;resize:none;min-height:120px;padding-top:4px}
+.mcm-ta::placeholder{color:var(--mu2)}
+.mcm-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.mcm-footer{
+  border-top:1px solid var(--br);padding:10px 16px;
+  display:flex;align-items:center;gap:4px;
+  background:var(--s1);flex-shrink:0;
+  padding-bottom:max(10px,env(safe-area-inset-bottom));
+}
+.mcm-tool{width:36px;height:36px;border-radius:9px;background:none;border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center;transition:all .15s}
+.mcm-tool:active{background:rgba(124,58,237,.14);color:var(--vl)}
+.mcm-tool svg{width:18px;height:18px}
+.mcm-cnt{margin-left:auto;font-size:.72rem;color:var(--mu2);font-family:'Syne',sans-serif}
+
+/* ── Skeleton loading ── */
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.skeleton{animation:shimmer 1.4s infinite linear;background:linear-gradient(90deg,var(--s3) 25%,var(--s2) 50%,var(--s3) 75%);background-size:800px 100%;border-radius:6px}
+.sk-card{background:var(--s2);border:1px solid var(--br);border-radius:16px;padding:16px;margin-bottom:12px}
+.sk-header{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.sk-ava{width:40px;height:40px;border-radius:50%;flex-shrink:0}
+.sk-line{height:12px;margin-bottom:6px;border-radius:6px}
+.sk-body{height:72px;border-radius:10px;margin-bottom:10px}
+.sk-footer{display:flex;gap:12px}
+.sk-foot-btn{height:10px;width:50px;border-radius:6px}
+
+/* ── THEME VARIANTS ──────────────────────────────────── */
+body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
+body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
+
+/* ── PWA Install Banner ── */
+.pwa-banner{position:fixed;bottom:70px;left:12px;right:12px;z-index:300;background:linear-gradient(135deg,var(--v),var(--b));border-radius:16px;padding:14px 16px;display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(124,58,237,.4);animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.pwa-banner.show{display:flex}
+.pwa-banner-icon{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex-shrink:0;font-size:1.3rem}
+.pwa-banner-text{flex:1;min-width:0}
+.pwa-banner-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.88rem;color:#fff}
+.pwa-banner-sub{font-size:.73rem;color:rgba(255,255,255,.75);margin-top:2px}
+.pwa-banner-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:7px 14px;border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;white-space:nowrap;transition:background .15s}
+.pwa-banner-btn:hover{background:rgba(255,255,255,.3)}
+.pwa-banner-close{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;padding:4px;font-size:1rem;flex-shrink:0}
+@media(min-width:601px){.pwa-banner{left:auto;right:20px;max-width:340px;bottom:20px}}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  try{
+    var p=JSON.parse(localStorage.getItem('weave_prefs')||'{}');
+    var t=p.theme||'light';
+    if(t==='light')  document.body.classList.add('light');
+    if(t==='amoled') document.body.classList.add('amoled');
+    var ac={purple:{v:'#7C3AED',vl:'#A78BFA',vd:'#4C1D95',b:'#2563EB',bl:'#60A5FA'},pink:{v:'#DB2777',vl:'#F472B6',vd:'#831843',b:'#9333EA',bl:'#C084FC'},teal:{v:'#059669',vl:'#34D399',vd:'#064E3B',b:'#0EA5E9',bl:'#38BDF8'},orange:{v:'#D97706',vl:'#FBBF24',vd:'#78350F',b:'#DC2626',bl:'#F87171'},blue:{v:'#2563EB',vl:'#60A5FA',vd:'#1E3A8A',b:'#06B6D4',bl:'#22D3EE'},green:{v:'#16A34A',vl:'#4ADE80',vd:'#14532D',b:'#84CC16',bl:'#BEF264'},red:{v:'#DC2626',vl:'#F87171',vd:'#7F1D1D',b:'#F97316',bl:'#FDBA74'}};
+    var a=ac[p.accent]||ac.purple;
+    var r=document.documentElement;
+    r.style.setProperty('--v',a.v);r.style.setProperty('--vl',a.vl);r.style.setProperty('--vd',a.vd);r.style.setProperty('--b',a.b);r.style.setProperty('--bl',a.bl);
+    if(p.fontSize)document.body.style.fontSize=p.fontSize+'px';
+  }catch(e){}
+})();
+</script>
+
+<!-- ═══ SIDENAV ═══ -->
+<nav class="sidenav" id="sidenav">
+  <a class="sn-logo" href="feed.html">
+    <div class="sn-logo-icon">W</div>
+    <span class="sn-logo-text">Weave<span>.</span></span>
+  </a>
+
+  <a class="sn-user" href="profile.html" id="sn-user-card">
+    <div class="sn-ava" id="sn-ava">?</div>
+    <div class="sn-user-info">
+      <div class="sn-user-name" id="sn-name">Загрузка…</div>
+      <div class="sn-user-handle" id="sn-handle">@…</div>
+    </div>
+    <div class="sn-online"></div>
+  </a>
+
+  <div class="sn-section">
+    <div class="sn-item active" onclick="window.location.href='feed.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sn-item-label">Лента</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='explore.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span class="sn-item-label">Поиск</span>
+    </div>
+    <div class="sn-item" id="msg-nav" onclick="window.location.href='messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="sn-item-label">Сообщения</span>
+      <span class="sn-badge sn-item-label" id="msg-badge" style="display:none">0</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="sn-item-label">Настройки</span>
+    </div>
+    <div class="sn-item" id="bm-nav" onclick="switchTab(null,'bookmarks')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <span class="sn-item-label">Закладки</span>
+      <span class="sn-badge sn-item-label" id="bm-badge" style="display:none">0</span>
+    </div>
+  </div>
+
+  <div class="sn-divider"></div>
+
+  <div class="sn-section">
+    <div class="sn-label sn-item-label">Профиль</div>
+    <div class="sn-item" onclick="window.location.href='profile.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="sn-item-label">Мой профиль</span>
+    </div>
+    <div class="sn-item" id="nav-admin" style="display:none" onclick="window.location.href='admin.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="sn-item-label">Админка</span>
+    </div>
+    <div class="sn-item" onclick="handleLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="sn-item-label">Выйти</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="srch" placeholder="Поиск постов, людей, тегов…" oninput="doSearch(this.value)"/>
+    </div>
+    <div class="topbar-actions">
+      <div class="tb-btn" onclick="window.location.href='notifications.html'" title="Уведомления" style="position:relative" id="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span id="notif-badge" style="display:none;position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--er);color:#fff;font-size:.6rem;font-weight:800;font-family:'Syne',sans-serif;display:none;align-items:center;justify-content:center;border:2px solid var(--bg)"></span>
+      </div>
+<div class="tb-btn" onclick="window.location.href='messages.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+    <div><!-- FEED COL -->
+
+      <!-- STORIES -->
+      <div class="stories-row">
+        <div class="stories-scroll" id="stories-scroll"></div>
+      </div>
+
+      <!-- COMPOSE -->
+      <div class="compose">
+        <div class="cmp-top">
+          <div class="cmp-ava" id="cmp-ava">?</div>
+          <div class="cmp-right">
+            <textarea class="cmp-ta" id="cmp-ta" placeholder="Что у тебя на уме? # для тегов, @ для упоминаний" rows="1"
+              oninput="onCmpInput(this)" onkeydown="onCmpKey(event)" maxlength="500"></textarea>
+            <div id="ac-wrap" style="display:none;position:absolute;top:calc(100%+4px);left:0;right:0;z-index:60"></div>
+            <div class="cmp-imgs" id="cmp-imgs"></div>
+          </div>
+        </div>
+        <div class="cmp-bar">
+          <div class="cmp-tools">
+            <button class="cmp-tool" title="Фото" onclick="document.getElementById('fu').click()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </button>
+            <button class="cmp-tool" title="Эмодзи" onclick="addEmoji()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </button>
+            <button class="cmp-tool" title="Место" onclick="addLocation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </button>
+          </div>
+          <div class="cmp-right-bar">
+            <span class="cmp-cnt" id="cmp-cnt">500</span>
+            <span id="char-count" style="font-size:.75rem;color:var(--mu);margin-right:auto;align-self:center"></span><button class="btn-post" id="btn-post" onclick="publish()" disabled>Опубликовать</button>
+          </div>
+        </div>
+        <input type="file" id="fu" accept="image/*" multiple style="display:none" onchange="onImgUpload(this)"/>
+      </div>
+
+      <!-- TABS -->
+      <div class="ftabs">
+        <button class="ftab on" id="tab-all" onclick="switchTab(this,'all')">Все</button>
+        <button class="ftab" id="tab-following" onclick="switchTab(this,'following')">Подписки</button>
+        <button class="ftab" id="tab-trending" onclick="switchTab(this,'trending')">Популярное</button>
+        <button class="ftab" id="tab-bookmarks" onclick="switchTab(this,'bookmarks')">Закладки</button>
+      </div>
+
+      <div id="feed"></div>
+    </div>
+
+    <!-- RIGHT COL -->
+    <div class="right-col">
+      <div class="widget">
+        <div class="wt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>Тренды</div>
+        <div id="trends"></div>
+      </div>
+      <div class="widget">
+        <div class="wt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Кого читать</div>
+        <div id="suggs"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STORY VIEWER -->
+<div class="sv" id="sv">
+  <button class="sv-nav-prev" onclick="prevStory()" id="sv-prev">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <div class="sv-card">
+    <div class="sv-prog" id="sv-prog"></div>
+    <div class="sv-top">
+      <div class="sv-who">
+        <div class="sv-a" id="sv-a"></div>
+        <div>
+          <div class="sv-nm" id="sv-nm"></div>
+          <div class="sv-tm" id="sv-tm"></div>
+        </div>
+      </div>
+      <button class="sv-x" onclick="closeSV(event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="sv-body" id="sv-body"></div>
+    <div class="sv-tap-l" onclick="prevSlide(event)"></div>
+    <div class="sv-tap-r" onclick="nextSlide(event)"></div>
+    <div class="sv-bottom">
+      <input class="sv-reply" id="sv-ri" placeholder="Ответить на историю…"
+        onkeydown="if(event.key==='Enter'){sendSVReply();event.stopPropagation()}"
+        onclick="event.stopPropagation()"/>
+      <button class="sv-send" onclick="sendSVReply();event.stopPropagation()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+  <button class="sv-nav-next" onclick="nextStory()" id="sv-next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLB()">
+  <button class="lb-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="ov" id="edit-ov" onclick="if(event.target===this)closeEdit()">
+  <div class="modal">
+    <div class="mh">
+      <div class="mhtit">Редактировать пост</div>
+      <button class="mx" onclick="closeEdit()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <textarea class="mta" id="edit-ta" maxlength="500" oninput="document.getElementById('edit-ch').textContent=(500-this.value.length)+' симв.'"></textarea>
+    <div style="text-align:right;font-size:.71rem;color:var(--mu2);margin-top:4px" id="edit-ch">500 симв.</div>
+    <div class="mf">
+      <button class="btn-mc" onclick="closeEdit()">Отмена</button>
+      <button class="btn-ms" onclick="saveEdit()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ==================== API КЛИЕНТ ====================
+const API = {
+  baseURL: '/api',
+  
+  getToken() {
+    return localStorage.getItem('weave_token') || sessionStorage.getItem('weave_token');
+  },
+  
+  async request(endpoint, options = {}) {
+    const token = this.getToken();
+    const res = await fetch(`${this.baseURL}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+        ...options.headers
+      }
+    });
+    
+    if (!res.ok) {
+      if (res.status === 401) {
+        // Токен истек, перенаправляем на логин
+        localStorage.removeItem('weave_token');
+        sessionStorage.removeItem('weave_token');
+        window.location.href = 'login.html';
+        throw new Error('Сессия истекла');
+      }
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.error || 'Ошибка запроса');
+    }
+    
+    return res.json();
+  },
+  
+  // Посты
+  async getPosts(tab = 'all', offset = 0, limit = 20) {
+    const uid = this.me?.id || '';
+    return this.request(`/posts?tab=${tab}&userId=${uid}&offset=${offset}&limit=${limit}`);
+  },
+  
+  async createPost(data) {
+    return this.request('/posts', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  async updatePost(id, data) {
+    return this.request(`/posts/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  async deletePost(id) {
+    return this.request(`/posts/${id}`, { method: 'DELETE' });
+  },
+  
+  async likePost(postId) {
+    return this.request(`/posts/${postId}/like`, { method: 'POST' });
+  },
+  
+  async bookmarkPost(postId) {
+    return this.request(`/posts/${postId}/bookmark`, { method: 'POST' });
+  },
+  
+  // Комментарии
+  async getComments(postId) {
+    return this.request(`/posts/${postId}/comments`);
+  },
+  
+  async createComment(data) {
+    return this.request('/comments', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  async deleteComment(commentId) {
+    return this.request(`/comments/${commentId}`, { method: 'DELETE' });
+  },
+  
+  // Истории
+  async getStories() {
+    return this.request('/stories');
+  },
+  
+  async createStory(slides) {
+    return this.request('/stories', {
+      method: 'POST',
+      body: JSON.stringify({ slides })
+    });
+  },
+  
+  async viewStory(storyId) {
+    return this.request(`/stories/${storyId}/view`, { method: 'POST' });
+  },
+  
+  // Профиль
+  async getUserProfile(username) {
+    return this.request(`/users/${username}`);
+  },
+  
+  async updateProfile(data) {
+    return this.request('/users/profile', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
+  },
+  
+  async followUser(userId) {
+    return this.request(`/users/${userId}/follow`, { method: 'POST' });
+  },
+  
+  async getFollowers(userId) {
+    return this.request(`/users/${userId}/followers`);
+  },
+  
+  async getFollowing(userId) {
+    return this.request(`/users/${userId}/following`);
+  },
+  
+  // Поиск
+  async search(query, type = 'all') {
+    return this.request(`/search?q=${encodeURIComponent(query)}&type=${type}`);
+  },
+  
+  // Сообщения
+  async getChats() {
+    return this.request('/chats');
+  },
+  
+  async getMessages(userId) {
+    return this.request(`/messages/${userId}`);
+  },
+  
+  async sendMessage(toId, text) {
+    return this.request('/messages', {
+      method: 'POST',
+      body: JSON.stringify({ toId, text })
+    });
+  },
+  
+  // Админка
+  async getMe() {
+    return this.request('/users/me');
+  },
+  
+  async getAdminUsers() {
+    return this.request('/admin/users');
+  },
+  
+  async setModerator(userId, isModerator) {
+    return this.request(`/admin/users/${userId}/moderator`, {
+      method: 'POST',
+      body: JSON.stringify({ isModerator })
+    });
+  },
+  
+  async setBan(userId, isBanned) {
+    return this.request(`/admin/users/${userId}/ban`, {
+      method: 'POST',
+      body: JSON.stringify({ isBanned })
+    });
+  }
+};
+
+// ==================== СОСТОЯНИЕ ====================
+let user = null;
+let posts = [];
+let postsOffset = 0;
+let postsTotal = 0;
+let postsLoading = false;
+let stories = [];
+let currentTab = 'all';
+let following = new Set();
+let editId = null;
+let pendImgs = [];
+let adminUsers = [];
+let adminPosts = [];
+
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadUser();
+  await Promise.all([
+    loadPosts(),
+    loadStories(),
+    loadTrends(),
+    loadSuggestions()
+  ]);
+  
+  document.addEventListener('click', closeDrops);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeEdit();
+      closeLB();
+      closeDrops();
+      closeSV();
+    }
+  });
+});
+
+async function loadUser() {
+  try {
+    const token = API.getToken();
+    if (!token) {
+      window.location.href = 'login.html';
+      return;
+    }
+    // Загружаем текущего пользователя с сервера, чтобы получить флаги isAdmin/isModerator/isBanned
+    user = await API.getMe();
+    localStorage.setItem('weave_current_user', JSON.stringify(user));
+    updateUserUI();
+    updateAdminNav();
+  } catch (error) {
+    console.error('Ошибка загрузки пользователя:', error);
+    showToast('Ошибка авторизации');
+  }
+}
+
+function updateUserUI() {
+  if (!user) return;
+  
+  const initials = ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() || '?';
+  const colors = [
+    'linear-gradient(135deg,#7C3AED,#2563EB)',
+    'linear-gradient(135deg,#DB2777,#7C3AED)',
+    'linear-gradient(135deg,#059669,#2563EB)',
+    'linear-gradient(135deg,#D97706,#DB2777)',
+    'linear-gradient(135deg,#06B6D4,#7C3AED)',
+    'linear-gradient(135deg,#7C3AED,#06B6D4)'
+  ];
+  const bg = colors[user.avatarColor || 0];
+  
+  ['sn-ava', 'cmp-ava'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = initials;
+      el.style.background = bg;
+    }
+  });
+  
+  document.getElementById('sn-name').textContent = `${user.firstName} ${user.lastName || ''}`.trim();
+  document.getElementById('sn-handle').textContent = `@${user.username}`;
+}
+
+function updateAdminNav() {
+  const el = document.getElementById('nav-admin');
+  if (!el) return;
+  const isPrivileged = !!(user && (user.isAdmin || user.isModerator));
+  el.style.display = isPrivileged ? 'flex' : 'none';
+}
+
+// ==================== ПОСТЫ ====================
+
+function showSkeletons(n=3){
+  const container=document.getElementById('feed');
+  if(!container)return;
+  container.innerHTML=Array.from({length:n},()=>`
+    <div class="sk-card">
+      <div class="sk-header">
+        <div class="sk-ava skeleton"></div>
+        <div style="flex:1">
+          <div class="sk-line skeleton" style="width:40%"></div>
+          <div class="sk-line skeleton" style="width:25%;margin-top:4px"></div>
+        </div>
+      </div>
+      <div class="sk-line skeleton" style="width:90%"></div>
+      <div class="sk-line skeleton" style="width:70%;margin-bottom:10px"></div>
+      <div class="sk-body skeleton"></div>
+      <div class="sk-footer">
+        <div class="sk-foot-btn skeleton"></div>
+        <div class="sk-foot-btn skeleton"></div>
+        <div class="sk-foot-btn skeleton"></div>
+      </div>
+    </div>`).join('');
+}
+async function loadPosts(reset = true) {
+  if (postsLoading) return;
+  postsLoading = true;
+  if (reset) { posts = []; postsOffset = 0; postsTotal = 0; showSkeletons(3); }
+  try {
+    const data = await API.getPosts(currentTab, postsOffset, 20);
+    const newPosts = data.posts || data; // совместимость
+    if (reset) posts = newPosts;
+    else posts = [...posts, ...newPosts];
+    postsTotal = data.total || newPosts.length;
+    postsOffset = posts.length;
+    renderFeed();
+    updateBMBadge();
+    renderLoadMore();
+  } catch (error) {
+    console.error('Ошибка загрузки постов:', error);
+    showToast('Не удалось загрузить посты');
+  } finally {
+    postsLoading = false;
+  }
+}
+
+function renderLoadMore() {
+  const existing = document.getElementById('load-more-btn');
+  if (existing) existing.remove();
+  if (posts.length < postsTotal) {
+    const btn = document.createElement('div');
+    btn.id = 'load-more-btn';
+    btn.style.cssText = 'text-align:center;padding:20px 0;';
+    btn.innerHTML = `<button onclick="loadPosts(false)" style="background:var(--s3);border:1px solid var(--br2);color:var(--vl);padding:10px 28px;border-radius:20px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;transition:all .2s" onmouseover="this.style.background='rgba(124,58,237,.15)'" onmouseout="this.style.background='var(--s3)'">Загрузить ещё (${postsTotal - posts.length})</button>`;
+    const feed = document.getElementById('feed');
+    if (feed) feed.after(btn);
+  }
+}
+
+function renderFeed() {
+  const container = document.getElementById('feed');
+  if (!container) return;
+  
+  if (!posts.length) {
+    const messages = {
+      all: 'Постов пока нет',
+      following: 'Подпишись на кого-нибудь',
+      trending: 'Нет постов',
+      bookmarks: 'Нет закладок'
+    };
+    container.innerHTML = `<div class="empty-f">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <p>${messages[currentTab]}</p>
+    </div>`;
+    return;
+  }
+  
+  container.innerHTML = posts.map((post, index) => buildPost(post, index)).join('');
+}
+
+function buildPost(p, index) {
+  const isOwner = p.author?.id === user?.id;
+  const bg = `linear-gradient(135deg,#${p.author?.avatarColor || 0},...)`; // Упрощенно
+  
+  let imgs = '';
+  if (p.images?.length) {
+    const n = Math.min(p.images.length, 4);
+    imgs = `<div class="pimgs i${n}">` + 
+      p.images.slice(0,4).map(src => 
+        `<img class="pimg" src="${src}" onclick="openLB('${src}')" loading="lazy"/>`
+      ).join('') + 
+    '</div>';
+  }
+  
+  return `
+  <div class="post" id="post-${p.id}" style="animation-delay:${index * 0.05}s">
+    <div class="ph">
+      <div class="pa" style="background:${bg}" onclick="window.location.href='profile.html?user=${p.author?.username}'">
+        ${(p.author?.firstName?.[0] || '') + (p.author?.lastName?.[0] || '')}
+      </div>
+      <div class="pm">
+        <div class="pn" onclick="window.location.href='profile.html?user=${p.author?.username}'">
+          ${p.author?.firstName} ${p.author?.lastName || ''}
+          ${p.edited ? '<span style="font-size:.68rem;color:var(--mu2);font-weight:400;margin-left:4px">(изм.)</span>' : ''}
+        </div>
+        <div class="pt">@${p.author?.username} · ${formatTime(p.createdAt)}</div>
+      </div>
+      <div class="pmenu-wrap">
+        <button class="pmenu-btn" onclick="toggleDrop(event, '${p.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/>
+          </svg>
+        </button>
+        <div class="pdrop" id="dd-${p.id}" style="display:none">
+          ${isOwner ? `
+            <div class="pd-it" onclick="openEdit('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>Редактировать
+            </div>
+            <div class="pd-it red" onclick="deletePost('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              </svg>Удалить
+            </div>
+          ` : `
+            <div class="pd-it" onclick="reportPost('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+                <line x1="4" y1="22" x2="4" y2="15"/>
+              </svg>Пожаловаться
+            </div>
+          `}
+          <div class="pd-it" onclick="sharePost('${p.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            </svg>Поделиться
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pbody" id="ptxt-${p.id}" ondblclick="doubleTapLike(event,'${p.id}')" style="cursor:default">${formatText(p.text)}</div>
+    ${imgs}
+    <div class="pacts">
+      <button class="pact ${p.liked ? 'liked' : ''}" onclick="toggleLike('${p.id}', this)">
+        <svg id="ht-${p.id}" viewBox="0 0 24 24" fill="${p.liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <span id="lk-${p.id}">${p.likes}</span>
+      </button>
+      <button class="pact" onclick="toggleComments('${p.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span id="cm-${p.id}">${p.comments}</span>
+      </button>
+      <button class="pact ${p.bookmarked ? 'bm' : ''}" onclick="toggleBookmark('${p.id}', this)">
+        <svg viewBox="0 0 24 24" fill="${p.bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+          <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cs" id="cs-${p.id}">
+      <div class="cs-sort">
+        <span id="ccl-${p.id}">${p.comments || 0} комментариев</span>
+      </div>
+      <div class="cc">
+        <div class="cca" id="cmt-ava-${p.id}"></div>
+        <div class="ccw">
+          <textarea class="cci" id="ci-${p.id}" placeholder="Комментарий…" rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment('${p.id}')}"
+            oninput="grow(this)"></textarea>
+          <button class="ccs" onclick="submitComment('${p.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="comments-${p.id}"></div>
+    </div>
+  </div>`;
+}
+
+function formatText(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/#(\w+)/g, '<span class="tag" onclick="searchTag(\'#$1\')">#$1</span>')
+    .replace(/@(\w+)/g, '<span class="mention" onclick="window.location.href=\'profile.html?user=$1\'">@$1</span>');
+}
+
+function formatTime(isoString) {
+  if (!isoString) return 'только что';
+  const date = new Date(isoString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'только что';
+  if (diffMins < 60) return `${diffMins} мин назад`;
+  if (diffHours < 24) return `${diffHours} ч назад`;
+  if (diffDays < 7) return `${diffDays} дн назад`;
+  return date.toLocaleDateString();
+}
+
+// ==================== ДЕЙСТВИЯ С ПОСТАМИ ====================
+async function toggleLike(postId, btn) {
+  try {
+    const result = await API.likePost(postId);
+    const liked = result.liked;
+    
+    btn.classList.toggle('liked', liked);
+    const svg = btn.querySelector('svg');
+    svg.setAttribute('fill', liked ? 'currentColor' : 'none');
+    
+    const span = document.getElementById(`lk-${postId}`);
+    span.textContent = result.likes;
+    
+    if (liked) {
+      svg.classList.add('hpop');
+      svg.addEventListener('animationend', () => svg.classList.remove('hpop'), { once: true });
+    }
+    
+    // Обновляем в локальном массиве
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      post.liked = liked;
+      post.likes = result.likes;
+    }
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+async function toggleBookmark(postId, btn) {
+  try {
+    const result = await API.bookmarkPost(postId);
+    btn.classList.toggle('bm', result.bookmarked);
+    btn.querySelector('svg').setAttribute('fill', result.bookmarked ? 'currentColor' : 'none');
+    
+    const post = posts.find(p => p.id === postId);
+    if (post) post.bookmarked = result.bookmarked;
+    
+    updateBMBadge();
+    showToast(result.bookmarked ? '🔖 Сохранено' : 'Убрано из закладок');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+async function deletePost(postId) {
+  if (!confirm('Удалить пост?')) return;
+  
+  try {
+    await API.deletePost(postId);
+    
+    const postElement = document.getElementById(`post-${postId}`);
+    if (postElement) {
+      postElement.style.cssText = 'opacity:0;transform:scale(.95);transition:all .22s';
+      setTimeout(() => {
+        posts = posts.filter(p => p.id !== postId);
+        renderFeed();
+      }, 240);
+    }
+    
+    showToast('🗑 Пост удалён');
+    closeDrops();
+  } catch (error) {
+    showToast('Ошибка удаления: ' + error.message);
+  }
+}
+
+// ==================== АДМИН-ПАНЕЛЬ ====================
+function openAdminPanel() {
+  let ov = document.getElementById('admin-panel-ov');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'admin-panel-ov';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:450;background:rgba(0,0,0,.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;';
+    ov.innerHTML = `
+      <div style="background:var(--s2);border-radius:20px;border:1px solid var(--br);width:min(960px,100%);max-height:90vh;overflow:hidden;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--br2)">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff">Админ-панель</div>
+            <div style="font-size:.8rem;color:var(--mu)">Управление пользователями и постами</div>
+          </div>
+          <button onclick="document.getElementById('admin-panel-ov').remove()" style="width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.06);border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center">
+            <svg viewBox="0 0 24 24" width="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div style="display:grid;grid-template-columns:1.1fr 1.2fr;gap:0;border-top:1px solid transparent;flex:1;min-height:0">
+          <div style="border-right:1px solid var(--br2);padding:14px 16px;overflow:auto" id="admin-users-wrap">
+            <div style="font-size:.78rem;color:var(--mu2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Пользователи</div>
+            <div id="admin-users-list" style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;color:var(--tx)">
+              Загрузка пользователей...
+            </div>
+          </div>
+          <div style="padding:14px 16px;overflow:auto" id="admin-posts-wrap">
+            <div style="font-size:.78rem;color:var(--mu2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Последние посты</div>
+            <div id="admin-posts-list" style="display:flex;flex-direction:column;gap:8px;font-size:.84rem;color:var(--tx)">
+              Загрузка постов...
+            </div>
+          </div>
+        </div>
+      </div>`;
+    ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
+    document.body.appendChild(ov);
+  }
+  loadAdminData();
+}
+
+async function loadAdminData() {
+  try {
+    adminUsers = await API.getAdminUsers();
+  } catch (e) {
+    console.error(e);
+    const uel = document.getElementById('admin-users-list');
+    if (uel) uel.textContent = 'Ошибка загрузки пользователей: ' + e.message;
+  }
+  try {
+    adminPosts = await API.getPosts('all');
+  } catch (e) {
+    console.error(e);
+    const pel = document.getElementById('admin-posts-list');
+    if (pel) pel.textContent = 'Ошибка загрузки постов: ' + e.message;
+  }
+  renderAdminUsers();
+  renderAdminPosts();
+}
+
+function renderAdminUsers() {
+  const el = document.getElementById('admin-users-list');
+  if (!el) return;
+  if (!adminUsers.length) {
+    el.textContent = 'Пользователей нет';
+    return;
+  }
+  el.innerHTML = adminUsers.map(u => {
+    const badges = [];
+    if (u.isAdmin) badges.push('<span style="background:#4B5563;color:#fff;font-size:.7rem;padding:2px 6px;border-radius:999px">ADMIN</span>');
+    if (u.isModerator) badges.push('<span style="background:#2563EB;color:#fff;font-size:.7rem;padding:2px 6px;border-radius:999px">MOD</span>');
+    if (u.isBanned) badges.push('<span style="background:#DC2626;color:#fff;font-size:.7rem;padding:2px 6px;border-radius:999px">BANNED</span>');
+    const canToggleMod = user?.isAdmin && u.id !== user.id;
+    const canBan = (user?.isAdmin || user?.isModerator) && u.id !== user.id && (!u.isAdmin || user.isAdmin);
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(148,163,184,.2)">
+        <div style="display:flex;align-items:center;gap:8px;min-width:0">
+          <div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;font-family:'Syne',sans-serif;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;flex-shrink:0">
+            ${(u.firstName?.[0] || '') + (u.lastName?.[0] || '')}
+          </div>
+          <div style="min-width:0">
+            <div style="font-weight:600;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              ${u.firstName} ${u.lastName || ''} <span style="color:var(--mu);font-weight:500">@${u.username}</span>
+            </div>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:2px">
+              ${badges.join(' ')}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">
+          ${canToggleMod ? `
+          <button onclick="toggleModerator('${u.id}', ${u.isModerator})" style="padding:4px 8px;border-radius:8px;border:1px solid var(--br2);background:none;color:var(--tx);font-size:.75rem;cursor:pointer;white-space:nowrap">
+            ${u.isModerator ? 'Снять модератора' : 'Сделать модератором'}
+          </button>` : ''}
+          ${canBan ? `
+          <button onclick="toggleBan('${u.id}', ${u.isBanned})" style="padding:4px 8px;border-radius:8px;border:1px solid ${u.isBanned ? 'var(--br2)' : '#DC2626'};background:none;color:${u.isBanned ? 'var(--mu2)' : '#DC2626'};font-size:.75rem;cursor:pointer;white-space:nowrap">
+            ${u.isBanned ? 'Разблокировать' : 'Забанить'}
+          </button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderAdminPosts() {
+  const el = document.getElementById('admin-posts-list');
+  if (!el) return;
+  if (!adminPosts.length) {
+    el.textContent = 'Постов нет';
+    return;
+  }
+  el.innerHTML = adminPosts.slice(0,50).map(p => `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(148,163,184,.2)" id="admin-post-${p.id}">
+      <div style="display:flex;align-items:flex-start;gap:8px;min-width:0">
+        <div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;font-family:'Syne',sans-serif;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;flex-shrink:0">
+          ${(p.author?.firstName?.[0] || '') + (p.author?.lastName?.[0] || '')}
+        </div>
+        <div style="min-width:0">
+          <div style="font-weight:600;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            ${p.author?.firstName || ''} ${p.author?.lastName || ''} <span style="color:var(--mu);font-weight:500">@${p.author?.username}</span>
+          </div>
+          <div style="font-size:.8rem;color:var(--mu);margin:2px 0">
+            ${formatTime(p.createdAt)} · ❤ ${p.likes} · 💬 ${p.comments || 0}
+          </div>
+          <div style="font-size:.85rem;color:var(--tx);max-height:70px;overflow:hidden;text-overflow:ellipsis">
+            ${formatText(p.text || '')}
+          </div>
+        </div>
+      </div>
+      <button onclick="adminDeletePost('${p.id}')" style="padding:4px 10px;border-radius:8px;border:1px solid #DC2626;background:none;color:#DC2626;font-size:.75rem;cursor:pointer;flex-shrink:0">
+        Удалить
+      </button>
+    </div>
+  `).join('');
+}
+
+async function toggleModerator(userId, currentState) {
+  try {
+    const updated = await API.setModerator(userId, !currentState);
+    adminUsers = adminUsers.map(u => u.id === updated.id ? updated : u);
+    renderAdminUsers();
+    showToast(!currentState ? 'Пользователь назначен модератором' : 'Права модератора сняты');
+  } catch (e) {
+    showToast('Ошибка: ' + e.message);
+  }
+}
+
+async function toggleBan(userId, currentState) {
+  try {
+    const updated = await API.setBan(userId, !currentState);
+    adminUsers = adminUsers.map(u => u.id === updated.id ? updated : u);
+    renderAdminUsers();
+    showToast(!currentState ? 'Аккаунт заблокирован' : 'Аккаунт разблокирован');
+  } catch (e) {
+    showToast('Ошибка: ' + e.message);
+  }
+}
+
+async function adminDeletePost(postId) {
+  if (!confirm('Удалить этот пост для всех пользователей?')) return;
+  try {
+    await API.deletePost(postId);
+    adminPosts = adminPosts.filter(p => p.id !== postId);
+    const el = document.getElementById(`admin-post-${postId}`);
+    if (el) el.remove();
+    showToast('Пост удалён');
+  } catch (e) {
+    showToast('Ошибка: ' + e.message);
+  }
+}
+
+// ==================== КОММЕНТАРИИ ====================
+async function toggleComments(postId) {
+  const commentsSection = document.getElementById(`cs-${postId}`);
+  if (!commentsSection) return;
+  
+  const wasOpen = commentsSection.classList.contains('on');
+  commentsSection.classList.toggle('on');
+  
+  if (!wasOpen) {
+    await loadComments(postId);
+    const textarea = document.getElementById(`ci-${postId}`);
+    setTimeout(() => textarea?.focus(), 80);
+  }
+}
+
+async function loadComments(postId) {
+  try {
+    const comments = await API.getComments(postId);
+    renderComments(postId, comments);
+  } catch (error) {
+    console.error('Ошибка загрузки комментариев:', error);
+  }
+}
+
+function renderComments(postId, comments) {
+  const container = document.getElementById(`comments-${postId}`);
+  if (!container) return;
+  
+  if (!comments.length) {
+    container.innerHTML = '';
+    return;
+  }
+  
+  container.innerHTML = comments.map(comment => buildComment(comment, postId)).join('');
+  
+  const countSpan = document.getElementById(`ccl-${postId}`);
+  if (countSpan) countSpan.textContent = `${comments.length} комментариев`;
+  
+  const cmSpan = document.getElementById(`cm-${postId}`);
+  if (cmSpan) cmSpan.textContent = comments.length;
+}
+
+function buildComment(c, postId) {
+  const isOwner = c.author?.id === user?.id;
+  const bg = `linear-gradient(135deg,#${c.author?.avatarColor || 0},...)`;
+  
+  return `
+  <div class="cmt" id="comment-${c.id}">
+    <div class="cca" style="background:${bg};width:30px;height:30px">
+      ${(c.author?.firstName?.[0] || '') + (c.author?.lastName?.[0] || '')}
+    </div>
+    <div class="cmtb">
+      <div class="cmtbub">
+        <div class="cmtan">${c.author?.firstName} ${c.author?.lastName || ''}</div>
+        <div class="cmtxt">${formatText(c.text)}</div>
+      </div>
+      <div class="cmtmeta">
+        <span class="cmttm">${formatTime(c.createdAt)}</span>
+        ${isOwner ? `
+          <button class="cdel" onclick="deleteComment('${c.id}', '${postId}')">✕</button>
+        ` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function submitComment(postId) {
+  const textarea = document.getElementById(`ci-${postId}`);
+  const text = textarea.value.trim();
+  if (!text) return;
+  
+  try {
+    const comment = await API.createComment({
+      postId,
+      text,
+      parentId: null
+    });
+    
+    textarea.value = '';
+    grow(textarea);
+    
+    await loadComments(postId);
+    showToast('💬 Комментарий добавлен');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+async function deleteComment(commentId, postId) {
+  if (!confirm('Удалить комментарий?')) return;
+  
+  try {
+    await API.deleteComment(commentId);
+    await loadComments(postId);
+    showToast('Комментарий удалён');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+// ==================== ИСТОРИИ ====================
+async function loadStories() {
+  try {
+    stories = await API.getStories();
+    renderStories();
+  } catch (error) {
+    console.error('Ошибка загрузки историй:', error);
+  }
+}
+
+function renderStories() {
+  const scroll = document.getElementById('stories-scroll');
+  if (!scroll) return;
+  
+  if (!stories.length) {
+    scroll.innerHTML = '<div class="story-item"><div class="story-ring mine-ring" onclick="addMyStory()"><div class="story-inner">+</div></div><div class="story-label mine">Добавить</div></div>';
+    return;
+  }
+  
+  scroll.innerHTML = `
+    <div class="story-item">
+      <div class="story-ring mine-ring" onclick="addMyStory()">
+        <div class="story-inner">+</div>
+      </div>
+      <div class="story-label mine">Моя история</div>
+    </div>
+  ` + stories.map(s => `
+    <div class="story-item" onclick="openStory('${s.id}')">
+      <div class="story-ring ${s.viewed ? 'seen' : ''}">
+        <div class="story-inner" style="background:linear-gradient(135deg,#7C3AED,#2563EB)">
+          ${(s.author?.firstName?.[0] || '') + (s.author?.lastName?.[0] || '')}
+        </div>
+      </div>
+      <div class="story-label">${s.author?.firstName || 'Пользователь'}</div>
+    </div>
+  `).join('');
+}
+
+// ─── STORY CREATOR ─────────────────────────────────────────
+function addMyStory() {
+  // Show story creator overlay
+  let ov = document.getElementById('story-creator-ov');
+  if (!ov) {
+    ov = document.createElement('div');
+    ov.id = 'story-creator-ov';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;animation:fadeIn .2s ease';
+    ov.innerHTML = `
+      <div style="background:var(--s3);border:1px solid var(--br);border-radius:22px;padding:26px;width:min(440px,100%);position:relative">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+          <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff">Создать историю</span>
+          <button onclick="document.getElementById('story-creator-ov').remove()" style="width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.06);border:none;cursor:pointer;color:var(--mu);display:grid;place-items:center">
+            <svg viewBox="0 0 24 24" width="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        <div id="story-preview" style="width:100%;height:200px;border-radius:14px;margin-bottom:14px;background:linear-gradient(135deg,#7C3AED,#06B6D4);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:600;color:#fff;text-align:center;padding:16px;word-break:break-word;position:relative;overflow:hidden">
+          <span id="story-preview-text">Предпросмотр</span>
+          <img id="story-preview-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none">
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+          <button onclick="document.getElementById('story-img-inp').click()" style="padding:9px;background:rgba(255,255,255,.05);border:1px solid var(--br2);border-radius:11px;color:var(--tx);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s" onmouseover="this.style.background='rgba(124,58,237,.15)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">
+            <svg viewBox="0 0 24 24" width="15" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            Фото
+          </button>
+          <input type="file" id="story-img-inp" accept="image/*" style="display:none" onchange="onStoryImg(this)">
+          <button onclick="cycleBg()" style="padding:9px;background:rgba(255,255,255,.05);border:1px solid var(--br2);border-radius:11px;color:var(--tx);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s" onmouseover="this.style.background='rgba(124,58,237,.15)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">
+            <svg viewBox="0 0 24 24" width="15" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
+            Фон
+          </button>
+        </div>
+
+        <textarea id="story-text-inp" placeholder="Добавь текст к истории…" maxlength="200"
+          style="width:100%;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:11px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;resize:none;min-height:60px;margin-bottom:14px;transition:border-color .2s"
+          onfocus="this.style.borderColor='var(--vl)'" onblur="this.style.borderColor='var(--br)'"
+          oninput="document.getElementById('story-preview-text').textContent=this.value||'Предпросмотр'"></textarea>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button onclick="document.getElementById('story-creator-ov').remove()" style="padding:9px 18px;border-radius:10px;border:1px solid var(--br2);background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.84rem;cursor:pointer">Отмена</button>
+          <button onclick="submitStory()" style="padding:9px 22px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-weight:600;font-size:.84rem;cursor:pointer">Опубликовать</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+    ov.addEventListener('click', e => { if(e.target===ov) ov.remove(); });
+  } else {
+    ov.style.display = 'flex';
+  }
+}
+
+const STORY_BGS = [
+  'linear-gradient(135deg,#7C3AED,#06B6D4)',
+  'linear-gradient(135deg,#DB2777,#7C3AED)',
+  'linear-gradient(135deg,#059669,#2563EB)',
+  'linear-gradient(135deg,#D97706,#DB2777)',
+  'linear-gradient(135deg,#0EA5E9,#6366F1)',
+  'linear-gradient(135deg,#EC4899,#F97316)'
+];
+let storyBgIdx = 0;
+
+function cycleBg() {
+  storyBgIdx = (storyBgIdx + 1) % STORY_BGS.length;
+  const prev = document.getElementById('story-preview');
+  if (prev) prev.style.background = STORY_BGS[storyBgIdx];
+}
+
+function onStoryImg(inp) {
+  const file = inp.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('story-preview-img');
+    const txt = document.getElementById('story-preview-text');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    txt.style.position = 'relative';
+    txt.style.zIndex = '1';
+    txt.style.textShadow = '0 1px 4px rgba(0,0,0,.8)';
+  };
+  reader.readAsDataURL(file);
+  inp.value = '';
+}
+
+async function submitStory() {
+  const text = document.getElementById('story-text-inp')?.value?.trim() || '';
+  const imgEl = document.getElementById('story-preview-img');
+  const hasImg = imgEl && imgEl.style.display !== 'none' && imgEl.src;
+
+  if (!text && !hasImg) { showToast('⚠️ Добавь текст или фото'); return; }
+
+  const slide = {
+    type: hasImg ? 'image' : 'text',
+    text: text,
+    bg: STORY_BGS[storyBgIdx],
+    image: hasImg ? imgEl.src : null,
+    time: 'только что'
+  };
+
+  try {
+    await API.createStory([slide]);
+    document.getElementById('story-creator-ov')?.remove();
+    await loadStories();
+    showToast('✨ История опубликована!');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+// ─── STORY VIEWER ────────────────────────────────────────────
+let svStories = [], svIdx = 0, svSlide = 0, svTimer = null;
+
+async function openStory(storyId) {
+  try {
+    await API.viewStory(storyId);
+    svStories = stories;
+    svIdx = stories.findIndex(s => s.id === storyId);
+    if (svIdx === -1) svIdx = 0;
+    svSlide = 0;
+    renderSV();
+    document.getElementById('sv').classList.add('open');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+function renderSV() {
+  const s = svStories[svIdx];
+  if (!s) { closeSV(); return; }
+
+  const slide = s.slides?.[svSlide];
+  if (!slide) { closeSV(); return; }
+
+  // Update story viewer UI
+  const svA = document.getElementById('sv-a');
+  const initials = ((s.author?.firstName?.[0]||'')+(s.author?.lastName?.[0]||'')).toUpperCase();
+  svA.textContent = initials;
+  svA.style.background = 'linear-gradient(135deg,#7C3AED,#2563EB)';
+  document.getElementById('sv-nm').textContent = s.author?.firstName || 'Пользователь';
+  document.getElementById('sv-tm').textContent = formatTime(s.createdAt);
+
+  // Build body
+  const body = document.getElementById('sv-body');
+  body.style.background = slide.bg || 'var(--s2)';
+
+  if (slide.type === 'image' && slide.image) {
+    body.innerHTML = `
+      <img src="${slide.image}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+      ${slide.text ? `<div style="position:absolute;bottom:70px;left:0;right:0;text-align:center;color:#fff;font-size:1.1rem;font-weight:600;padding:0 20px;text-shadow:0 2px 8px rgba(0,0,0,.7)">${slide.text}</div>` : ''}`;
+  } else {
+    body.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;font-size:1.3rem;font-weight:600;color:#fff;word-break:break-word;text-shadow:0 2px 8px rgba(0,0,0,.4)">${slide.text || ''}</div>`;
+  }
+
+  // Progress bars
+  const prog = document.getElementById('sv-prog');
+  const total = s.slides?.length || 1;
+  prog.innerHTML = Array.from({length: total}, (_,i) => `
+    <div style="flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden">
+      <div style="height:100%;background:#fff;width:${i < svSlide ? 100 : i === svSlide ? 0 : 0}%;transition:none" id="sv-bar-${i}"></div>
+    </div>`).join('');
+
+  // Prev/Next story nav
+  document.getElementById('sv-prev').style.display = svIdx > 0 ? '' : 'none';
+  document.getElementById('sv-next').style.display = svIdx < svStories.length - 1 ? '' : 'none';
+
+  // Start slide timer
+  clearTimeout(svTimer);
+  const bar = document.getElementById(`sv-bar-${svSlide}`);
+  if (bar) {
+    bar.style.transition = 'width 5s linear';
+    requestAnimationFrame(() => { bar.style.width = '100%'; });
+  }
+  svTimer = setTimeout(nextSlide, 5000);
+}
+
+function nextSlide(e) {
+  if (e) e.stopPropagation();
+  clearTimeout(svTimer);
+  const s = svStories[svIdx];
+  if (s && svSlide < (s.slides?.length || 1) - 1) {
+    svSlide++;
+    renderSV();
+  } else {
+    nextStory();
+  }
+}
+
+function prevSlide(e) {
+  if (e) e.stopPropagation();
+  clearTimeout(svTimer);
+  if (svSlide > 0) { svSlide--; renderSV(); }
+  else prevStory();
+}
+
+function nextStory() {
+  clearTimeout(svTimer);
+  if (svIdx < svStories.length - 1) { svIdx++; svSlide=0; renderSV(); }
+  else closeSV();
+}
+
+function prevStory() {
+  clearTimeout(svTimer);
+  if (svIdx > 0) { svIdx--; svSlide=0; renderSV(); }
+}
+
+function closeSV(e) {
+  if (e) e.stopPropagation();
+  clearTimeout(svTimer);
+  document.getElementById('sv').classList.remove('open');
+}
+
+// ==================== ПУБЛИКАЦИЯ ПОСТА ====================
+function onCmpInput(ta) {
+  grow(ta);
+  const rem = 500 - ta.value.length;
+  const ch = document.getElementById('cmp-cnt');
+  ch.textContent = rem;
+  ch.style.color = rem < 40 ? '#F87171' : '';
+  
+  const btn = document.getElementById('btn-post');
+  btn.disabled = ta.value.trim().length === 0 && !pendImgs.length;
+  
+  handleAutocomplete(ta);
+}
+
+function grow(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 200) + 'px';
+}
+
+function onImgUpload(input) {
+  const files = Array.from(input.files);
+  if (pendImgs.length + files.length > 4) {
+    showToast('⚠️ Максимум 4 фото');
+    return;
+  }
+  
+  files.forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      pendImgs.push(e.target.result);
+      renderPendingImages();
+      document.getElementById('btn-post').disabled = false;
+    };
+    reader.readAsDataURL(file);
+  });
+  
+  input.value = '';
+}
+
+function renderPendingImages() {
+  const container = document.getElementById('cmp-imgs');
+  container.innerHTML = pendImgs.map((src, i) => `
+    <div class="ci-w">
+      <img src="${src}"/>
+      <button class="ci-rm" onclick="removeImage(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeImage(index) {
+  pendImgs.splice(index, 1);
+  renderPendingImages();
+  
+  const ta = document.getElementById('cmp-ta');
+  document.getElementById('btn-post').disabled = ta.value.trim().length === 0 && !pendImgs.length;
+}
+
+async function publish() {
+  const ta = document.getElementById('cmp-ta');
+  const text = ta.value.trim();
+  
+  if (!text && !pendImgs.length) return;
+  
+  try {
+    const newPost = await API.createPost({
+      text,
+      images: pendImgs
+    });
+    
+    ta.value = '';
+    ta.style.height = 'auto';
+    pendImgs = [];
+    renderPendingImages();
+    document.getElementById('btn-post').disabled = true;
+    document.getElementById('cmp-cnt').textContent = '500';
+    
+    await loadPosts();
+    showToast('✓ Пост опубликован!');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+// ==================== ПОИСК ====================
+let searchTimeout;
+
+async function doSearch(query) {
+  clearTimeout(searchTimeout);
+  
+  searchTimeout = setTimeout(async () => {
+    if (!query.trim()) {
+      await loadPosts();
+      return;
+    }
+    
+    try {
+      const results = await API.search(query);
+      // Пока просто фильтруем посты локально
+      // В реальности нужно показывать результаты поиска
+      if (results.posts) {
+        posts = results.posts;
+        renderFeed();
+      }
+    } catch (error) {
+      console.error('Ошибка поиска:', error);
+    }
+  }, 300);
+}
+
+function searchTag(tag) {
+  const inp = document.getElementById('srch');
+  if (inp) inp.value = tag;
+  // Фильтруем посты по хэштегу
+  postsLoading = false;
+  API.search(tag).then(res => {
+    if (res.posts) {
+      posts = res.posts;
+      postsTotal = res.posts.length;
+      postsOffset = res.posts.length;
+      renderFeed();
+      const lm = document.getElementById('load-more-btn');
+      if (lm) lm.remove();
+    }
+  }).catch(()=>{});
+  // Показываем индикатор активного тега
+  showToast('🔍 ' + tag);
+}
+
+// ==================== ТРЕНДЫ И ПРЕДЛОЖЕНИЯ ====================
+async function loadTrends() {
+  try {
+    const trends = await API.req('/trends');
+    const el = document.getElementById('trends-list');
+    if (!el) return;
+    if (!trends.length) { el.innerHTML = '<div style="color:var(--mu);font-size:.78rem;padding:8px 0">Хэштегов пока нет</div>'; return; }
+    el.innerHTML = trends.map(t => `
+      <div class="tr-it" onclick="searchTag('${t.tag}')">
+        <div class="tr-tag">${t.tag}</div>
+        <div class="tr-cnt">${t.count} ${t.count===1?'пост':'постов'}</div>
+      </div>`).join('');
+    return;
+  } catch(e) {}
+  // fallback
+  const trends = [
+    { tag: '#webdev', count: 12400 },
+    { tag: '#дизайн', count: 8100 },
+    { tag: '#frontend', count: 6700 },
+    { tag: '#javascript', count: 5400 },
+    { tag: '#vue', count: 3900 }
+  ];
+  
+  document.getElementById('trends').innerHTML = trends.map(t => `
+    <div class="tr-it" onclick="searchTag('${t.tag}')">
+      <div class="tr-tag">${t.tag}</div>
+      <div class="tr-cnt">${(t.count / 1000).toFixed(1)}K постов</div>
+    </div>
+  `).join('');
+}
+
+async function loadSuggestions() {
+  try {
+    // Грузим всех пользователей, исключаем себя и уже подписок
+    const [all, following] = await Promise.all([
+      API.req('/users?q=&limit=20').catch(()=>[]),
+      ME ? API.req('/users/'+ME.id+'/following').catch(()=>[]) : Promise.resolve([])
+    ]);
+    const followingIds = new Set(following.map(u=>u.id));
+    const suggestions = all.filter(u=>u.id!==ME?.id && !followingIds.has(u.id)).slice(0,5);
+    const el = document.getElementById('suggs');
+    if(!suggestions.length){
+      el.innerHTML = '<div style="color:var(--mu);font-size:.78rem;text-align:center;padding:8px">Пока никого нет</div>';
+      return;
+    }
+    const AVA = ['linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)','linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)','linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'];
+    el.innerHTML = suggestions.map(s => {
+      const ini = ((s.firstName?.[0]||'')+(s.lastName?.[0]||'')).toUpperCase()||'?';
+      const grad = AVA[(s.avatarColor||0)%6];
+      return `<div class="sg-it">
+        <div class="sg-a" style="background:${grad}">${ini}</div>
+        <div class="sg-inf">
+          <div class="sg-nm">${s.firstName} ${s.lastName||''} ${s.isVerified?'<svg viewBox="0 0 24 24" width="11" height="11" style="color:#06B6D4;vertical-align:middle" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>':''}</div>
+          <div class="sg-hd">@${s.username}</div>
+        </div>
+        <button class="btn-flw" onclick="followUser('${s.id}', this)">Читать</button>
+      </div>`;
+    }).join('');
+  } catch (error) {
+    console.error('Ошибка загрузки предложений:', error);
+  }
+}
+
+async function followUser(userId, btn) {
+  try {
+    const result = await API.followUser(userId);
+    btn.textContent = result.following ? '✓ Читаю' : 'Читать';
+    btn.classList.toggle('on', result.following);
+    showToast(result.following ? '✓ Подписались' : 'Отписались');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+
+// ==================== ТАБЫ ====================
+async function switchTab(btn, tabName) {
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+  
+  currentTab = tabName;
+  await loadPosts();
+  
+  document.getElementById('bm-nav')?.classList.toggle('active', tabName === 'bookmarks');
+}
+
+function updateBMBadge() {
+  const count = posts.filter(p => p.bookmarked).length;
+  const badge = document.getElementById('bm-badge');
+  if (badge) {
+    badge.style.display = count > 0 ? '' : 'none';
+    badge.textContent = count;
+  }
+}
+
+// ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+function toggleDrop(event, postId) {
+  event.stopPropagation();
+  const dropdown = document.getElementById(`dd-${postId}`);
+  const isVisible = dropdown.style.display !== 'none';
+  
+  closeDrops();
+  
+  if (!isVisible) {
+    dropdown.style.display = 'block';
+  }
+}
+
+function closeDrops() {
+  document.querySelectorAll('.pdrop').forEach(d => d.style.display = 'none');
+}
+
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2700);
+}
+
+function handleLogout() {
+  if (confirm('Выйти из Weave?')) {
+    localStorage.removeItem('weave_token');
+    localStorage.removeItem('weave_current_user');
+    sessionStorage.removeItem('weave_token');
+    window.location.href = 'login.html';
+  }
+}
+
+function openLB(src) {
+  const lb = document.getElementById('lb');
+  const img = document.getElementById('lb-img');
+  img.src = src;
+  lb.classList.add('open');
+}
+
+function closeLB() {
+  document.getElementById('lb').classList.remove('open');
+}
+
+// closeSV объявлена выше
+
+function sendSVReply() {
+  const input = document.getElementById('sv-ri');
+  if (!input.value.trim()) return;
+  input.value = '';
+  showToast('💌 Ответ отправлен!');
+}
+
+// Автозаполнение
+function handleAutocomplete(ta) {
+  // Заглушка для автозаполнения
+}
+
+function addEmoji() {
+  const emojis = ['😊','🔥','💜','🚀','✨','🎉'];
+  const ta = document.getElementById('cmp-ta');
+  const pos = ta.selectionStart;
+  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  ta.value = ta.value.slice(0, pos) + emoji + ta.value.slice(pos);
+  ta.focus();
+  ta.setSelectionRange(pos + emoji.length, pos + emoji.length);
+  onCmpInput(ta);
+}
+
+function addLocation() {
+  const ta = document.getElementById('cmp-ta');
+  ta.value += (ta.value.length ? ' ' : '') + '📍Москва';
+  ta.focus();
+  onCmpInput(ta);
+}
+
+function sharePost(postId) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(`${location.origin}/post/${postId}`);
+  }
+  showToast('🔗 Ссылка скопирована!');
+  closeDrops();
+}
+
+function reportPost(postId) {
+  showToast('🚩 Жалоба отправлена');
+  closeDrops();
+}
+
+function openEdit(postId) {
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  
+  editId = postId;
+  const ta = document.getElementById('edit-ta');
+  ta.value = post.text;
+  document.getElementById('edit-ov').classList.add('open');
+}
+
+function closeEdit() {
+  document.getElementById('edit-ov').classList.remove('open');
+  editId = null;
+}
+
+async function saveEdit() {
+  if (!editId) return;
+  
+  const newText = document.getElementById('edit-ta').value.trim();
+  if (!newText) {
+    showToast('⚠️ Пост не может быть пустым');
+    return;
+  }
+  
+  try {
+    await API.updatePost(editId, { text: newText });
+    
+    const post = posts.find(p => p.id === editId);
+    if (post) {
+      post.text = newText;
+      post.edited = true;
+    }
+    
+    const textEl = document.getElementById(`ptxt-${editId}`);
+    if (textEl) textEl.innerHTML = formatText(newText);
+    
+    closeEdit();
+    showToast('✓ Пост обновлён');
+  } catch (error) {
+    showToast('Ошибка: ' + error.message);
+  }
+}
+</script>
+<script src="theme.js">
+// ══════════════════════════════════════════════
+//  УВЕДОМЛЕНИЯ: polling каждые 30 сек + бейдж
+// ══════════════════════════════════════════════
+let lastNotifCount = 0;
+async function checkNotifications() {
+  try {
+    const notifs = await API.req('/notifications').catch(()=>[]);
+    const unread = (notifs||[]).filter(n=>!n.read).length;
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+      if (unread > 0) {
+        badge.textContent = unread > 9 ? '9+' : unread;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    // Тост при новых уведомлениях
+    if (unread > lastNotifCount && lastNotifCount >= 0) {
+      const diff = unread - lastNotifCount;
+      if (diff > 0 && lastNotifCount >= 0 && document.visibilityState === 'visible') {
+        showToast(`🔔 ${diff} новое уведомление`);
+      }
+    }
+    lastNotifCount = unread;
+    // Синхронизируем мобильный бейдж
+    const mobBadge = document.getElementById('mob-notif-badge');
+    if (mobBadge) {
+      mobBadge.textContent = unread > 9 ? '9+' : unread;
+      mobBadge.style.display = unread > 0 ? 'flex' : 'none';
+    }
+  } catch(e) {}
+}
+// Запускаем через 3 секунды после загрузки, затем каждые 30 сек
+setTimeout(()=>{ checkNotifications(); setInterval(checkNotifications, 30000); }, 3000);
+
+// ══════════════════════════════════════════════
+//  ОНЛАЙН-СТАТУС: обновляем статусы в профилях
+// ══════════════════════════════════════════════
+async function refreshOnlineStatus() {
+  try {
+    const data = await API.req('/online').catch(()=>({online:[]}));
+    const onlineSet = new Set(data.online||[]);
+    document.querySelectorAll('[data-user-id]').forEach(el => {
+      const dot = el.querySelector('.online-dot');
+      if (dot) dot.style.background = onlineSet.has(el.dataset.userId) ? 'var(--gn)' : 'rgba(255,255,255,.2)';
+    });
+  } catch(e) {}
+}
+setInterval(refreshOnlineStatus, 15000);
+
+function renderAva(el, user, size=''){
+  if(!el||!user) return;
+  if(user.avatarUrl){
+    el.style.backgroundImage='url('+user.avatarUrl+')';
+    el.style.backgroundSize='cover';
+    el.style.backgroundPosition='center';
+    el.innerHTML='';
+  } else {
+    el.style.backgroundImage='';
+    el.style.background=avBg(user.avatarColor);
+    const ini=((user.firstName?.[0]||'')+(user.lastName?.[0]||'')).toUpperCase()||'?';
+    el.textContent=ini;
+  }
+}
+
+// ── Двойной тап — лайк с анимацией ──
+const _tapTimers={};
+function doubleTapLike(e, postId){
+  // Показать сердечко
+  const card=e.currentTarget.closest('.pcard');
+  if(!card)return;
+  const h=document.createElement('div');
+  h.className='heart-anim';
+  h.textContent='❤️';
+  card.appendChild(h);
+  setTimeout(()=>h.remove(),700);
+  // Лайкнуть если ещё не лайкнуто
+  const post=posts.find(p=>p.id===postId);
+  if(post&&!post.liked){ toggleLike(postId); }
+}
+
+// ── Счётчик символов поста ──
+function updateCharCount(val){
+  const el=document.getElementById('char-count');
+  if(!el)return;
+  const left=500-val.length;
+  if(val.length>0){
+    el.textContent=left+' симв.';
+    el.style.color=left<50?'var(--er)':left<100?'var(--warn,#FBBF24)':'var(--mu)';
+  } else {
+    el.textContent='';
+  }
+  const btn=document.getElementById('btn-post');
+  if(btn)btn.disabled=val.length>500;
+}
+
+// ══════════════════════════════════════════════
+//  МОБИЛЬНЫЙ COMPOSE
+// ══════════════════════════════════════════════
+let mcmImgs = [];
+
+function openMobCompose() {
+  const modal = document.getElementById('mob-compose-modal');
+  modal.classList.remove('closing');
+  modal.style.display = 'flex';
+  // Синхронизируем аватар
+  const mcmAva = document.getElementById('mcm-ava');
+  const cmpAva = document.getElementById('cmp-ava');
+  if (mcmAva && cmpAva) {
+    mcmAva.style.cssText = cmpAva.style.cssText;
+    mcmAva.textContent = cmpAva.textContent;
+    mcmAva.style.background = cmpAva.style.background;
+  }
+  mcmImgs = [];
+  document.getElementById('mcm-imgs').innerHTML = '';
+  document.getElementById('mcm-ta').value = '';
+  document.getElementById('mcm-cnt').textContent = '500';
+  document.getElementById('mcm-post-btn').disabled = true;
+  // Фокус с небольшой задержкой (анимация)
+  setTimeout(() => document.getElementById('mcm-ta')?.focus(), 280);
+  // Блокируем прокрутку body
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobCompose() {
+  const modal = document.getElementById('mob-compose-modal');
+  modal.classList.add('closing');
+  document.body.style.overflow = '';
+  setTimeout(() => { modal.style.display = 'none'; modal.classList.remove('closing'); }, 200);
+}
+
+function onMcmInput(ta) {
+  // Auto-resize
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 300) + 'px';
+  const left = 500 - ta.value.length;
+  document.getElementById('mcm-cnt').textContent = left;
+  const cnt = document.getElementById('mcm-cnt');
+  cnt.style.color = left < 50 ? 'var(--er)' : left < 100 ? 'var(--warn,#FBBF24)' : 'var(--mu2)';
+  document.getElementById('mcm-post-btn').disabled = ta.value.trim().length === 0 && mcmImgs.length === 0;
+}
+
+function addMobEmoji() {
+  const ta = document.getElementById('mcm-ta');
+  const emojis = ['😊','🔥','❤️','👍','🎉','✨','😂','🙌','💪','🤔','😎','🚀'];
+  const e = emojis[Math.floor(Math.random() * emojis.length)];
+  const pos = ta.selectionStart;
+  ta.value = ta.value.slice(0, pos) + e + ta.value.slice(pos);
+  ta.selectionStart = ta.selectionEnd = pos + e.length;
+  ta.focus();
+  onMcmInput(ta);
+}
+
+function onMcmImgUpload(inp) {
+  const files = Array.from(inp.files);
+  if (!files.length) return;
+  files.slice(0, 4 - mcmImgs.length).forEach(f => {
+    if (f.size > 10 * 1024 * 1024) { showToast('Файл слишком большой'); return; }
+    const r = new FileReader();
+    r.onload = e => {
+      mcmImgs.push(e.target.result);
+      renderMcmImgs();
+      document.getElementById('mcm-post-btn').disabled = false;
+    };
+    r.readAsDataURL(f);
+  });
+  inp.value = '';
+}
+
+function renderMcmImgs() {
+  document.getElementById('mcm-imgs').innerHTML = mcmImgs.map((src, i) => `
+    <div style="position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;flex-shrink:0">
+      <img src="${src}" style="width:100%;height:100%;object-fit:cover">
+      <button onclick="mcmImgs.splice(${i},1);renderMcmImgs()" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.8);border:none;cursor:pointer;color:#fff;font-size:11px;display:grid;place-items:center">✕</button>
+    </div>`).join('');
+}
+
+async function publishMob() {
+  const ta = document.getElementById('mcm-ta');
+  const text = ta.value.trim();
+  if (!text && !mcmImgs.length) return;
+  
+  const btn = document.getElementById('mcm-post-btn');
+  btn.disabled = true;
+  btn.textContent = '…';
+  
+  try {
+    await API.createPost({ text, images: mcmImgs });
+    closeMobCompose();
+    showToast('✓ Пост опубликован', 'ok');
+    await loadPosts(true);
+  } catch(e) {
+    showToast('Ошибка: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Опубликовать';
+  }
+}
+
+// Закрыть по свайпу вниз
+(function(){
+  let startY = 0;
+  document.addEventListener('touchstart', e => {
+    const modal = document.getElementById('mob-compose-modal');
+    if (modal?.style.display === 'flex') startY = e.touches[0].clientY;
+  }, {passive:true});
+  document.addEventListener('touchend', e => {
+    const modal = document.getElementById('mob-compose-modal');
+    if (modal?.style.display !== 'flex') return;
+    const dy = e.changedTouches[0].clientY - startY;
+    // Свайп вниз > 80px — закрыть
+    if (dy > 80 && startY < 80) closeMobCompose();
+  }, {passive:true});
+})();
+</script>
+<!-- ═══ MOBILE BOTTOM NAV ═══ -->
+<!-- ─── FAB: мобильный compose ─── -->
+<button class="mob-fab" id="mob-fab" onclick="openMobCompose()" aria-label="Создать пост">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<!-- ─── Mobile compose modal ─── -->
+<div class="mob-compose-modal" id="mob-compose-modal">
+  <div class="mcm-header">
+    <button class="mcm-cancel" onclick="closeMobCompose()">Отмена</button>
+    <div class="mcm-title">Новый пост</div>
+    <button class="mcm-post-btn" id="mcm-post-btn" onclick="publishMob()" disabled>Опубликовать</button>
+  </div>
+  <div class="mcm-body">
+    <div class="mcm-ava-row">
+      <div class="mcm-ava" id="mcm-ava">?</div>
+      <textarea class="mcm-ta" id="mcm-ta" placeholder="Что у тебя на уме? # для тегов, @ для упоминаний"
+        oninput="onMcmInput(this)" rows="4" maxlength="500" autocomplete="off"></textarea>
+    </div>
+    <div class="mcm-imgs" id="mcm-imgs"></div>
+  </div>
+  <div class="mcm-footer">
+    <button class="mcm-tool" title="Фото" onclick="document.getElementById('mcm-fu').click()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </button>
+    <button class="mcm-tool" title="Эмодзи" onclick="addMobEmoji()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    </button>
+    <span class="mcm-cnt" id="mcm-cnt">500</span>
+    <input type="file" id="mcm-fu" accept="image/*" multiple style="display:none" onchange="onMcmImgUpload(this)">
+  </div>
+</div>
+
+<nav class="mob-nav">
+  <a class="mob-nav-btn active" href="feed.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Лента</span>
+  </a>
+  <a class="mob-nav-btn " href="explore.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span>Поиск</span>
+  </a>
+  <a class="mob-nav-btn " href="messages.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="mob-nav-badge" id="mob-msg-badge"></span><span>Чаты</span>
+  </a>
+  <a class="mob-nav-btn " href="profile.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Профиль</span>
+  </a>
+</nav>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW зарегистрирован:', reg.scope))
+      .catch(err => console.warn('SW ошибка:', err));
+  });
+}
+
+// ══ PWA Install prompt ══
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Показать баннер если не отклонён ранее
+  if (!localStorage.getItem('pwa_dismissed')) {
+    setTimeout(() => {
+      const banner = document.getElementById('pwa-banner');
+      if (banner) banner.classList.add('show');
+    }, 4000); // через 4 сек после загрузки
+  }
+});
+
+document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('pwa-banner')?.classList.remove('show');
+  if (outcome === 'accepted') showToast('✅ Weave добавлен на экран!');
+});
+
+function dismissPWA() {
+  document.getElementById('pwa-banner')?.classList.remove('show');
+  localStorage.setItem('pwa_dismissed', '1');
+}
+
+// Скрыть если уже установлено
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwa-banner')?.classList.remove('show');
+  showToast('✅ Weave установлен!');
+});
+</script>
+
+<!-- PWA Install Banner -->
+<div class="pwa-banner" id="pwa-banner">
+  <div class="pwa-banner-icon">📱</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Установить Weave</div>
+    <div class="pwa-banner-sub">Добавь на экран — как настоящее приложение</div>
+  </div>
+  <button class="pwa-banner-btn" id="pwa-install-btn">Установить</button>
+  <button class="pwa-banner-close" onclick="dismissPWA()">✕</button>
+</div>
+</body>
+</html>

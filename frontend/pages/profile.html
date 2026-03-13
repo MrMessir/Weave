@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weave">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="shortcut icon" href="/icons/icon-32.png">
+<title>Weave — Профиль</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--v:#7C3AED;--vl:#A78BFA;--vd:#4C1D95;--b:#2563EB;--bl:#60A5FA;--cy:#06B6D4;--bg:#09090F;--s1:#0D0D1A;--s2:#111120;--s3:#151528;--br:rgba(124,58,237,.18);--br2:rgba(255,255,255,.06);--tx:#E8E4FF;--mu:#6B6B8F;--mu2:#3D3D5C;--pk:#F472B6;--gn:#34D399;--er:#F87171;--nav-w:260px}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
+.sidenav{width:var(--nav-w);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:90;background:var(--s1);border-right:1px solid var(--br);display:flex;flex-direction:column;transition:width .25s cubic-bezier(.22,1,.36,1);overflow:hidden}
+.sidenav:hover{width:var(--nav-w)}
+.sn-logo{padding:20px 18px 14px;display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
+.sn-logo-icon{width:36px;height:36px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,var(--v),var(--b));display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff}
+.sn-logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;background:linear-gradient(135deg,#C4B5FD,#7DD3FC);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.sn-logo-text span{opacity:.5}
+.sn-user{margin:0 12px 16px;padding:12px;background:var(--s2);border:1px solid var(--br);border-radius:14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .2s;text-decoration:none;flex-shrink:0;overflow:hidden}
+.sn-user:hover{background:rgba(124,58,237,.12)}
+.sn-ava{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;border:2px solid var(--br)}
+.sn-user-info{min-width:0;flex:1}
+.sn-user-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.84rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sn-user-handle{font-size:.72rem;color:var(--mu);white-space:nowrap}
+.sn-online{width:8px;height:8px;border-radius:50%;background:var(--gn);flex-shrink:0;box-shadow:0 0 6px var(--gn)}
+.sn-section{padding:0 8px;margin-bottom:6px;flex-shrink:0}
+.sn-label{font-size:.64rem;font-weight:600;color:var(--mu2);letter-spacing:.08em;text-transform:uppercase;padding:6px 10px 4px;white-space:nowrap;overflow:hidden}
+.sn-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;text-decoration:none;color:var(--mu);font-size:.88rem;font-weight:500;transition:all .18s;cursor:pointer;white-space:nowrap;overflow:hidden}
+.sn-item:hover{background:rgba(124,58,237,.1);color:var(--tx)}
+.sn-item.active{background:rgba(124,58,237,.18);color:var(--vl)}
+.sn-item svg{width:20px;height:20px;flex-shrink:0}
+.sn-item-label{flex:1;overflow:hidden;text-overflow:ellipsis}
+.sn-badge{background:var(--v);color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:10px;flex-shrink:0}
+.sn-divider{height:1px;background:var(--br);margin:8px 16px}
+.main{margin-left:var(--nav-w);flex:1;min-width:0;position:relative;z-index:1}
+.topbar{position:sticky;top:0;z-index:80;height:56px;background:rgba(9,9,15,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--br);display:flex;align-items:center;padding:0 20px;gap:14px}
+.topbar-search{flex:1;max-width:400px;position:relative}
+.topbar-search input{width:100%;padding:8px 14px 8px 36px;background:rgba(255,255,255,.05);border:1px solid var(--br);border-radius:20px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;transition:all .2s}
+.topbar-search input:focus{border-color:var(--vl);background:rgba(124,58,237,.08);box-shadow:0 0 0 3px rgba(124,58,237,.14)}
+.topbar-search input::placeholder{color:var(--mu2)}
+.topbar-search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mu);width:14px;height:14px;pointer-events:none}
+.topbar-actions{display:flex;align-items:center;gap:8px;margin-left:auto}
+.tb-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--br2);display:grid;place-items:center;cursor:pointer;color:var(--mu);transition:all .2s;position:relative}
+.tb-btn:hover{background:rgba(124,58,237,.15);color:var(--vl)}
+.tb-btn svg{width:16px;height:16px}
+.tb-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--vl);border:1.5px solid var(--bg)}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(14px);padding:11px 22px;border-radius:13px;font-family:'Syne',sans-serif;font-weight:600;font-size:.84rem;color:#fff;opacity:0;transition:all .3s cubic-bezier(.22,1,.36,1);z-index:9999;white-space:nowrap;box-shadow:0 8px 28px rgba(0,0,0,.5);pointer-events:none;background:linear-gradient(135deg,var(--v),var(--b))}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:linear-gradient(135deg,#DC2626,#9333EA)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1100px){:root{--nav-w:68px}.sn-item-label,.sn-label,.sn-user-info,.sn-logo-text,.sn-online{opacity:0;pointer-events:none}}
+@media(max-width:600px){
+  .mob-nav{display:flex!important}:root{--nav-w:0px}.sidenav{display:none}.main{margin-left:0}}
+
+/* PROFILE HEADER */
+.profile-hero{max-width:860px;margin:0 auto;padding:28px 24px 0}
+.ph-top{display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap;margin-bottom:20px}
+.ph-ava-wrap{flex-shrink:0;position:relative;cursor:pointer}
+.ph-ava{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:2.4rem;color:#fff;border:4px solid var(--s2);box-shadow:0 0 0 2px var(--br);overflow:hidden;transition:opacity .2s}
+.ph-ava img{width:100%;height:100%;object-fit:cover;display:none}
+.ph-ava img.loaded{display:block}
+.ph-ava:hover{opacity:.85}
+.ph-online{position:absolute;bottom:6px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--gn);border:3px solid var(--bg);box-shadow:0 0 8px var(--gn)}
+.ph-info{flex:1;min-width:240px}
+.ph-row1{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.ph-username{font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:#fff}
+.ph-verified{width:20px;height:20px;background:var(--v);border-radius:50%;display:grid;place-items:center}
+.ph-verified svg{width:11px;height:11px;color:#fff}
+.ph-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-prim{padding:8px 22px;border-radius:22px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:all .2s;box-shadow:0 2px 12px rgba(124,58,237,.3)}
+.btn-prim:hover{opacity:.9;transform:translateY(-1px)}
+.btn-sec{padding:8px 20px;border-radius:22px;border:1px solid var(--br2);background:var(--s3);color:var(--tx);font-family:'Syne',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;transition:all .2s}
+.btn-sec:hover{border-color:var(--vl);color:var(--vl)}
+.btn-icon{width:36px;height:36px;border-radius:50%;border:1px solid var(--br2);background:var(--s3);display:grid;place-items:center;cursor:pointer;transition:all .2s;color:var(--mu)}
+.btn-icon:hover{border-color:var(--vl);color:var(--vl)}
+.btn-icon svg{width:16px;height:16px}
+.ph-stats{display:flex;gap:24px;margin-bottom:14px}
+.ph-stat{text-align:center;cursor:pointer}
+.ph-stat-n{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff}
+.ph-stat-l{font-size:.75rem;color:var(--mu)}
+.ph-bio{font-size:.9rem;line-height:1.6}
+.ph-bio-name{font-family:'Syne',sans-serif;font-weight:700;color:#fff;margin-bottom:2px}
+.ph-bio-text{color:var(--mu);margin-bottom:4px}
+.ph-bio-link{color:var(--vl);text-decoration:none;font-weight:500;font-size:.88rem}
+.ph-bio-link:hover{text-decoration:underline}
+/* STORIES BAR */
+.stories-bar{max-width:860px;margin:20px auto 0;padding:0 24px;display:flex;gap:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.stories-bar::-webkit-scrollbar{display:none}
+.story-bubble{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;flex-shrink:0}
+.sb-ring{width:68px;height:68px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,#E1306C,#F56040,#FCAF45);transition:transform .2s}
+.sb-ring:hover{transform:scale(1.06)}
+.sb-ring.seen{background:var(--br2);padding:2px}
+.sb-ring.add-ring{background:none;border:2px dashed rgba(124,58,237,.5)}
+.sb-inner{width:100%;height:100%;border-radius:50%;background:var(--s3);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:#fff;border:2.5px solid var(--s2);overflow:hidden}
+.sb-inner img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.sb-label{font-size:.66rem;color:var(--mu);text-align:center;width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* TABS */
+.profile-tabs{max-width:860px;margin:28px auto 0;padding:0 24px;border-top:1px solid var(--br);display:flex;gap:0}
+.ptab{flex:1;padding:14px 0;background:none;border:none;border-bottom:2px solid transparent;color:var(--mu);font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .18s}
+.ptab svg{width:15px;height:15px}
+.ptab:hover{color:var(--tx)}
+.ptab.active{color:var(--vl);border-bottom-color:var(--vl)}
+/* POSTS */
+.posts-wrap{max-width:620px;margin:20px auto 60px;padding:0 24px}
+.post{background:var(--s2);border:1px solid var(--br);border-radius:18px;padding:16px;margin-bottom:14px;animation:fadeUp .35s both;transition:border-color .2s}
+.post:hover{border-color:rgba(124,58,237,.35)}
+.p-head{display:flex;align-items:flex-start;gap:11px;margin-bottom:10px}
+.p-av{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:#fff;cursor:pointer}
+.p-meta{flex:1;min-width:0}
+.p-name{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.p-name:hover{color:var(--vl)}
+.p-time{font-size:.73rem;color:var(--mu);margin-top:1px}
+.p-body{font-size:.9rem;line-height:1.65;color:var(--tx);margin-bottom:10px;word-break:break-word}
+.p-body .tag{color:var(--vl);cursor:pointer;font-weight:500}
+.p-body .mention{color:var(--bl);cursor:pointer}
+.p-imgs{display:grid;gap:3px;border-radius:12px;overflow:hidden;margin-bottom:10px}
+.p-imgs.i1{grid-template-columns:1fr}.p-imgs.i2{grid-template-columns:1fr 1fr}.p-imgs.i3{grid-template-columns:1fr 1fr}.p-imgs.i4{grid-template-columns:1fr 1fr}
+.p-img{width:100%;object-fit:cover;cursor:pointer;transition:opacity .2s;border-radius:2px}
+.p-imgs.i1 .p-img{max-height:320px;border-radius:12px}.p-imgs.i2 .p-img{height:180px}.p-imgs.i3 .p-img:first-child{grid-row:span 2;height:220px}.p-imgs.i3 .p-img:not(:first-child){height:107px}.p-imgs.i4 .p-img{height:130px}
+.p-img:hover{opacity:.85}
+.p-acts{display:flex;gap:2px;margin-top:4px}
+.p-act{display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:9px;border:none;cursor:pointer;background:none;color:var(--mu);font-family:'DM Sans',sans-serif;font-size:.79rem;transition:all .18s}
+.p-act svg{width:15px;height:15px}
+.p-act:hover{background:rgba(124,58,237,.1);color:var(--vl)}
+.p-act.liked{color:var(--pk)}.p-act.liked:hover{background:rgba(244,114,182,.1)}
+.p-act.bookmarked{color:var(--vl)}
+.empty-tab{text-align:center;padding:60px 0;color:var(--mu)}
+.empty-tab svg{width:40px;height:40px;margin:0 auto 12px;display:block;opacity:.25}
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.93);display:none;align-items:center;justify-content:center}
+.lb.open{display:flex}
+.lb img{max-width:90vw;max-height:90vh;border-radius:12px;object-fit:contain}
+.lb-x{position:absolute;top:18px;right:18px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.1);border:none;cursor:pointer;color:#fff;display:grid;place-items:center}
+/* STORY VIEWER */
+.sv{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center}
+.sv.open{display:flex}
+.sv-card{width:min(400px,90vw);height:min(720px,90vh);border-radius:24px;overflow:hidden;position:relative;background:var(--s3)}
+.sv-prog{position:absolute;top:0;left:0;right:0;display:flex;gap:3px;padding:10px 12px 0;z-index:5}
+.sv-bar{flex:1;height:3px;background:rgba(255,255,255,.3);border-radius:2px;overflow:hidden}
+.sv-bar-fill{height:100%;background:#fff;width:0;transition:none}
+.sv-top{position:absolute;top:0;left:0;right:0;padding:22px 14px 10px;display:flex;align-items:center;justify-content:space-between;z-index:5;background:linear-gradient(to bottom,rgba(0,0,0,.5),transparent)}
+.sv-who{display:flex;align-items:center;gap:8px}
+.sv-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.76rem;color:#fff;border:2px solid rgba(255,255,255,.35)}
+.sv-nm{font-family:'Syne',sans-serif;font-weight:700;font-size:.86rem;color:#fff}
+.sv-tm{font-size:.7rem;color:rgba(255,255,255,.6)}
+.sv-x{background:rgba(0,0,0,.4);border:none;cursor:pointer;color:#fff;width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+.sv-body{width:100%;height:100%;position:relative;overflow:hidden}
+.sv-tap{position:absolute;top:0;bottom:0;width:50%;z-index:4;cursor:pointer}
+.sv-tap-l{left:0}.sv-tap-r{right:0}
+.sv-bottom{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(to top,rgba(0,0,0,.5),transparent);z-index:5}
+.sv-reply-row{display:flex;gap:8px;align-items:center}
+.sv-ri{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:8px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none}
+.sv-ri::placeholder{color:rgba(255,255,255,.45)}
+.sv-send{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);border:none;cursor:pointer;color:#fff;display:grid;place-items:center}
+.sv-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:5;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.4);border:none;cursor:pointer;color:#fff;display:grid;place-items:center}
+.sv-nav-l{left:-52px}.sv-nav-r{right:-52px}
+@media(max-width:600px){.sv-nav{display:none}}
+
+/* ── THEME VARIANTS ──────────────────────────────────── */
+body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
+body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
+
+/* ── Mobile bottom nav ── */
+@media(max-width:600px){
+  :root{--nav-w:0px!important}
+  .sidenav,.nav{display:none!important}
+  .main{margin-left:0!important;padding-bottom:64px!important}
+  
+}
+
+
+.mob-nav-btn.active,.mob-nav-btn:hover{color:var(--vl)}
+.mob-nav-btn svg{width:22px;height:22px}
+
+.mob-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  height:60px;
+  background:var(--s1);
+  border-top:1px solid var(--br);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  align-items:center;justify-content:space-around;
+  padding:0 4px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.mob-nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  flex:1;height:100%;justify-content:center;
+  color:var(--mu);cursor:pointer;transition:color .18s;
+  text-decoration:none;position:relative;
+  font-size:.6rem;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.01em;
+}
+.mob-nav-btn.active{color:var(--vl)}
+.mob-nav-btn svg{width:21px;height:21px}
+.mob-nav-btn span{line-height:1}
+.mob-nav-badge{position:absolute;top:7px;right:calc(50% - 19px);min-width:14px;height:14px;border-radius:7px;background:var(--er);color:#fff;font-size:.54rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 2px;border:2px solid var(--bg)}
+.mob-nav-btn.active svg{stroke:var(--vl)}
+</style>
+</head>
+<body>
+<script>
+(function(){
+  try{
+    var p=JSON.parse(localStorage.getItem('weave_prefs')||'{}');
+    var t=p.theme||'light';
+    if(t==='light')  document.body.classList.add('light');
+    if(t==='amoled') document.body.classList.add('amoled');
+    var ac={purple:{v:'#7C3AED',vl:'#A78BFA',vd:'#4C1D95',b:'#2563EB',bl:'#60A5FA'},pink:{v:'#DB2777',vl:'#F472B6',vd:'#831843',b:'#9333EA',bl:'#C084FC'},teal:{v:'#059669',vl:'#34D399',vd:'#064E3B',b:'#0EA5E9',bl:'#38BDF8'},orange:{v:'#D97706',vl:'#FBBF24',vd:'#78350F',b:'#DC2626',bl:'#F87171'},blue:{v:'#2563EB',vl:'#60A5FA',vd:'#1E3A8A',b:'#06B6D4',bl:'#22D3EE'},green:{v:'#16A34A',vl:'#4ADE80',vd:'#14532D',b:'#84CC16',bl:'#BEF264'},red:{v:'#DC2626',vl:'#F87171',vd:'#7F1D1D',b:'#F97316',bl:'#FDBA74'}};
+    var a=ac[p.accent]||ac.purple;
+    var r=document.documentElement;
+    r.style.setProperty('--v',a.v);r.style.setProperty('--vl',a.vl);r.style.setProperty('--vd',a.vd);r.style.setProperty('--b',a.b);r.style.setProperty('--bl',a.bl);
+    if(p.fontSize)document.body.style.fontSize=p.fontSize+'px';
+  }catch(e){}
+})();
+</script>
+<nav class="sidenav" id="sidenav">
+  <a class="sn-logo" href="feed.html">
+    <div class="sn-logo-icon">W</div>
+    <span class="sn-logo-text">Weave<span>.</span></span>
+  </a>
+
+  <a class="sn-user" href="profile.html" id="sn-user-card">
+    <div class="sn-ava" id="sn-ava">?</div>
+    <div class="sn-user-info">
+      <div class="sn-user-name" id="sn-name">Загрузка…</div>
+      <div class="sn-user-handle" id="sn-handle">@…</div>
+    </div>
+    <div class="sn-online"></div>
+  </a>
+
+  <div class="sn-section">
+    <div class="sn-item" onclick="window.location.href='feed.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="sn-item-label">Лента</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='explore.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <span class="sn-item-label">Поиск</span>
+    </div>
+    <div class="sn-item" id="msg-nav" onclick="window.location.href='messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="sn-item-label">Сообщения</span>
+      <span class="sn-badge sn-item-label" id="msg-badge" style="display:none">0</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="sn-item-label">Настройки</span>
+    </div>
+    <div class="sn-item" onclick="window.location.href='feed.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <span class="sn-item-label">Закладки</span>
+    </div>
+  </div>
+
+  <div class="sn-divider"></div>
+
+  <div class="sn-section">
+    <div class="sn-label sn-item-label">Профиль</div>
+    <div class="sn-item active" onclick="window.location.href='profile.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="sn-item-label">Мой профиль</span>
+    </div>
+    <div class="sn-item" id="nav-admin" style="display:none" onclick="window.location.href='admin.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span class="sn-item-label">Админка</span>
+    </div>
+    <div class="sn-item" onclick="handleLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span class="sn-item-label">Выйти</span>
+    </div>
+  </div>
+</nav>
+<div class="main">
+  <div class="topbar">
+    <button onclick="history.back()" style="background:none;border:none;color:var(--mu);cursor:pointer;display:flex;align-items:center;gap:6px;font-size:.88rem;padding:6px 10px;border-radius:10px;transition:all .18s" onmouseover="this.style.background='rgba(124,58,237,.1)'" onmouseout="this.style.background='none'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+      <span id="topbar-name">Профиль</span>
+    </button>
+    <div class="topbar-actions">
+      <div class="tb-btn" onclick="window.location.href='notifications.html'" title="Уведомления" style="position:relative" id="notif-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span id="notif-badge" style="display:none;position:absolute;top:3px;right:3px;min-width:16px;height:16px;border-radius:8px;background:var(--er);color:#fff;font-size:.6rem;font-weight:800;font-family:'Syne',sans-serif;align-items:center;justify-content:center;border:2px solid var(--bg);padding:0 2px"></span>
+      </div>
+</div>
+  </div>
+
+  <div class="profile-hero">
+    <div class="ph-top">
+      <div class="ph-ava-wrap">
+        <div class="ph-ava" id="ph-ava">
+          <img id="ph-ava-img" src="" alt="">
+          <span id="ph-ava-ini">?</span>
+        </div>
+        <div class="ph-online" id="ph-online" style="display:none"></div>
+      </div>
+      <div class="ph-info">
+        <div class="ph-row1">
+          <span class="ph-username" id="ph-username">@username</span>
+          <div id="ph-actions" class="ph-actions"></div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat" onclick="showFollowModal('posts')"><div class="ph-stat-n" id="ph-posts">0</div><div class="ph-stat-l">постов</div></div>
+          <div class="ph-stat" onclick="showFollowModal('followers')"><div class="ph-stat-n" id="ph-followers">0</div><div class="ph-stat-l">подписчиков</div></div>
+          <div class="ph-stat" onclick="showFollowModal('following')"><div class="ph-stat-n" id="ph-following">0</div><div class="ph-stat-l">подписок</div></div>
+        </div>
+        <div class="ph-bio">
+          <div class="ph-bio-name" id="ph-bio-name"></div>
+          <div class="ph-bio-text" id="ph-bio-text"></div>
+          <a class="ph-bio-link" id="ph-bio-link" href="#" target="_blank" style="display:none"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stories-bar" id="stories-bar"></div>
+
+  <div class="profile-tabs">
+    <button class="ptab active" onclick="switchTab('posts',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>ПОСТЫ
+    </button>
+    <button class="ptab" onclick="switchTab('replies',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>ОТВЕТЫ
+    </button>
+    <button class="ptab" onclick="switchTab('media',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 3 4 18M3 9h18M3 15h18"/></svg>МЕДИА
+    </button>
+    <button class="ptab" id="tab-saved-btn" onclick="switchTab('saved',this)" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>СОХРАНЕНО
+    </button>
+  </div>
+
+  <div class="posts-wrap" id="posts-wrap"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="closeLB()">
+  <button class="lb-x" onclick="event.stopPropagation();closeLB()"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <img id="lb-img" src="" onclick="event.stopPropagation()">
+</div>
+
+<!-- STORY VIEWER -->
+<div class="sv" id="sv">
+  <button class="sv-nav sv-nav-l" onclick="svPrevStory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <div class="sv-card">
+    <div class="sv-prog" id="sv-prog"></div>
+    <div class="sv-top">
+      <div class="sv-who"><div class="sv-av" id="sv-av"></div><div><div class="sv-nm" id="sv-nm"></div><div class="sv-tm" id="sv-tm"></div></div></div>
+      <button class="sv-x" onclick="closeSV()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="sv-body" id="sv-body"></div>
+    <div class="sv-tap sv-tap-l" onclick="svPrevSlide()"></div>
+    <div class="sv-tap sv-tap-r" onclick="svNextSlide()"></div>
+    <div class="sv-bottom">
+      <div class="sv-reply-row">
+        <input class="sv-ri" id="sv-ri" placeholder="Ответить на историю…" onkeydown="if(event.key==='Enter')svSendReply()">
+        <button class="sv-send" onclick="svSendReply()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <button class="sv-nav sv-nav-r" onclick="svNextStory()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18"><polyline points="9 18 15 12 9 6"/></svg></button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const API={base:'/api',tok(){return localStorage.getItem('weave_token')||sessionStorage.getItem('weave_token')},async req(u,o={}){const r=await fetch(this.base+u,{...o,headers:{'Content-Type':'application/json',...(this.tok()&&{Authorization:'Bearer '+this.tok()}),...(o.headers||{})}});if(r.status===401){logout();throw 0}if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Ошибка')}return r.json()}};
+function showToast(m,type=''){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2700)}
+function logout(){localStorage.removeItem('weave_token');localStorage.removeItem('weave_current_user');sessionStorage.removeItem('weave_token');location.href='login.html'}
+function avBg(i=0){return['linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)','linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)','linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'][i%6]}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmtTime(iso){if(!iso)return'только что';const d=new Date(iso),now=new Date(),diff=now-d;if(diff<60000)return'только что';if(diff<3600000)return Math.floor(diff/60000)+' мин';if(diff<86400000)return Math.floor(diff/3600000)+' ч';if(diff<604800000)return Math.floor(diff/86400000)+' дн';return d.toLocaleDateString('ru',{day:'numeric',month:'short'})}
+let ME=null;
+function bootNav(){const s=localStorage.getItem('weave_current_user');if(!s&&!API.tok()){location.href='login.html';return}ME=s?JSON.parse(s):null;if(!ME){location.href='login.html';return}const ini=((ME.firstName?.[0]||'')+(ME.lastName?.[0]||'')).toUpperCase()||'?';const av=document.getElementById('sn-ava');if(av){av.textContent=ini;av.style.background=avBg(ME.avatarColor)}const nm=document.getElementById('sn-name');if(nm)nm.textContent=(ME.firstName+' '+(ME.lastName||'')).trim();const hd=document.getElementById('sn-handle');if(hd)hd.textContent='@'+ME.username;const adm=document.getElementById('nav-admin');if(adm&&(ME.isAdmin||ME.isModerator))adm.style.display='flex';}
+
+let profileUser=null, profilePosts=[], stories=[], allPosts=[];
+let isOwn=false, currentTab='posts';
+let svStories=[], svIdx=0, svSlide=0, svTimer=null;
+
+window.addEventListener('DOMContentLoaded', async()=>{
+  bootNav();
+  const q=new URLSearchParams(location.search).get('user');
+  const username=q||(ME?.username);
+  if(!username){location.href='login.html';return}
+  await loadProfile(username);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLB();closeSV()}});
+});
+
+async function loadProfile(username){
+  try{
+    profileUser=await API.req('/users/'+username);
+    isOwn=ME&&ME.username===profileUser.username;
+    renderHeader();
+    document.title='Weave — @'+profileUser.username;
+    document.getElementById('topbar-name').textContent='@'+profileUser.username;
+    await Promise.all([loadPosts(), loadStories()]);
+    if(isOwn) document.getElementById('tab-saved-btn').style.display='';
+  }catch(e){showToast('Не удалось загрузить профиль','err')}
+}
+
+function renderHeader(){
+  const u=profileUser;
+  const ini=((u.firstName?.[0]||'')+(u.lastName?.[0]||'')).toUpperCase()||'?';
+  const av=document.getElementById('ph-ava');
+  av.style.background=avBg(u.avatarColor||0);
+  document.getElementById('ph-ava-ini').textContent=ini;
+  if(u.avatarUrl){const img=document.getElementById('ph-ava-img');img.src=u.avatarUrl;img.classList.add('loaded');document.getElementById('ph-ava-ini').style.display='none'}
+  document.getElementById('ph-username').textContent='@'+u.username;
+  document.getElementById('ph-bio-name').textContent=(u.firstName+' '+(u.lastName||'')).trim();
+  document.getElementById('ph-bio-text').textContent=u.bio||'';
+  if(u.website){const lnk=document.getElementById('ph-bio-link');lnk.href=u.website.startsWith('http')?u.website:'https://'+u.website;lnk.textContent=u.website.replace(/^https?:\/\//,'');lnk.style.display=''}
+  document.getElementById('ph-posts').textContent=u.stats?.posts||0;
+  document.getElementById('ph-followers').textContent=u.stats?.followers||0;
+  document.getElementById('ph-following').textContent=u.stats?.following||0;
+  if(u.online) document.getElementById('ph-online').style.display='';
+
+  const ac=document.getElementById('ph-actions');
+  if(isOwn){
+    ac.innerHTML=`<button class="btn-prim" onclick="location.href='settings.html'">Редактировать</button><button class="btn-sec" onclick="location.href='settings.html'">⚙</button>`;
+  }else{
+    ac.innerHTML=`<button class="btn-prim" id="btn-follow" onclick="doFollow()">${u.isFollowing?'✓ Читаю':'Подписаться'}</button>
+      <button class="btn-sec" onclick="location.href='messages.html?user=${u.id}'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>`;
+  }
+}
+
+async function loadPosts(){
+  try{
+    allPosts=await API.req('/posts?tab=profile&userId='+profileUser.id);
+    profilePosts=allPosts;
+    renderPosts();
+  }catch(e){document.getElementById('posts-wrap').innerHTML='<div class="empty-tab">Не удалось загрузить посты</div>'}
+}
+
+async function loadStories(){
+  try{
+    const all=await API.req('/stories');
+    stories=all.filter(s=>s.author?.id===profileUser.id||s.author?.username===profileUser.username);
+    renderStoriesBar();
+  }catch(e){}
+}
+
+function renderStoriesBar(){
+  const bar=document.getElementById('stories-bar');
+  let html='';
+  if(isOwn) html+=`<div class="story-bubble" onclick="addStory()"><div class="sb-ring add-ring"><div class="sb-inner" style="font-size:1.4rem">+</div></div><div class="sb-label" style="color:var(--vl)">Добавить</div></div>`;
+  html+=stories.map(s=>`<div class="story-bubble" onclick="openSV('${s.id}')">
+    <div class="sb-ring${s.viewed?' seen':''}"><div class="sb-inner">${(s.author?.firstName?.[0]||'')+(s.author?.lastName?.[0]||'')}</div></div>
+    <div class="sb-label">${fmtTime(s.createdAt)}</div></div>`).join('');
+  bar.innerHTML=html;
+}
+
+function renderPosts(){
+  const wrap=document.getElementById('posts-wrap');
+  if(!profilePosts.length){wrap.innerHTML='<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>Постов пока нет</p></div>';return}
+  wrap.innerHTML=profilePosts.map((p,i)=>buildPost(p,i)).join('');
+}
+
+function buildPost(p,i){
+  const ini=((p.author?.firstName?.[0]||'')+(p.author?.lastName?.[0]||'')).toUpperCase();
+  const bg=avBg(p.author?.avatarColor||0);
+  let imgs='';
+  if(p.images?.length){const n=Math.min(p.images.length,4);imgs=`<div class="p-imgs i${n}">`+p.images.slice(0,4).map(s=>`<img class="p-img" src="${s}" onclick="openLB('${s}')" loading="lazy">`).join('')+'</div>'}
+  const txt=esc(p.text||'').replace(/#(\w+)/g,'<span class="tag" onclick="location.href=\'explore.html\'">#$1</span>').replace(/@(\w+)/g,'<span class="mention" onclick="location.href=\'profile.html?user=$1\'">@$1</span>');
+  return `<div class="post" style="animation-delay:${i*.05}s">
+    <div class="p-head">
+      <div class="p-av" style="background:${bg}" onclick="location.href='profile.html?user=${p.author?.username}'">${ini}</div>
+      <div class="p-meta">
+        <div class="p-name" onclick="location.href='profile.html?user=${p.author?.username}'">${esc(p.author?.firstName||'')} ${esc(p.author?.lastName||'')}</div>
+        <div class="p-time">@${esc(p.author?.username||'')} · ${fmtTime(p.createdAt)}</div>
+      </div>
+    </div>
+    <div class="p-body">${txt}</div>
+    ${imgs}
+    <div class="p-acts">
+      <button class="p-act${p.liked?' liked':''}" onclick="doLike('${p.id}',this)">
+        <svg viewBox="0 0 24 24" fill="${p.liked?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>${p.likes||0}</span>
+      </button>
+      <button class="p-act" onclick="location.href='feed.html?post=${p.id}'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>${p.comments||0}</span>
+      </button>
+      <button class="p-act${p.bookmarked?' bookmarked':''}" onclick="doBookmark('${p.id}',this)">
+        <svg viewBox="0 0 24 24" fill="${p.bookmarked?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function switchTab(tab, btn){
+  currentTab=tab;
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const wrap=document.getElementById('posts-wrap');
+  if(tab==='posts'){profilePosts=[...allPosts];renderPosts()}
+  else if(tab==='media'){
+    const mediaPosts=allPosts.filter(p=>p.images?.length);
+    profilePosts=mediaPosts;
+    if(!mediaPosts.length){wrap.innerHTML='<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><p>Нет медиафайлов</p></div>';return}
+    renderPosts();
+  }else if(tab==='replies'){
+    wrap.innerHTML='<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>Нет ответов</p></div>';
+  }else if(tab==='saved'){
+    profilePosts=allPosts.filter(p=>p.bookmarked);
+    if(!profilePosts.length){wrap.innerHTML='<div class="empty-tab"><p>Нет сохранённых постов</p></div>';return}
+    renderPosts();
+  }
+}
+
+async function doLike(id,btn){
+  try{const r=await API.req('/posts/'+id+'/like',{method:'POST'});
+    btn.classList.toggle('liked',r.liked);
+    btn.querySelector('svg').setAttribute('fill',r.liked?'currentColor':'none');
+    btn.querySelector('span').textContent=r.likes;
+    const p=allPosts.find(x=>x.id===id);if(p){p.liked=r.liked;p.likes=r.likes}
+  }catch(e){showToast('Ошибка','err')}
+}
+
+async function doBookmark(id,btn){
+  try{const r=await API.req('/posts/'+id+'/bookmark',{method:'POST'});
+    btn.classList.toggle('bookmarked',r.bookmarked);
+    btn.querySelector('svg').setAttribute('fill',r.bookmarked?'currentColor':'none');
+    const p=allPosts.find(x=>x.id===id);if(p) p.bookmarked=r.bookmarked;
+    showToast(r.bookmarked?'✓ Сохранено':'Убрано из сохранённых');
+  }catch(e){showToast('Ошибка','err')}
+}
+
+async function doFollow(){
+  try{
+    const r=await API.req('/users/'+profileUser.id+'/follow',{method:'POST'});
+    document.getElementById('btn-follow').textContent=r.following?'✓ Читаю':'Подписаться';
+    const cnt=document.getElementById('ph-followers');
+    cnt.textContent=parseInt(cnt.textContent)+(r.following?1:-1);
+    showToast(r.following?'✓ Подписались':'Отписались');
+  }catch(e){showToast('Ошибка','err')}
+}
+
+// STORY VIEWER
+function openSV(storyId){
+  svStories=stories; svIdx=stories.findIndex(s=>s.id===storyId)||0; svSlide=0;
+  renderSV(); document.getElementById('sv').classList.add('open');
+}
+function renderSV(){
+  const s=svStories[svIdx]; if(!s){closeSV();return}
+  const slide=s.slides?.[svSlide]||{text:s.text||'',bg:'linear-gradient(135deg,#7C3AED,#06B6D4)',type:'text'};
+  const ini=((s.author?.firstName?.[0]||'')+(s.author?.lastName?.[0]||'')).toUpperCase();
+  const svAv=document.getElementById('sv-av');svAv.textContent=ini;svAv.style.background=avBg(s.author?.avatarColor||0);
+  document.getElementById('sv-nm').textContent=s.author?.firstName||'';
+  document.getElementById('sv-tm').textContent=fmtTime(s.createdAt);
+  const body=document.getElementById('sv-body');
+  body.style.background=slide.bg||'var(--s2)';
+  if(slide.type==='image'&&slide.image){
+    body.innerHTML=`<img src="${slide.image}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">${slide.text?`<div style="position:absolute;bottom:80px;left:0;right:0;text-align:center;color:#fff;font-size:1.1rem;font-weight:600;padding:0 20px;text-shadow:0 2px 8px rgba(0,0,0,.7)">${slide.text}</div>`:''}`
+  }else{
+    body.innerHTML=`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;font-size:1.3rem;font-weight:600;color:#fff;word-break:break-word;text-shadow:0 2px 8px rgba(0,0,0,.4)">${slide.text||''}</div>`;
+  }
+  const total=s.slides?.length||1;
+  document.getElementById('sv-prog').innerHTML=Array.from({length:total},(_,i)=>`<div class="sv-bar"><div class="sv-bar-fill" id="svb-${i}" style="width:${i<svSlide?100:0}%"></div></div>`).join('');
+  clearTimeout(svTimer);
+  const bar=document.getElementById('svb-'+svSlide);
+  if(bar){requestAnimationFrame(()=>{bar.style.transition='width 5s linear';bar.style.width='100%'})}
+  svTimer=setTimeout(svNextSlide,5000);
+}
+function svNextSlide(){clearTimeout(svTimer);const s=svStories[svIdx];if(s&&svSlide<(s.slides?.length||1)-1){svSlide++;renderSV()}else svNextStory()}
+function svPrevSlide(){clearTimeout(svTimer);if(svSlide>0){svSlide--;renderSV()}else svPrevStory()}
+function svNextStory(){clearTimeout(svTimer);if(svIdx<svStories.length-1){svIdx++;svSlide=0;renderSV()}else closeSV()}
+function svPrevStory(){clearTimeout(svTimer);if(svIdx>0){svIdx--;svSlide=0;renderSV()}}
+function closeSV(){clearTimeout(svTimer);document.getElementById('sv').classList.remove('open')}
+function svSendReply(){const ri=document.getElementById('sv-ri');if(!ri.value.trim())return;showToast('💌 Ответ отправлен');ri.value=''}
+
+function addStory(){location.href='feed.html#add-story'}
+function openLB(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open')}
+function closeLB(){document.getElementById('lb').classList.remove('open')}
+function showFollowModal(t){showToast('Список '+(t==='followers'?'подписчиков':t==='following'?'подписок':'постов'))}
+</script>
+<script src="theme.js">
+// Бейдж уведомлений
+async function checkNotifications() {
+  try {
+    const tok = localStorage.getItem('weave_token')||sessionStorage.getItem('weave_token');
+    if (!tok) return;
+    const r = await fetch('/api/notifications',{headers:{Authorization:'Bearer '+tok}});
+    if (!r.ok) return;
+    const notifs = await r.json();
+    const unread = (notifs||[]).filter(n=>!n.read).length;
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+      badge.textContent = unread > 9 ? '9+' : unread;
+      badge.style.display = unread > 0 ? 'flex' : 'none';
+    }
+  } catch(e) {}
+}
+setTimeout(()=>{ checkNotifications(); setInterval(checkNotifications,30000); }, 2000);
+</script>
+<nav class="mob-nav">
+  <a class="mob-nav-btn " href="feed.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Лента</span>
+  </a>
+  <a class="mob-nav-btn " href="explore.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <span>Поиск</span>
+  </a>
+  <a class="mob-nav-btn " href="messages.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="mob-nav-badge" id="mob-msg-badge"></span><span>Чаты</span>
+  </a>
+  <a class="mob-nav-btn active" href="profile.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Профиль</span>
+  </a>
+</nav>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW зарегистрирован:', reg.scope))
+      .catch(err => console.warn('SW ошибка:', err));
+  });
+}
+</script>
+</body></html>
