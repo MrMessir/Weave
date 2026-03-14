@@ -425,6 +425,8 @@ window.addEventListener('DOMContentLoaded', async()=>{
 
 async function loadProfile(username){
   try{
+    if(!username){showToast('Имя пользователя не найдено','err');return;}
+    console.log('Loading profile for:', username);
     profileUser=await API.request('/users/'+username);
     isOwn=ME&&ME.username===profileUser.username;
     renderHeader();
@@ -432,7 +434,7 @@ async function loadProfile(username){
     document.getElementById('topbar-name').textContent='@'+profileUser.username;
     await Promise.all([loadPosts(), loadStories()]);
     if(isOwn) document.getElementById('tab-saved-btn').style.display='';
-  }catch(e){showToast('Не удалось загрузить профиль','err')}
+  }catch(e){console.error('Profile load error:',e);showToast('Ошибка: '+(e?.message||e),'err')}
 }
 
 function renderHeader(){

@@ -1957,10 +1957,10 @@ async function loadSuggestions() {
     // Грузим всех пользователей, исключаем себя и уже подписок
     const [all, following] = await Promise.all([
       API.request('/users?q=&limit=20').catch(()=>[]),
-      ME ? API.request('/users/'+ME.id+'/following').catch(()=>[]) : Promise.resolve([])
+      user ? API.request('/users/'+user.id+'/following').catch(()=>[]) : Promise.resolve([])
     ]);
     const followingIds = new Set(following.map(u=>u.id));
-    const suggestions = all.filter(u=>u.id!==ME?.id && !followingIds.has(u.id)).slice(0,5);
+    const suggestions = all.filter(u=>u.id!==user?.id && !followingIds.has(u.id)).slice(0,5);
     const el = document.getElementById('suggs');
     if(!suggestions.length){
       el.innerHTML = '<div style="color:var(--mu);font-size:.78rem;text-align:center;padding:8px">Пока никого нет</div>';
@@ -2266,15 +2266,15 @@ function openMobCompose() {
   modal.style.display = 'flex';
   // Синхронизируем аватар
   const mcmAva = document.getElementById('mcm-ava');
-  if (mcmAva && ME) {
-    if (ME.avatarUrl) {
-      mcmAva.style.backgroundImage = 'url('+ME.avatarUrl+')';
+  if (mcmAva && user) {
+    if (user.avatarUrl) {
+      mcmAva.style.backgroundImage = 'url('+user.avatarUrl+')';
       mcmAva.style.backgroundSize = 'cover';
       mcmAva.textContent = '';
     } else {
       mcmAva.style.backgroundImage = '';
-      mcmAva.style.background = avBg(ME.avatarColor);
-      const ini = ((ME.firstName?.[0]||'')+(ME.lastName?.[0]||'')).toUpperCase()||'?';
+      mcmAva.style.background = avBg(user.avatarColor);
+      const ini = ((user.firstName?.[0]||'')+(user.lastName?.[0]||'')).toUpperCase()||'?';
       mcmAva.textContent = ini;
     }
   }
