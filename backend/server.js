@@ -8,16 +8,14 @@ const bcrypt       = require('bcryptjs');
 const http         = require('http');
 const WebSocket    = require('ws');
 
-const Database = require('better-sqlite3');
+const { DatabaseSync } = require('node:sqlite');
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'weave.db');
 // Создать директорию если не существует (для Render Disk)
 const dbDir = path.dirname(DB_PATH);
 if (!require('fs').existsSync(dbDir)) require('fs').mkdirSync(dbDir, { recursive: true });
 if (!require('fs').existsSync(path.join(__dirname,'data')))
   require('fs').mkdirSync(path.join(__dirname,'data'),{recursive:true});
-const db = new Database(DB_PATH);
-db.pragma('journal_mode = WAL'); // быстрее и надёжнее
-db.pragma('foreign_keys = ON');
+const db = new DatabaseSync(DB_PATH);
 
 const app    = express();
 const server = http.createServer(app);

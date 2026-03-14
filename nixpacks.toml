@@ -5,4 +5,4 @@ nixPkgs = ["nodejs_22"]
 cmds = ["cd backend && npm install"]
 
 [start]
-cmd = "cd backend && node server.js"
+cmd = "cd backend && node --experimental-sqlite server.js"
