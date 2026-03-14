@@ -437,6 +437,10 @@ async function loadProfile(username){
   }catch(e){console.error('Profile load error:',e);showToast('Ошибка: '+(e?.message||e),'err')}
 }
 
+
+function verifiedBadge(size=14){
+  return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" style="vertical-align:middle;margin-left:3px;flex-shrink:0;display:inline-block"><circle cx="12" cy="12" r="11" fill="#111111"/><polyline points="6.5,12 10,15.5 17.5,8.5" fill="none" stroke="#E53935" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
 function renderHeader(){
   const u=profileUser;
   const ini=((u.firstName?.[0]||'')+(u.lastName?.[0]||'')).toUpperCase()||'?';
@@ -633,9 +637,6 @@ async function checkNotifications() {
 }
 setTimeout(()=>{ checkNotifications(); setInterval(checkNotifications,30000); }, 2000);
 
-function verifiedBadge(size=14){
-  return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" style="vertical-align:middle;margin-left:3px;flex-shrink:0;display:inline-block"><circle cx="12" cy="12" r="11" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/><polyline points=\'6.5,12 10,15.5 17.5,8.5\' fill="none" stroke="#E53935" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-}
 </script>
 <nav class="mob-nav">
   <a class="mob-nav-btn " href="feed.html">
