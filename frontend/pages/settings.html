@@ -282,8 +282,7 @@ body.light .topbar{background:rgba(240,239,248,.9)}
 
 
 /* ── Avatar Crop Modal ── */
-.crop-modal{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);flex-direction:column;align-items:center;justify-content:center;padding:20px}
-.crop-modal.open{display:flex}
+
 .crop-box{position:relative;background:#000;border-radius:16px;overflow:hidden;touch-action:none;max-width:360px;max-height:360px;width:min(360px,90vw);height:min(360px,90vw)}
 .crop-img{position:absolute;transform-origin:0 0;cursor:move;user-select:none;-webkit-user-select:none}
 .crop-overlay{position:absolute;inset:0;pointer-events:none}
@@ -1368,18 +1367,7 @@ function applyCrop() {
 }
 </script>
 
-<!-- Avatar Crop Modal -->
-<div class="crop-modal" id="crop-modal">
-  <div class="crop-box" id="crop-box">
-    <img class="crop-img" id="crop-img" draggable="false">
-    <div class="crop-overlay"><div class="crop-circle"></div></div>
-  </div>
-  <p class="crop-hint">Перетащи и масштабируй пальцами или колёсиком мыши</p>
-  <div class="crop-actions">
-    <button class="crop-btn s" onclick="closeCrop()">Отмена</button>
-    <button class="crop-btn p" onclick="applyCrop()">Применить</button>
-  </div>
-</div>
+
 
 
 <!-- Avatar Cropper Modal -->
