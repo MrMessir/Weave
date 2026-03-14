@@ -741,6 +741,7 @@ const API = {
     return r.json();
   }
 };
+API.request=API.req.bind(API);
 
 const PREFS_KEY = 'weave_prefs';
 function getPrefs(){ try{ return JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'); }catch{ return {}; } }

@@ -207,6 +207,30 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .mob-nav-btn span{line-height:1}
 .mob-nav-badge{position:absolute;top:7px;right:calc(50% - 19px);min-width:14px;height:14px;border-radius:7px;background:var(--er);color:#fff;font-size:.54rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 2px;border:2px solid var(--bg)}
 .mob-nav-btn.active svg{stroke:var(--vl)}
+
+/* ── Follow Modal ── */
+.fw-modal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center}
+.fw-modal.open{display:flex}
+@media(min-width:540px){.fw-modal{align-items:center}}
+.fw-box{background:var(--s1);border-radius:20px 20px 0 0;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+@media(min-width:540px){.fw-box{border-radius:20px;max-height:70vh}}
+.fw-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--br);flex-shrink:0}
+.fw-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem}
+.fw-close{background:none;border:none;color:var(--mu);cursor:pointer;font-size:1.2rem;line-height:1;padding:4px}
+.fw-search{padding:10px 16px;border-bottom:1px solid var(--br);flex-shrink:0}
+.fw-search input{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:12px;padding:8px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.88rem;outline:none}
+.fw-search input:focus{border-color:var(--v)}
+.fw-list{overflow-y:auto;flex:1;padding:8px 0}
+.fw-item{display:flex;align-items:center;gap:12px;padding:10px 20px;cursor:pointer;transition:background .15s}
+.fw-item:hover{background:var(--s2)}
+.fw-ava{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:#fff;flex-shrink:0}
+.fw-info{flex:1;min-width:0}
+.fw-name{font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:4px}
+.fw-handle{font-size:.78rem;color:var(--mu)}
+.fw-btn{background:var(--s3);border:1px solid var(--br);color:var(--tx);padding:6px 14px;border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;flex-shrink:0;transition:all .15s}
+.fw-btn.following{background:rgba(124,58,237,.15);border-color:var(--v);color:var(--vl)}
+.fw-empty{padding:40px 20px;text-align:center;color:var(--mu);font-size:.85rem}
+
 </style>
 </head>
 <body>
@@ -377,6 +401,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 <script>
 
 const API={base:'/api',tok(){return localStorage.getItem('weave_token')||sessionStorage.getItem('weave_token')},async req(u,o={}){const r=await fetch(this.base+u,{...o,headers:{'Content-Type':'application/json',...(this.tok()&&{Authorization:'Bearer '+this.tok()}),...(o.headers||{})}});if(r.status===401){logout();throw 0}if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Ошибка')}return r.json()}};
+API.request=API.req.bind(API); // алиас для совместимости
 function showToast(m,type=''){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2700)}
 function logout(){localStorage.removeItem('weave_token');localStorage.removeItem('weave_current_user');sessionStorage.removeItem('weave_token');location.href='login.html'}
 function avBg(i=0){return['linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)','linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)','linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'][i%6]}
@@ -585,7 +610,7 @@ function svSendReply(){const ri=document.getElementById('sv-ri');if(!ri.value.tr
 function addStory(){location.href='feed.html#add-story'}
 function openLB(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open')}
 function closeLB(){document.getElementById('lb').classList.remove('open')}
-function showFollowModal(t){showToast('Список '+(t==='followers'?'подписчиков':t==='following'?'подписок':'постов'))}
+
 </script>
 <script src="theme.js">
 // Бейдж уведомлений
@@ -636,5 +661,101 @@ if ('serviceWorker' in navigator) {
       .catch(e => console.warn('SW error:', e));
   });
 }
+
+// ══ Follow Modal ══
+let _fwAll = [], _fwType = '';
+
+async function showFollowModal(type) {
+  _fwType = type;
+  const modal = document.getElementById('fw-modal');
+  const title = document.getElementById('fw-title');
+  const list = document.getElementById('fw-list');
+  const search = document.getElementById('fw-search');
+
+  title.textContent = type === 'followers' ? 'Подписчики' : 'Подписки';
+  list.innerHTML = '<div class="fw-empty">Загрузка…</div>';
+  search.value = '';
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  try {
+    const url = type === 'followers'
+      ? '/users/' + profileUser.id + '/followers'
+      : '/users/' + profileUser.id + '/following';
+    _fwAll = await API.request(url);
+    renderFwList(_fwAll);
+  } catch(e) {
+    list.innerHTML = '<div class="fw-empty">Не удалось загрузить</div>';
+  }
+}
+
+function closeFwModal() {
+  document.getElementById('fw-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function filterFwList(q) {
+  const ql = q.toLowerCase();
+  const filtered = _fwAll.filter(u =>
+    (u.firstName + ' ' + (u.lastName||'') + ' ' + u.username).toLowerCase().includes(ql)
+  );
+  renderFwList(filtered);
+}
+
+function renderFwList(users) {
+  const list = document.getElementById('fw-list');
+  if (!users.length) {
+    list.innerHTML = '<div class="fw-empty">Никого нет</div>';
+    return;
+  }
+  list.innerHTML = users.map(u => {
+    const ini = ((u.firstName?.[0]||'') + (u.lastName?.[0]||'')).toUpperCase() || '?';
+    const bg = avBg(u.avatarColor || 0);
+    const avaStyle = u.avatarUrl
+      ? `background-image:url(${u.avatarUrl});background-size:cover;background-position:center`
+      : `background:${bg}`;
+    const isSelf = ME && u.id === ME.id;
+    return `<div class="fw-item" onclick="location.href='profile.html?user=${esc(u.username)}'">
+      <div class="fw-ava" style="${avaStyle}">${u.avatarUrl ? '' : ini}</div>
+      <div class="fw-info">
+        <div class="fw-name">${esc(u.firstName)} ${esc(u.lastName||'')}${u.isVerified ? verifiedBadge(13) : ''}</div>
+        <div class="fw-handle">@${esc(u.username)}</div>
+      </div>
+      ${!isSelf ? `<button class="fw-btn${u.isFollowing?' following':''}"
+        onclick="event.stopPropagation();fwFollow('${u.id}',this)">
+        ${u.isFollowing ? '✓ Читаю' : 'Читать'}
+      </button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function fwFollow(uid, btn) {
+  try {
+    const r = await API.request('/users/' + uid + '/follow', { method: 'POST' });
+    btn.textContent = r.following ? '✓ Читаю' : 'Читать';
+    btn.classList.toggle('following', r.following);
+    const u = _fwAll.find(x => x.id === uid);
+    if (u) u.isFollowing = r.following;
+  } catch(e) { showToast('Ошибка', 'err'); }
+}
+
+// Закрыть по Escape
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFwModal(); });
 </script>
+
+<!-- Follow Modal -->
+<div class="fw-modal" id="fw-modal" onclick="if(event.target===this)closeFwModal()">
+  <div class="fw-box">
+    <div class="fw-header">
+      <div class="fw-title" id="fw-title">Подписчики</div>
+      <button class="fw-close" onclick="closeFwModal()">✕</button>
+    </div>
+    <div class="fw-search">
+      <input type="text" id="fw-search" placeholder="Поиск..." oninput="filterFwList(this.value)">
+    </div>
+    <div class="fw-list" id="fw-list">
+      <div class="fw-empty">Загрузка…</div>
+    </div>
+  </div>
+</div>
 </body></html>

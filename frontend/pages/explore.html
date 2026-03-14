@@ -270,6 +270,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 <script>
 
 const API={base:'/api',tok(){return localStorage.getItem('weave_token')||sessionStorage.getItem('weave_token')},async req(u,o={}){const r=await fetch(this.base+u,{...o,headers:{'Content-Type':'application/json',...(this.tok()&&{Authorization:'Bearer '+this.tok()}),...(o.headers||{})}});if(r.status===401){logout();throw 0}if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Ошибка')}return r.json()}};
+API.request=API.req.bind(API);
 function showToast(m,type=''){const t=document.getElementById('toast');t.textContent=m;t.className='toast show'+(type?' '+type:'');clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',2700)}
 function logout(){localStorage.removeItem('weave_token');localStorage.removeItem('weave_current_user');sessionStorage.removeItem('weave_token');location.href='login.html'}
 function avBg(i=0){return['linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)','linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)','linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'][i%6]}
