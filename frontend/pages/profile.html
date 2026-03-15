@@ -19,7 +19,7 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--v:#7C3AED;--vl:#A78BFA;--vd:#4C1D95;--b:#2563EB;--bl:#60A5FA;--cy:#06B6D4;--bg:#09090F;--s1:#0D0D1A;--s2:#111120;--s3:#151528;--br:rgba(124,58,237,.18);--br2:rgba(255,255,255,.06);--tx:#E8E4FF;--mu:#6B6B8F;--mu2:#3D3D5C;--pk:#F472B6;--gn:#34D399;--er:#F87171;--nav-w:260px}
 html{scroll-behavior:smooth}
-body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
+body{overflow-x:hidden;min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
 .sidenav{width:var(--nav-w);flex-shrink:0;position:fixed;top:0;left:0;bottom:0;z-index:90;background:var(--s1);border-right:1px solid var(--br);display:flex;flex-direction:column;transition:width .25s cubic-bezier(.22,1,.36,1);overflow:hidden}
 .sidenav:hover{width:var(--nav-w)}
@@ -269,6 +269,10 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .fw-btn.following{background:rgba(124,58,237,.15);border-color:var(--v);color:var(--vl)}
 .fw-empty{padding:40px 20px;text-align:center;color:var(--mu);font-size:.85rem}
 
+
+@media(max-width:600px){
+  input,textarea,select{font-size:16px!important}
+}
 </style>
 </head>
 <body>

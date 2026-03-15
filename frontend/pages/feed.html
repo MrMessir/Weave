@@ -31,7 +31,7 @@
   --nav-w:260px;--nav-collapsed:68px;
 }
 html{scroll-behavior:smooth}
-body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
+body{overflow-x:hidden;min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
 
 /* ═══ LEFT NAV (VK style) ═══ */
@@ -699,6 +699,43 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .sched-row input[type=datetime-local]{background:none;border:none;color:var(--vl);font-size:.78rem;outline:none;font-family:'DM Sans',sans-serif;flex:1}
 .sched-rm{background:none;border:none;color:var(--mu);cursor:pointer;font-size:.9rem}
 
+
+/* ── Карусель фото ── */
+.post-carousel{position:relative;border-radius:12px;overflow:hidden;margin-bottom:12px;background:var(--s3);user-select:none}
+.post-carousel-track{display:flex;transition:transform .28s cubic-bezier(.22,1,.36,1)}
+.post-carousel-slide{min-width:100%;position:relative}
+.post-carousel-slide img{width:100%;max-height:480px;object-fit:cover;display:block}
+.post-carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.45);border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;transition:background .15s}
+.post-carousel-btn:hover{background:rgba(0,0,0,.7)}
+.post-carousel-btn.prev{left:8px}
+.post-carousel-btn.next{right:8px}
+.post-carousel-btn svg{width:14px;height:14px;flex-shrink:0}
+.post-carousel-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px}
+.post-carousel-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);transition:all .2s;cursor:pointer}
+.post-carousel-dot.on{background:#fff;width:14px;border-radius:3px}
+.post-carousel-counter{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);color:#fff;font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:10px;backdrop-filter:blur(4px)}
+
+
+/* ── Треды ── */
+.thread-chain{border-left:2px solid var(--br);margin-left:20px;padding-left:14px;margin-top:-4px}
+.thread-more{font-size:.78rem;color:var(--vl);cursor:pointer;padding:6px 0;display:inline-block}
+.thread-more:hover{opacity:.75}
+.post-thread-badge{display:inline-flex;align-items:center;gap:4px;font-size:.72rem;color:var(--mu);margin-bottom:4px}
+.cmp-thread-note{font-size:.75rem;color:var(--vl);padding:6px 0;display:flex;align-items:center;gap:6px}
+
+
+@media(max-width:600px){
+  input,textarea,select{font-size:16px!important}
+}
+
+@media(max-width:600px){
+  .mcm-ta{min-height:200px;font-size:16px!important}
+  .post-carousel-btn.prev{left:4px}
+  .post-carousel-btn.next{right:4px}
+  .post-carousel-slide img{max-height:360px}
+  .pacts{gap:12px}
+  .pact{min-width:44px;min-height:44px;justify-content:center}
+}
 </style>
 </head>
 <body>
@@ -844,6 +881,9 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
             </button>
             <button class="cmp-tool" title="Музыка" id="music-toggle-btn" onclick="toggleMusicSearch()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </button>
+            <button class="cmp-tool" id="subs-toggle-btn" title="Только подписчики" onclick="toggleSubsOnly()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </button>
             <button class="cmp-tool" title="Запланировать" onclick="toggleSchedule()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
@@ -1290,12 +1330,25 @@ function buildPost(p, index) {
   
   let imgs = '';
   if (p.images?.length) {
-    const n = Math.min(p.images.length, 4);
-    imgs = `<div class="pimgs i${n}">` + 
-      p.images.slice(0,4).map(src => 
-        `<img class="pimg" src="${src}" onclick="openLB('${src}')" loading="lazy"/>`
-      ).join('') + 
-    '</div>';
+    if (p.images.length === 1) {
+      // Одно фото — обычный вид
+      imgs = `<div class="pimgs i1"><img class="pimg" src="${p.images[0]}" onclick="openLB('${p.images[0]}')" loading="lazy"/></div>`;
+    } else {
+      // Несколько фото — карусель
+      const id = 'car-' + p.id;
+      imgs = `<div class="post-carousel" id="${id}" onkeydown="carKey(event,'${p.id}')">
+        <div class="post-carousel-track" id="ct-${p.id}">
+          ${p.images.map((src,i) => `<div class="post-carousel-slide"><img src="${src}" loading="lazy" onclick="openLB('${src}')"/></div>`).join('')}
+        </div>
+        ${p.images.length > 1 ? `
+        <button class="post-carousel-btn prev" onclick="carSlide('${p.id}',-1,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <button class="post-carousel-btn next" onclick="carSlide('${p.id}',1,event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+        <div class="post-carousel-dots" id="cd-${p.id}">
+          ${p.images.map((_,i)=>`<div class="post-carousel-dot${i===0?' on':''}" onclick="carGo('${p.id}',${i},event)"></div>`).join('')}
+        </div>
+        <div class="post-carousel-counter" id="cc-${p.id}">1 / ${p.images.length}</div>` : ''}
+      </div>`;
+    }
   }
   
   return `
@@ -1310,7 +1363,7 @@ function buildPost(p, index) {
           ${p.author?.isVerified ? verifiedBadge(14) : ''}
           ${p.edited ? '<span style="font-size:.68rem;color:var(--mu2);font-weight:400;margin-left:4px">(изм.)</span>' : ''}
         </div>
-        <div class="pt">@${p.author?.username} · ${formatTime(p.createdAt)}${p.pinned ? " · 📌 Закреплён" : ""}</div>
+        <div class="pt">@${p.author?.username} · ${formatTime(p.createdAt)}${p.pinned ? " · 📌 Закреплён" : ""}${p.threadId ? " · 🧵 Тред" : ""}${p.subscribersOnly ? " · 🔒" : ""}</div>
       </div>
       <div class="pmenu-wrap">
         <button class="pmenu-btn" onclick="toggleDrop(event, '${p.id}')">
@@ -1323,6 +1376,10 @@ function buildPost(p, index) {
             <div class="pd-it" id="pin-${p.id}" onclick="pinPost('${p.id}',this)">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
               <span id="pin-lbl-${p.id}">${p.pinned?'Открепить':'Закрепить'}</span>
+            </div>
+            <div class="pd-it" onclick="startThread('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+              Добавить в тред
             </div>
             <div class="pd-it" onclick="openEdit('${p.id}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1341,6 +1398,10 @@ function buildPost(p, index) {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
               Цитировать
             </div>
+            <div class="pd-it" onclick="inviteCollab('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Позвать соавтора
+            </div>
             <div class="pd-it" onclick="reportPost('${p.id}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
@@ -1357,25 +1418,29 @@ function buildPost(p, index) {
         </div>
       </div>
     </div>
-    \${p.track ? `<div class="post-track" onclick="playTrack('\${p.track.preview}','\${p.id}')">
-      <img class="post-track-thumb" src="\${p.track.cover}" alt="">
+    ${p.track ? `<div class="post-track" onclick="playTrack('${p.track.preview}','${p.id}')">
+      <img class="post-track-thumb" src="${p.track.cover}" alt="">
       <div class="post-track-info">
-        <div class="post-track-name">\${esc(p.track.title)}</div>
-        <div class="post-track-artist">\${esc(p.track.artist)}</div>
+        <div class="post-track-name">${esc(p.track.title)}</div>
+        <div class="post-track-artist">${esc(p.track.artist)}</div>
       </div>
-      <div class="post-track-wave paused" id="wave-\${p.id}">
+      <div class="post-track-wave paused" id="wave-${p.id}">
         <span style="height:6px"></span><span style="height:10px"></span><span style="height:14px"></span><span style="height:8px"></span>
       </div>
-      <button class="post-track-play" id="play-\${p.id}">
+      <button class="post-track-play" id="play-${p.id}">
         <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
       </button>
     </div>` : ''}
-    \${p.quotePost ? `<div class="quote-block"" onclick="location.href='feed.html?post=\${p.quotePost.id}'">
-      <span class="quote-ava" style="background:\${avbg(p.quotePost.author?.avatarColor||0)}">\${((p.quotePost.author?.firstName?.[0]||'')+(p.quotePost.author?.lastName?.[0]||'')).toUpperCase()}</span>
-      <span class="quote-author">@\${esc(p.quotePost.author?.username||'')}</span>
-      <div class="quote-text">\${esc(p.quotePost.text||'')}</div>
+    ${p.collabInvite && !p.collabAccepted && p.author?.id !== (user?.id||'') ? `<div style="background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:10px;padding:8px 12px;margin-bottom:8px;font-size:.78rem;display:flex;align-items:center;gap:8px">
+      <span style="color:var(--vl)">👥 Коллаборация — тебя позвали соавтором</span>
+      <button onclick="acceptCollab('${p.id}')" style="background:var(--v);border:none;color:#fff;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:.75rem;font-family:'Syne',sans-serif;font-weight:700">Принять</button>
     </div>` : ''}
-    <div class="pbody" id="ptxt-\${p.id}" ondblclick="doubleTapLike(event,'${p.id}')" style="cursor:default">${formatText(p.text)}</div>
+    ${p.quotePost ? `<div class="quote-block"" onclick="location.href='feed.html?post=${p.quotePost.id}'">
+      <span class="quote-ava" style="background:${avbg(p.quotePost.author?.avatarColor||0)}">${((p.quotePost.author?.firstName?.[0]||'')+(p.quotePost.author?.lastName?.[0]||'')).toUpperCase()}</span>
+      <span class="quote-author">@${esc(p.quotePost.author?.username||'')}</span>
+      <div class="quote-text">${esc(p.quotePost.text||'')}</div>
+    </div>` : ''}
+    <div class="pbody" id="ptxt-${p.id}" ondblclick="doubleTapLike(event,'${p.id}')" style="cursor:default">${formatText(p.text)}</div>
     ${imgs}
     <div class="pacts">
       <div style="position:relative"><button class="pact ${p.liked ? 'liked' : ''}" onclick="toggleLike('${p.id}', this)">
@@ -2086,8 +2151,8 @@ function grow(ta) {
 
 function onImgUpload(input) {
   const files = Array.from(input.files);
-  if (pendImgs.length + files.length > 4) {
-    showToast('⚠️ Максимум 4 фото');
+  if (pendImgs.length + files.length > 10) {
+    showToast('⚠️ Максимум 10 фото');
     return;
   }
   
@@ -2138,13 +2203,16 @@ async function publish() {
       poll: pollData,
       quoteId: pendQuote?.id || null,
       track: pendTrack || null,
-      scheduledAt: scheduledAt || null
+      scheduledAt: scheduledAt || null,
+      threadId: _activeThread || null,
+      subscribersOnly: _subsOnly
     });
     
     ta.value = '';
     // Сбросить доп. поля
     if (pollActive) togglePoll();
     clearQuote(); clearTrack(); clearSchedule();
+    cancelThread(); if(_subsOnly){toggleSubsOnly();}
     document.getElementById('poll-options') && (document.getElementById('poll-options').innerHTML = '<div class="poll-option"><input placeholder="Вариант 1" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button></div><div class="poll-option"><input placeholder="Вариант 2" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button></div>');
     ta.style.height = 'auto';
     pendImgs = [];
@@ -2965,7 +3033,7 @@ async function pinPost(postId, btn) {
 // ══ МУЗЫКА (Deezer) ══
 let _musicAudio = null;   // текущий Audio объект
 let _selectedTrack = {};  // {story: {...}, post: {...}}
-let _musicTimer = {};
+// _musicTimer объявлен ниже
 
 
 
@@ -3164,17 +3232,33 @@ function searchMusic(q) {
       const data = await fetch('/api/music/search?q='+encodeURIComponent(q)).then(r=>r.json());
       if (!res) return;
       if (!data.data?.length) { res.innerHTML = '<div style="color:var(--mu);font-size:.8rem;padding:8px">Ничего не найдено</div>'; return; }
-      res.innerHTML = data.data.slice(0,6).map(t => `
-        <div class="music-item" onclick="selectTrack(${JSON.stringify({id:t.id,title:t.title.replace(/'/g,'\\''),artist:t.artist.name.replace(/'/g,'\\''),cover:t.album.cover_medium,preview:t.preview,duration:t.duration}).replace(/"/g,'&quot;')})">
+      // Сохраняем треки глобально для клика
+      window._musicResults = data.data.slice(0,6);
+      res.innerHTML = window._musicResults.map((t,idx) => `
+        <div class="music-item" onclick="selectTrackByIdx(${idx})">
           <img class="music-thumb" src="${t.album.cover_small}" alt="">
           <div class="music-info">
-            <div class="music-title">${t.title}</div>
-            <div class="music-artist">${t.artist.name}</div>
+            <div class="music-title">${esc2(t.title)}</div>
+            <div class="music-artist">${esc2(t.artist.name)}</div>
           </div>
           <div class="music-dur">${Math.floor(t.duration/60)}:${String(t.duration%60).padStart(2,'0')}</div>
         </div>`).join('');
     } catch(e) {}
   }, 400);
+}
+function esc2(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function selectTrackByIdx(idx) {
+  const results = window._musicResults || [];
+  if (!results[idx]) return;
+  const t = results[idx];
+  selectTrack({
+    id: t.id,
+    title: t.title,
+    artist: t.artist.name,
+    cover: t.album.cover_medium,
+    preview: t.preview,
+    duration: t.duration
+  });
 }
 function selectTrack(track) {
   pendTrack = track;
@@ -3251,6 +3335,146 @@ function getScheduledAt() {
   const dt = document.getElementById('sched-dt');
   if (!dt || document.getElementById('sched-row')?.style.display === 'none') return null;
   return dt.value ? new Date(dt.value).toISOString() : null;
+}
+
+// ══ Карусель фото ══
+const _carIdx = {};
+function carSlide(postId, dir, e) {
+  if (e) e.stopPropagation();
+  const post = posts.find(p => p.id === postId);
+  if (!post?.images?.length) return;
+  const n = post.images.length;
+  _carIdx[postId] = ((_carIdx[postId]||0) + dir + n) % n;
+  _carUpdate(postId, n);
+}
+function carGo(postId, idx, e) {
+  if (e) e.stopPropagation();
+  _carIdx[postId] = idx;
+  const post = posts.find(p => p.id === postId);
+  _carUpdate(postId, post?.images?.length||0);
+}
+function carKey(e, postId) {
+  if (e.key === 'ArrowLeft') carSlide(postId,-1,e);
+  if (e.key === 'ArrowRight') carSlide(postId,1,e);
+}
+function _carUpdate(postId, n) {
+  const idx = _carIdx[postId]||0;
+  const track = document.getElementById('ct-'+postId);
+  if (track) track.style.transform = `translateX(-${idx*100}%)`;
+  // Точки
+  const dots = document.querySelectorAll(`#cd-${postId} .post-carousel-dot`);
+  dots.forEach((d,i) => d.classList.toggle('on', i===idx));
+  // Счётчик
+  const cnt = document.getElementById('cc-'+postId);
+  if (cnt) cnt.textContent = `${idx+1} / ${n}`;
+}
+
+// Свайп на мобиле
+function initCarouselTouch() {
+  document.addEventListener('touchstart', e => {
+    const car = e.target.closest('.post-carousel');
+    if (!car) return;
+    car._tx = e.touches[0].clientX;
+  }, {passive:true});
+  document.addEventListener('touchend', e => {
+    const car = e.target.closest('.post-carousel');
+    if (!car || car._tx === undefined) return;
+    const dx = e.changedTouches[0].clientX - car._tx;
+    if (Math.abs(dx) < 40) return;
+    const postId = car.id.replace('car-','');
+    carSlide(postId, dx < 0 ? 1 : -1, null);
+    delete car._tx;
+  }, {passive:true});
+}
+initCarouselTouch();
+
+// Стрелки клавиатуры для открытой карусели
+document.addEventListener('keydown', e => {
+  const focused = document.activeElement?.closest('.post-carousel');
+  if (focused) {
+    const postId = focused.id.replace('car-','');
+    if (e.key==='ArrowLeft') { carSlide(postId,-1,null); e.preventDefault(); }
+    if (e.key==='ArrowRight') { carSlide(postId,1,null); e.preventDefault(); }
+  }
+});
+
+// ══ ТРЕДЫ ══
+let _activeThread = null;
+function startThread(postId) {
+  closeDrops();
+  _activeThread = postId;
+  const ta = document.getElementById('cmp-ta');
+  if (ta) {
+    ta.focus();
+    ta.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  // Показать заметку
+  let note = document.getElementById('thread-note');
+  if (!note) {
+    note = document.createElement('div');
+    note.id = 'thread-note';
+    note.className = 'cmp-thread-note';
+    note.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/></svg> Продолжение треда&nbsp;<button onclick="cancelThread()" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:.9rem;margin-left:4px">✕</button>';
+    document.getElementById('cmp-imgs').after(note);
+  }
+  showToast('🧵 Напиши продолжение треда');
+}
+function cancelThread() {
+  _activeThread = null;
+  document.getElementById('thread-note')?.remove();
+}
+
+// ══ ТОЛЬКО ПОДПИСЧИКИ ══
+let _subsOnly = false;
+function toggleSubsOnly() {
+  _subsOnly = !_subsOnly;
+  const btn = document.getElementById('subs-toggle-btn');
+  if (btn) btn.style.color = _subsOnly ? 'var(--v)' : '';
+  showToast(_subsOnly ? '🔒 Только для подписчиков' : '🔓 Видно всем');
+}
+
+// ══ КОЛЛАБОРАЦИИ ══
+async function inviteCollab(postId) {
+  closeDrops();
+  // Показываем модал выбора пользователя
+  const q = prompt('Введи @никнейм соавтора:');
+  if (!q) return;
+  const username = q.replace('@','').trim();
+  try {
+    // Найти пользователя
+    const res = await API.request('/users/'+username);
+    if (!res?.id) { showToast('Пользователь не найден','err'); return; }
+    await API.request('/posts/'+postId+'/collab/invite', {method:'POST', body:JSON.stringify({userId:res.id})});
+    showToast('✅ Приглашение отправлено @'+username);
+  } catch(e) { showToast('Ошибка: '+e.message,'err'); }
+}
+
+async function acceptCollab(postId) {
+  try {
+    await API.request('/posts/'+postId+'/collab/accept', {method:'POST'});
+    showToast('✅ Ты теперь соавтор поста!');
+    await loadPosts(true);
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+// ══ ТОП НЕДЕЛИ — виджет в правой панели ══
+async function loadTopWeek() {
+  try {
+    const el = document.getElementById('top-week-list');
+    if (!el) return;
+    // Топ постов за 7 дней по лайкам
+    const data = await API.request('/posts?tab=trending&limit=3&offset=0');
+    const topPosts = (data.posts||data).slice(0,3);
+    if (!topPosts.length) { el.innerHTML = '<div style="color:var(--mu);font-size:.78rem">Пока нет постов</div>'; return; }
+    el.innerHTML = topPosts.map((p,i) => `
+      <div style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--br2);cursor:pointer" onclick="location.href='feed.html?post=${p.id}'">
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--mu);min-width:20px">${i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.8rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.text?.slice(0,50)||'[медиа]')}</div>
+          <div style="font-size:.7rem;color:var(--mu)">@${esc(p.author?.username||'')} · ❤ ${p.likes||0}</div>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
 }
 </script>
 

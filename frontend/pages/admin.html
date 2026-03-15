@@ -32,7 +32,7 @@
   --nav-w:260px;--nav-collapsed:68px;
 }
 html{scroll-behavior:smooth}
-body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
+body{overflow-x:hidden;min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
 
 /* ═══ LEFT NAV (VK style) ═══ */
@@ -556,6 +556,10 @@ table.admin-tbl{width:100%;border-collapse:collapse;}
 
 @media(max-width:900px){.admin-layout{margin-left:0;}}
 @media(max-width:700px){.admin-sidebar{display:none;} .chart-row{grid-template-columns:1fr;} .stat-grid{grid-template-columns:repeat(2,1fr);} .admin-page{padding:14px 16px;}}
+
+@media(max-width:600px){
+  input,textarea,select{font-size:16px!important}
+}
 </style>
 </head>
 <body>

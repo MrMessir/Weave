@@ -28,7 +28,7 @@
   --tx:#E8E4FF;--mu:#6B6B8F;--mu2:#3D3D5C;
   --gn:#34D399;--er:#F87171;--nav-w:260px
 }
-html,body{height:100%;overflow:hidden}
+html,body{overflow-x:hidden;height:100%;overflow:hidden}
 body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
 /* NAV */
@@ -384,6 +384,10 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .mrow .reply-preview{background:rgba(124,58,237,.08);border-left:3px solid var(--v);border-radius:6px;padding:5px 8px;margin-bottom:5px;font-size:.75rem;color:var(--mu);cursor:pointer}
 .mrow .reply-preview b{color:var(--vl);display:block;margin-bottom:2px;font-size:.7rem}
 
+
+@media(max-width:600px){
+  input,textarea,select{font-size:16px!important}
+}
 </style>
 </head>
 <body>

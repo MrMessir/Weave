@@ -30,7 +30,7 @@
   --nav-w:260px;
 }
 html{scroll-behavior:smooth}
-body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex;transition:background .25s,color .25s}
+body{overflow-x:hidden;min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex;transition:background .25s,color .25s}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
 /* Theme variants */
 body.light{--bg:#FFFFFF;--s1:#F3F4F6;--s2:#E9EAEC;--s3:#D9DADD;--br:rgba(0,0,0,.12);--br2:rgba(0,0,0,.08);--tx:#111827;--mu:#6B7280;--mu2:#9CA3AF}
@@ -348,6 +348,10 @@ body.light .topbar{background:rgba(240,239,248,.9)}
 .crop-cancel-btn{background:var(--s3);color:var(--tx)}
 .crop-ok-btn{background:linear-gradient(135deg,var(--v),var(--b));color:#fff}
 
+
+@media(max-width:600px){
+  input,textarea,select{font-size:16px!important}
+}
 </style>
 </head>
 <body>

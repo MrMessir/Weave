@@ -52,6 +52,12 @@ try{db.exec(`CREATE TABLE IF NOT EXISTS post_reactions(postId TEXT,userId TEXT,e
 try{db.exec(`ALTER TABLE posts ADD COLUMN isHidden INTEGER DEFAULT 0`)}catch{}
 try{db.exec(`ALTER TABLE posts ADD COLUMN poll TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`ALTER TABLE posts ADD COLUMN quoteId TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN threadId TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN threadOrder INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN subscribersOnly INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN collabInvite TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN collabAccepted INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS story_chains(id TEXT PRIMARY KEY,starterId TEXT,slides TEXT DEFAULT '[]',participants TEXT DEFAULT '[]',createdAt TEXT)`)}catch{}
 try{db.exec(`ALTER TABLE posts ADD COLUMN track TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`ALTER TABLE posts ADD COLUMN scheduledAt TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`ALTER TABLE messages ADD COLUMN ttl INTEGER DEFAULT 0`)}catch{}
@@ -80,7 +86,7 @@ const S = {
   insSess:   db.prepare(`INSERT INTO sessions(token,userId,createdAt)VALUES(?,?,?)`),
   getSess:   db.prepare(`SELECT userId FROM sessions WHERE token=?`),
   delSess:   db.prepare(`DELETE FROM sessions WHERE token=?`),
-  insPost:   db.prepare(`INSERT INTO posts(id,authorId,text,images,poll,quoteId,track,scheduledAt,createdAt)VALUES(?,?,?,?,?,?,?,?,?)`),
+  insPost:   db.prepare(`INSERT INTO posts(id,authorId,text,images,poll,quoteId,track,scheduledAt,threadId,threadOrder,subscribersOnly,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`),
   getPost:   db.prepare(`SELECT * FROM posts WHERE id=?`),
   delPost:   db.prepare(`DELETE FROM posts WHERE id=?`),
   updPost:   db.prepare(`UPDATE posts SET text=?,edited=1 WHERE id=?`),
@@ -275,7 +281,8 @@ app.get('/api/posts',(req,res)=>{
   const lim=Math.min(Number(limit)||20,50),off=Number(offset)||0;
   let rows,total=0;
   if(tab==='following'&&userId){
-    rows=db.prepare(`SELECT * FROM posts WHERE isHidden=0 AND authorId IN(SELECT followingId FROM follows WHERE followerId=?)ORDER BY createdAt DESC LIMIT ? OFFSET ?`).all(userId,lim,off);
+    // Показываем subscribersOnly только подписчикам
+rows=db.prepare(`SELECT * FROM posts WHERE isHidden=0 AND authorId IN(SELECT followingId FROM follows WHERE followerId=?) AND (subscribersOnly=0 OR authorId IN(SELECT followingId FROM follows WHERE followerId=?)) ORDER BY createdAt DESC LIMIT ? OFFSET ?`).all(userId,userId,lim,off);
     total=db.prepare(`SELECT COUNT(*) as n FROM posts WHERE isHidden=0 AND authorId IN(SELECT followingId FROM follows WHERE followerId=?)`).get(userId).n;
   } else if(tab==='profile'&&userId){
     rows=db.prepare(`SELECT * FROM posts WHERE authorId=? ORDER BY createdAt DESC LIMIT ? OFFSET ?`).all(userId,lim,off);
@@ -834,6 +841,31 @@ app.delete('/api/messages/:id',auth,(req,res)=>{
   const ws=wsClients.get(m.toId);
   if(ws?.readyState===1)ws.send(JSON.stringify({type:'message_deleted',messageId:req.params.id}));
   res.json({success:true});
+});
+
+// Принять коллаб
+app.post('/api/posts/:id/collab/invite',auth,(req,res)=>{
+  const{userId}=req.body;
+  if(!userId)return res.status(400).json({error:'userId required'});
+  db.prepare('UPDATE posts SET collabInvite=? WHERE id=? AND authorId=?').run(userId,req.params.id,req.userId);
+  res.json({success:true});
+});
+
+app.post('/api/posts/:id/collab/accept',auth,(req,res)=>{
+  const post=S.getPost.get(req.params.id);
+  if(!post)return res.status(404).json({error:'Пост не найден'});
+  if(post.collabInvite!==req.userId)return res.status(403).json({error:'Нет инвайта'});
+  db.prepare('UPDATE posts SET collabAccepted=1 WHERE id=?').run(req.params.id);
+  res.json({success:true});
+});
+
+// Тред — все посты цепочки
+app.get('/api/posts/:id/thread',auth,(req,res)=>{
+  const post=S.getPost.get(req.params.id);
+  if(!post)return res.status(404).json({error:'Пост не найден'});
+  const threadId=post.threadId||req.params.id;
+  const rows=db.prepare('SELECT * FROM posts WHERE (id=? OR threadId=?) ORDER BY threadOrder ASC,createdAt ASC').all(threadId,threadId);
+  res.json(rows.map(r=>enrichPost(r,req.userId)));
 });
 
 // Кто лайкнул
