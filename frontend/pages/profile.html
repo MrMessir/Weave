@@ -168,7 +168,45 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 @media(max-width:600px){.sv-nav{display:none}}
 
 /* ── THEME VARIANTS ──────────────────────────────────── */
-body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.light{--bg:#FFFFFF;--s1:#F3F4F6;--s2:#E9EAEC;--s3:#D9DADD;--br:rgba(0,0,0,.12);--br2:rgba(0,0,0,.08);--tx:#111827;--mu:#6B7280;--mu2:#9CA3AF}
+/* ── Светлая тема: перекрытие белого текста ── */
+body.light .sn-user-name,
+body.light .sn-handle,
+body.light .sn-item,
+body.light .sn-label,
+body.light .pn,
+body.light .pt,
+body.light .pbody,
+body.light .p-body,
+body.light .p-name,
+body.light .p-time,
+body.light .cmt-nm,
+body.light .cmt-tx,
+body.light .sg-nm,
+body.light .sg-hd,
+body.light .tr-tag,
+body.light .tr-cnt,
+body.light .not-title,
+body.light .not-body { color: var(--tx); }
+body.light .sn-ava-ini,
+body.light .pa,
+body.light .cmp-ava,
+body.light .sv-a,
+body.light .cca { color: #fff; } /* инициалы на цветном фоне — оставить белыми */
+body.light .sn-logo-text { -webkit-text-fill-color: unset; background: linear-gradient(135deg,#7C3AED,#2563EB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .post,
+body.light .compose,
+body.light .sk-card,
+body.light .notif-item,
+body.light .sg-card,
+body.light .ch-item { background: var(--s1); border-color: var(--br); }
+body.light .cmp-ta,
+body.light .search-inp,
+body.light input,
+body.light textarea { background: var(--s2); color: var(--tx); border-color: var(--br); }
+body.light .cmp-ta::placeholder,
+body.light input::placeholder,
+body.light textarea::placeholder { color: var(--mu); }
 body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
 body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
 
@@ -341,6 +379,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
         </div>
         <div class="ph-bio">
           <div class="ph-bio-name" id="ph-bio-name"></div>
+          <div id="ph-status" style="font-size:.78rem;color:var(--vl);margin-top:2px;display:none"></div>
           <div class="ph-bio-text" id="ph-bio-text"></div>
           <a class="ph-bio-link" id="ph-bio-link" href="#" target="_blank" style="display:none"></a>
         </div>
@@ -461,6 +500,8 @@ function renderHeader(){
   const _phName=document.getElementById('ph-bio-name');
   if(_phName) _phName.innerHTML=esc((u.firstName+' '+(u.lastName||'')).trim())+(u.isVerified?verifiedBadge(16):'');
   document.getElementById('ph-bio-text').textContent=u.bio||'';
+  const stEl=document.getElementById('ph-status');
+  if(stEl&&u.status){stEl.textContent=u.status;stEl.style.display='block';}
   if(u.website){const lnk=document.getElementById('ph-bio-link');lnk.href=u.website.startsWith('http')?u.website:'https://'+u.website;lnk.textContent=u.website.replace(/^https?:\/\//,'');lnk.style.display=''}
   document.getElementById('ph-posts').textContent=u.stats?.posts||0;
   document.getElementById('ph-followers').textContent=u.stats?.followers||0;

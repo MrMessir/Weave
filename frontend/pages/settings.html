@@ -33,7 +33,45 @@ html{scroll-behavior:smooth}
 body{min-height:100vh;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--tx);display:flex;transition:background .25s,color .25s}
 body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(124,58,237,.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;z-index:0}
 /* Theme variants */
-body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.light{--bg:#FFFFFF;--s1:#F3F4F6;--s2:#E9EAEC;--s3:#D9DADD;--br:rgba(0,0,0,.12);--br2:rgba(0,0,0,.08);--tx:#111827;--mu:#6B7280;--mu2:#9CA3AF}
+/* ── Светлая тема: перекрытие белого текста ── */
+body.light .sn-user-name,
+body.light .sn-handle,
+body.light .sn-item,
+body.light .sn-label,
+body.light .pn,
+body.light .pt,
+body.light .pbody,
+body.light .p-body,
+body.light .p-name,
+body.light .p-time,
+body.light .cmt-nm,
+body.light .cmt-tx,
+body.light .sg-nm,
+body.light .sg-hd,
+body.light .tr-tag,
+body.light .tr-cnt,
+body.light .not-title,
+body.light .not-body { color: var(--tx); }
+body.light .sn-ava-ini,
+body.light .pa,
+body.light .cmp-ava,
+body.light .sv-a,
+body.light .cca { color: #fff; } /* инициалы на цветном фоне — оставить белыми */
+body.light .sn-logo-text { -webkit-text-fill-color: unset; background: linear-gradient(135deg,#7C3AED,#2563EB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .post,
+body.light .compose,
+body.light .sk-card,
+body.light .notif-item,
+body.light .sg-card,
+body.light .ch-item { background: var(--s1); border-color: var(--br); }
+body.light .cmp-ta,
+body.light .search-inp,
+body.light input,
+body.light textarea { background: var(--s2); color: var(--tx); border-color: var(--br); }
+body.light .cmp-ta::placeholder,
+body.light input::placeholder,
+body.light textarea::placeholder { color: var(--mu); }
 body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
 body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
 
@@ -471,6 +509,11 @@ body.light .topbar{background:rgba(240,239,248,.9)}
             <textarea id="p-bio" maxlength="160" rows="2" placeholder="Биография…" oninput="$('bio-cnt').textContent=this.value.length+' / 160'" style="background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;resize:none;max-height:80px;text-align:right;width:200px"></textarea>
           </div>
           <div class="fr"><div class="fi yw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="fmeta"><div class="flabel">Сайт</div></div><input class="finput" id="p-website" placeholder="https://…"></div>
+          <div class="fg-row">
+            <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+            <div class="fmeta"><div class="flabel">Статус</div><div class="fdesc">Показывается под ником</div></div>
+          </div>
+          <input class="finput" id="p-status" placeholder="🎧 Слушаю музыку" maxlength="50">
           <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="fmeta"><div class="flabel">Город</div></div><input class="finput" id="p-city" placeholder="Москва"></div>
           <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div class="fmeta"><div class="flabel">Дата рождения</div></div><input class="finput" id="p-birthday" type="date" style="color-scheme:dark"></div>
         </div>
@@ -921,6 +964,7 @@ async function saveProfile(){
   const username =($('p-username')?.value||'').trim();
   const bio      =($('p-bio')?.value||'').trim();
   const website  =($('p-website')?.value||'').trim();
+  const status   =($('p-status')?.value||'').trim()||null;
   const city     =($('p-city')?.value||'').trim();
   const phone    =($('p-phone')?.value||'').trim();
   const birthday =($('p-birthday')?.value||'');
@@ -940,9 +984,9 @@ async function saveProfile(){
     }
     const updated=await API.request('/users/profile',{
       method:'PUT',
-      body:JSON.stringify({firstName,lastName,username,bio,website,city,phone,birthday,avatarColor:selAvaColor,avatarUrl})
+      body:JSON.stringify({firstName,lastName,username,bio,website,city,phone,birthday,avatarColor:selAvaColor,avatarUrl,status})
     });
-    Object.assign(ME, updated, {avatarColor:selAvaColor, avatarUrl});
+    Object.assign(ME, updated, {avatarColor:selAvaColor, avatarUrl, status});
     if(avatarUrl) ME.avatarBase64=avatarUrl;
     localStorage.setItem('weave_current_user',JSON.stringify(ME));
     bootNav();

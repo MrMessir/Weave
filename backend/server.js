@@ -46,14 +46,33 @@ try{db.exec(`ALTER TABLE users ADD COLUMN isModerator INTEGER DEFAULT 0`)}catch{
 try{db.exec(`ALTER TABLE users ADD COLUMN isBanned INTEGER DEFAULT 0`)}catch{}
 try{db.exec(`ALTER TABLE users ADD COLUMN banReason TEXT DEFAULT ''`)}catch{}
 try{db.exec(`ALTER TABLE users ADD COLUMN avatarUrl TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN status TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN pinnedBy TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS post_reactions(postId TEXT,userId TEXT,emoji TEXT,createdAt TEXT,PRIMARY KEY(postId,userId))`)}catch{}
 try{db.exec(`ALTER TABLE posts ADD COLUMN isHidden INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN poll TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN quoteId TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN track TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN scheduledAt TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN ttl INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS message_reactions(msgId TEXT,userId TEXT,emoji TEXT,createdAt TEXT,PRIMARY KEY(msgId,userId))`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS blocked_users(blockerId TEXT,blockedId TEXT,createdAt TEXT,PRIMARY KEY(blockerId,blockedId))`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS poll_votes(postId TEXT,userId TEXT,optionIndex INTEGER,createdAt TEXT,PRIMARY KEY(postId,userId))`)}catch{}
+try{db.exec(`ALTER TABLE posts ADD COLUMN track TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`CREATE TABLE IF NOT EXISTS admin_logs (id TEXT PRIMARY KEY,adminId TEXT NOT NULL,action TEXT NOT NULL,targetId TEXT,targetType TEXT,detail TEXT DEFAULT '',createdAt TEXT NOT NULL)`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS groups (id TEXT PRIMARY KEY,name TEXT NOT NULL,avatar INTEGER DEFAULT 0,description TEXT DEFAULT '',ownerId TEXT NOT NULL,createdAt TEXT NOT NULL)`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS group_members (groupId TEXT NOT NULL,userId TEXT NOT NULL,role TEXT DEFAULT 'member',joinedAt TEXT NOT NULL,PRIMARY KEY(groupId,userId))`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS group_messages (id TEXT PRIMARY KEY,groupId TEXT NOT NULL,fromId TEXT NOT NULL,text TEXT,images TEXT DEFAULT '[]',voiceData TEXT,voiceDur REAL DEFAULT 0,createdAt TEXT NOT NULL)`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS pinned_messages (chatKey TEXT NOT NULL,messageId TEXT NOT NULL,pinnedBy TEXT NOT NULL,pinnedAt TEXT NOT NULL,PRIMARY KEY(chatKey))`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN deleted INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN edited INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN replyToId TEXT DEFAULT NULL`)}catch{}
 
 const S = {
   insUser:   db.prepare(`INSERT INTO users(id,firstName,lastName,username,email,password,avatarColor,bio,website,isAdmin,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?)`),
   getById:   db.prepare(`SELECT * FROM users WHERE id=?`),
   getByIdent:db.prepare(`SELECT * FROM users WHERE email=? OR username=?`),
-  updProf:   db.prepare(`UPDATE users SET firstName=?,lastName=?,bio=?,website=?,avatarColor=?,phone=?,city=?,birthday=?,interests=?,avatarUrl=? WHERE id=?`),
+  updProf:   db.prepare(`UPDATE users SET firstName=?,lastName=?,bio=?,website=?,avatarColor=?,phone=?,city=?,birthday=?,interests=?,avatarUrl=?,status=? WHERE id=?`),
   updUser:   db.prepare(`UPDATE users SET username=? WHERE id=?`),
   chkEmail:  db.prepare(`SELECT id FROM users WHERE email=?`),
   chkUser:   db.prepare(`SELECT id FROM users WHERE username=?`),
@@ -61,7 +80,7 @@ const S = {
   insSess:   db.prepare(`INSERT INTO sessions(token,userId,createdAt)VALUES(?,?,?)`),
   getSess:   db.prepare(`SELECT userId FROM sessions WHERE token=?`),
   delSess:   db.prepare(`DELETE FROM sessions WHERE token=?`),
-  insPost:   db.prepare(`INSERT INTO posts(id,authorId,text,images,createdAt)VALUES(?,?,?,?,?)`),
+  insPost:   db.prepare(`INSERT INTO posts(id,authorId,text,images,poll,quoteId,track,scheduledAt,createdAt)VALUES(?,?,?,?,?,?,?,?,?)`),
   getPost:   db.prepare(`SELECT * FROM posts WHERE id=?`),
   delPost:   db.prepare(`DELETE FROM posts WHERE id=?`),
   updPost:   db.prepare(`UPDATE posts SET text=?,edited=1 WHERE id=?`),
@@ -79,7 +98,7 @@ const S = {
   addSView:  db.prepare(`INSERT OR IGNORE INTO story_views(storyId,userId)VALUES(?,?)`),
   cntSViews: db.prepare(`SELECT COUNT(*) as n FROM story_views WHERE storyId=?`),
   hasSView:  db.prepare(`SELECT 1 FROM story_views WHERE storyId=? AND userId=?`),
-  insMsg:    db.prepare(`INSERT INTO messages(id,fromId,toId,text,images,voiceData,voiceDur,encryptedText,iv,senderPublicKey,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?)`),
+  insMsg:    db.prepare(`INSERT INTO messages(id,fromId,toId,text,images,voiceData,voiceDur,encryptedText,iv,senderPublicKey,ttl,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`),
   markRead:  db.prepare(`UPDATE messages SET read=1 WHERE fromId=? AND toId=? AND read=0`),
   addFollow: db.prepare(`INSERT OR IGNORE INTO follows(followerId,followingId)VALUES(?,?)`),
   rmFollow:  db.prepare(`DELETE FROM follows WHERE followerId=? AND followingId=?`),
@@ -109,12 +128,12 @@ function pub(u){
 }
 function enrichPost(r,vid){
   const a=S.getById.get(r.authorId);
-  return{...r,images:safeJ(r.images),
+  return{...r,images:safeJ(r.images),track:r.track?safeJ(r.track):null,
     likes:S.cntLikes.get(r.id).n,
     liked:vid?!!S.hasLike.get(r.id,vid):false,
     bookmarked:vid?!!S.hasBkm.get(vid,r.id):false,
     comments:db.prepare(`SELECT COUNT(*) as n FROM comments WHERE postId=?`).get(r.id).n,
-    author:a?{id:a.id,firstName:a.firstName,lastName:a.lastName,username:a.username,avatarColor:a.avatarColor,avatarUrl:a.avatarUrl||null,isVerified:!!a.isVerified}:null
+    author:a?{id:a.id,firstName:a.firstName,lastName:a.lastName,username:a.username,avatarColor:a.avatarColor,avatarUrl:a.avatarUrl||null,isVerified:!!a.isVerified,status:a.status||null}:null,pinned:!!r.pinnedBy
   }
 }
 
@@ -267,6 +286,45 @@ app.get('/api/posts',(req,res)=>{
   } else if(tab==='trending'){
     rows=db.prepare(`SELECT p.* FROM posts p LEFT JOIN post_likes l ON l.postId=p.id WHERE p.isHidden=0 GROUP BY p.id ORDER BY COUNT(l.userId) DESC,p.createdAt DESC LIMIT ? OFFSET ?`).all(lim,off);
     total=db.prepare(`SELECT COUNT(*) as n FROM posts WHERE isHidden=0`).get().n;
+  } else if(tab==='for_you'&&userId){
+    // ── Алгоритмическая лента ──
+    const u=db.prepare('SELECT * FROM users WHERE id=?').get(userId);
+    const userInterests=(u?.interests||'').toLowerCase().split(/[,\s]+/).filter(Boolean);
+    const following=new Set(db.prepare('SELECT followingId FROM follows WHERE followerId=?').all(userId).map(r=>r.followingId));
+    const likedPosts=new Set(db.prepare('SELECT postId FROM post_likes WHERE userId=?').all(userId).map(r=>r.postId));
+    // Берём 200 последних постов (не своих, не скрытых)
+    const candidates=db.prepare('SELECT p.*,u.isVerified,u.interests as authorInterests FROM posts p JOIN users u ON u.id=p.authorId WHERE p.isHidden=0 AND p.authorId!=? ORDER BY p.createdAt DESC LIMIT 200').all(userId);
+    const now=Date.now();
+    const scored=candidates.map(p=>{
+      let score=0;
+      // Свежесть — убывает со временем
+      const ageH=(now-new Date(p.createdAt).getTime())/3600000;
+      score-=Math.min(ageH*0.5,48); // макс -48 за 4 дня
+      // Подписка на автора
+      if(following.has(p.authorId)) score+=15;
+      // Лайки
+      const likes=db.prepare('SELECT COUNT(*) as n FROM post_likes WHERE postId=?').get(p.id).n;
+      score+=Math.min(likes*3,45);
+      // Комментарии
+      const cmts=db.prepare('SELECT COUNT(*) as n FROM comments WHERE postId=?').get(p.id).n;
+      score+=Math.min(cmts*2,30);
+      // Верифицированный автор
+      if(p.isVerified) score+=10;
+      // Закреплённый
+      if(p.pinnedBy) score+=5;
+      // Совпадение интересов по хэштегам
+      if(userInterests.length&&p.text){
+        const tags=(p.text.match(/#(\w+)/g)||[]).map(t=>t.slice(1).toLowerCase());
+        const matches=tags.filter(t=>userInterests.some(i=>t.includes(i)||i.includes(t)));
+        score+=matches.length*12;
+      }
+      // Уже лайкнул — понизить (уже видел)
+      if(likedPosts.has(p.id)) score-=20;
+      return{...p,_score:score};
+    });
+    scored.sort((a,b)=>b._score-a._score);
+    total=scored.length;
+    rows=scored.slice(off,off+lim);
   } else {
     rows=db.prepare(`SELECT * FROM posts WHERE isHidden=0 ORDER BY createdAt DESC LIMIT ? OFFSET ?`).all(lim,off);
     total=db.prepare(`SELECT COUNT(*) as n FROM posts WHERE isHidden=0`).get().n;
@@ -294,6 +352,36 @@ app.post('/api/posts/:id/like',auth,(req,res)=>{
   if(S.hasLike.get(id,req.userId)){S.rmLike.run(id,req.userId);res.json({liked:false,likes:S.cntLikes.get(id).n})}
   else{S.addLike.run(id,req.userId);res.json({liked:true,likes:S.cntLikes.get(id).n})}
 });
+// Реакции на посты
+app.get('/api/posts/:id/reactions',(req,res)=>{
+  const rows=db.prepare(`SELECT emoji,COUNT(*) as n FROM post_reactions WHERE postId=? GROUP BY emoji`).all(req.params.id);
+  const myEmoji=req.userId?db.prepare(`SELECT emoji FROM post_reactions WHERE postId=? AND userId=?`).get(req.params.id,req.userId)?.emoji:null;
+  res.json({reactions:rows,myEmoji});
+});
+app.post('/api/posts/:id/react',auth,(req,res)=>{
+  const{emoji}=req.body;
+  const valid=['❤️','😂','🔥','👏','😮','😢'];
+  if(!valid.includes(emoji))return res.status(400).json({error:'Недопустимая реакция'});
+  const existing=db.prepare(`SELECT emoji FROM post_reactions WHERE postId=? AND userId=?`).get(req.params.id,req.userId);
+  if(existing?.emoji===emoji){
+    db.prepare(`DELETE FROM post_reactions WHERE postId=? AND userId=?`).run(req.params.id,req.userId);
+  } else {
+    db.prepare(`INSERT OR REPLACE INTO post_reactions(postId,userId,emoji,createdAt)VALUES(?,?,?,?)`).run(req.params.id,req.userId,emoji,new Date().toISOString());
+  }
+  const rows=db.prepare(`SELECT emoji,COUNT(*) as n FROM post_reactions WHERE postId=? GROUP BY emoji`).all(req.params.id);
+  res.json({reactions:rows,myEmoji:existing?.emoji===emoji?null:emoji});
+});
+
+// Закреп поста
+app.post('/api/posts/:id/pin',auth,(req,res)=>{
+  const post=S.getPost.get(req.params.id);
+  if(!post)return res.status(404).json({error:'Пост не найден'});
+  if(post.authorId!==req.userId&&!req.user?.isAdmin)return res.status(403).json({error:'Нет прав'});
+  const isPinned=!!post.pinnedBy;
+  db.prepare(`UPDATE posts SET pinnedBy=? WHERE id=?`).run(isPinned?null:req.userId,req.params.id);
+  res.json({pinned:!isPinned});
+});
+
 app.post('/api/posts/:id/bookmark',auth,(req,res)=>{
   const{id}=req.params;
   if(S.hasBkm.get(req.userId,id)){S.rmBkm.run(req.userId,id);res.json({bookmarked:false})}
@@ -348,7 +436,7 @@ app.get('/api/messages/:userId',auth,(req,res)=>{
   const uid=req.userId,oid=req.params.userId;
   const rows=db.prepare(`SELECT * FROM messages WHERE(fromId=? AND toId=?)OR(fromId=? AND toId=?)ORDER BY createdAt ASC`).all(uid,oid,oid,uid);
   S.markRead.run(oid,uid);
-  res.json(rows.map(r=>({...r,images:safeJ(r.images),read:!!r.read})));
+  res.json(rows.map(r=>({...r,images:safeJ(r.images),track:r.track?safeJ(r.track):null,read:!!r.read})));
 });
 app.post('/api/messages',auth,(req,res)=>{
   const{toId,text,images=[],encryptedText,iv,senderPublicKey,voiceData,voiceDur}=req.body;
@@ -365,14 +453,14 @@ app.get('/api/users/me',auth,(req,res)=>{
 });
 app.put('/api/users/profile',auth,(req,res)=>{
   const u=S.getById.get(req.userId);if(!u)return res.status(404).json({error:'Не найден'});
-  const{firstName=u.firstName,lastName=u.lastName,bio=u.bio,website=u.website,avatarColor=u.avatarColor,phone=u.phone||'',city=u.city||'',birthday=u.birthday||'',interests=u.interests||'',avatarUrl:rawAvatarUrl=u.avatarUrl||null}=req.body;
+  const{firstName=u.firstName,lastName=u.lastName,bio=u.bio,website=u.website,avatarColor=u.avatarColor,phone=u.phone||'',city=u.city||'',birthday=u.birthday||'',interests=u.interests||'',avatarUrl:rawAvatarUrl=u.avatarUrl||null,status=u.status||null}=req.body;
   // Валидация: только data: URL или null
   const avatarUrl=rawAvatarUrl===null?null:(typeof rawAvatarUrl==='string'&&rawAvatarUrl.startsWith('data:image/'))?rawAvatarUrl:u.avatarUrl||null;
   if(req.body.username&&req.body.username!==u.username){
     if(S.chkUser.get(req.body.username))return res.status(400).json({error:'Ник занят'});
     S.updUser.run(req.body.username,req.userId);
   }
-  S.updProf.run(firstName,lastName,bio,website,avatarColor,phone,city,birthday,interests,avatarUrl,req.userId);
+  S.updProf.run(firstName,lastName,bio,website,avatarColor,phone,city,birthday,interests,avatarUrl,status,req.userId);
   res.json(pub(S.getById.get(req.userId)));
 });
 app.delete('/api/users/me',auth,(req,res)=>{
@@ -635,6 +723,150 @@ app.post('/api/notifications/read-all',auth,(req,res)=>{
   } catch(e){ res.json({success:true}); }
 });
 
+// ══ GROUPS ══
+// Создать группу
+app.post('/api/groups',auth,(req,res)=>{
+  const{name,memberIds=[],description='',avatar=0}=req.body;
+  if(!name)return res.status(400).json({error:'Нужно название'});
+  const id=uuid(),now=new Date().toISOString();
+  db.prepare(`INSERT INTO groups(id,name,avatar,description,ownerId,createdAt)VALUES(?,?,?,?,?,?)`).run(id,name,avatar,description,req.userId,now);
+  db.prepare(`INSERT INTO group_members(groupId,userId,role,joinedAt)VALUES(?,?,?,?)`).run(id,req.userId,'owner',now);
+  const all=[...new Set(memberIds)].filter(uid=>uid!==req.userId);
+  all.forEach(uid=>db.prepare(`INSERT OR IGNORE INTO group_members(groupId,userId,role,joinedAt)VALUES(?,?,?,?)`).run(id,uid,'member',now));
+  res.status(201).json({id,name,avatar,description,ownerId:req.userId,createdAt:now,memberCount:all.length+1});
+});
+
+// Список групп пользователя
+app.get('/api/groups',auth,(req,res)=>{
+  const rows=db.prepare(`SELECT g.*,COUNT(gm2.userId) as memberCount FROM groups g JOIN group_members gm ON gm.groupId=g.id AND gm.userId=? LEFT JOIN group_members gm2 ON gm2.groupId=g.id GROUP BY g.id ORDER BY g.createdAt DESC`).all(req.userId);
+  res.json(rows);
+});
+
+// Участники группы
+app.get('/api/groups/:id/members',auth,(req,res)=>{
+  const rows=db.prepare(`SELECT u.id,u.firstName,u.lastName,u.username,u.avatarColor,u.avatarUrl,u.isVerified,gm.role FROM group_members gm JOIN users u ON u.id=gm.userId WHERE gm.groupId=?`).all(req.params.id);
+  res.json(rows);
+});
+
+// Добавить участника
+app.post('/api/groups/:id/members',auth,(req,res)=>{
+  const{userId}=req.body;
+  const owner=db.prepare(`SELECT ownerId FROM groups WHERE id=?`).get(req.params.id);
+  if(!owner)return res.status(404).json({error:'Группа не найдена'});
+  if(owner.ownerId!==req.userId)return res.status(403).json({error:'Нет прав'});
+  db.prepare(`INSERT OR IGNORE INTO group_members(groupId,userId,role,joinedAt)VALUES(?,?,?,?)`).run(req.params.id,userId,'member',new Date().toISOString());
+  res.json({success:true});
+});
+
+// Удалить участника / выйти
+app.delete('/api/groups/:id/members/:userId',auth,(req,res)=>{
+  const g=db.prepare(`SELECT ownerId FROM groups WHERE id=?`).get(req.params.id);
+  if(!g)return res.status(404).json({error:'Не найдена'});
+  if(req.params.userId!==req.userId && g.ownerId!==req.userId)return res.status(403).json({error:'Нет прав'});
+  db.prepare(`DELETE FROM group_members WHERE groupId=? AND userId=?`).run(req.params.id,req.params.userId);
+  res.json({success:true});
+});
+
+// Сообщения группы
+app.get('/api/groups/:id/messages',auth,(req,res)=>{
+  const member=db.prepare(`SELECT 1 FROM group_members WHERE groupId=? AND userId=?`).get(req.params.id,req.userId);
+  if(!member)return res.status(403).json({error:'Не участник'});
+  const rows=db.prepare(`SELECT gm.*,u.firstName,u.lastName,u.username,u.avatarColor,u.avatarUrl FROM group_messages gm JOIN users u ON u.id=gm.fromId WHERE gm.groupId=? ORDER BY gm.createdAt ASC`).all(req.params.id);
+  res.json(rows.map(r=>({...r,images:JSON.parse(r.images||'[]'),author:{id:r.fromId,firstName:r.firstName,lastName:r.lastName,username:r.username,avatarColor:r.avatarColor,avatarUrl:r.avatarUrl||null}})));
+});
+
+// Отправить сообщение в группу
+app.post('/api/groups/:id/messages',auth,(req,res)=>{
+  const member=db.prepare(`SELECT 1 FROM group_members WHERE groupId=? AND userId=?`).get(req.params.id,req.userId);
+  if(!member)return res.status(403).json({error:'Не участник'});
+  const{text,images=[]}=req.body;
+  const id=uuid(),now=new Date().toISOString();
+  db.prepare(`INSERT INTO group_messages(id,groupId,fromId,text,images,createdAt)VALUES(?,?,?,?,?,?)`).run(id,req.params.id,req.userId,text||null,JSON.stringify(images),now);
+  const saved=db.prepare(`SELECT gm.*,u.firstName,u.lastName,u.username,u.avatarColor FROM group_messages gm JOIN users u ON u.id=gm.fromId WHERE gm.id=?`).get(id);
+  // Уведомить участников через WS
+  const members=db.prepare(`SELECT userId FROM group_members WHERE groupId=? AND userId!=?`).all(req.params.id,req.userId);
+  const payload=JSON.stringify({type:'group_message',groupId:req.params.id,message:{...saved,images:JSON.parse(saved.images||'[]')}});
+  members.forEach(m=>{const ws=wsClients.get(m.userId);if(ws?.readyState===1)ws.send(payload);});
+  res.status(201).json({...saved,images:JSON.parse(saved.images||'[]')});
+});
+
+// ══ ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ ══
+app.post('/api/messages/:id/pin',auth,(req,res)=>{
+  const m=db.prepare(`SELECT * FROM messages WHERE id=?`).get(req.params.id);
+  if(!m)return res.status(404).json({error:'Не найдено'});
+  const chatKey=[m.fromId,m.toId].sort().join('_');
+  db.prepare(`INSERT OR REPLACE INTO pinned_messages(chatKey,messageId,pinnedBy,pinnedAt)VALUES(?,?,?,?)`).run(chatKey,req.params.id,req.userId,new Date().toISOString());
+  res.json({success:true});
+});
+
+app.delete('/api/messages/:id/pin',auth,(req,res)=>{
+  const m=db.prepare(`SELECT * FROM messages WHERE id=?`).get(req.params.id);
+  if(!m)return res.status(404).json({error:'Не найдено'});
+  const chatKey=[m.fromId,m.toId].sort().join('_');
+  db.prepare(`DELETE FROM pinned_messages WHERE chatKey=?`).run(chatKey);
+  res.json({success:true});
+});
+
+app.get('/api/chats/:userId/pinned',auth,(req,res)=>{
+  const chatKey=[req.userId,req.params.userId].sort().join('_');
+  const pin=db.prepare(`SELECT pm.*,m.text,m.images,m.createdAt as msgDate,u.firstName,u.lastName FROM pinned_messages pm JOIN messages m ON m.id=pm.messageId JOIN users u ON u.id=pm.pinnedBy WHERE pm.chatKey=?`).get(chatKey);
+  res.json(pin||null);
+});
+
+// ══ РЕДАКТИРОВАТЬ / УДАЛИТЬ СООБЩЕНИЕ ══
+app.put('/api/messages/:id',auth,(req,res)=>{
+  const m=db.prepare(`SELECT * FROM messages WHERE id=?`).get(req.params.id);
+  if(!m)return res.status(404).json({error:'Не найдено'});
+  if(m.fromId!==req.userId)return res.status(403).json({error:'Нет прав'});
+  const{text}=req.body;
+  db.prepare(`UPDATE messages SET text=?,edited=1 WHERE id=?`).run(text,req.params.id);
+  // Уведомить собеседника
+  const ws=wsClients.get(m.toId);
+  if(ws?.readyState===1)ws.send(JSON.stringify({type:'message_edited',messageId:req.params.id,text}));
+  res.json({success:true});
+});
+
+app.delete('/api/messages/:id',auth,(req,res)=>{
+  const m=db.prepare(`SELECT * FROM messages WHERE id=?`).get(req.params.id);
+  if(!m)return res.status(404).json({error:'Не найдено'});
+  if(m.fromId!==req.userId)return res.status(403).json({error:'Нет прав'});
+  db.prepare(`UPDATE messages SET deleted=1,text=NULL WHERE id=?`).run(req.params.id);
+  const ws=wsClients.get(m.toId);
+  if(ws?.readyState===1)ws.send(JSON.stringify({type:'message_deleted',messageId:req.params.id}));
+  res.json({success:true});
+});
+
+// Кто лайкнул
+app.get('/api/posts/:id/likers',auth,(req,res)=>{
+  const likers=db.prepare('SELECT u.id,u.firstName,u.lastName,u.username,u.avatarColor FROM post_likes pl JOIN users u ON u.id=pl.userId WHERE pl.postId=? ORDER BY pl.rowid DESC LIMIT 50').all(req.params.id);
+  res.json({likers});
+});
+
+// Голосование в опросе
+app.post('/api/posts/:id/vote',auth,(req,res)=>{
+  const{optionIndex}=req.body;
+  const post=S.getPost.get(req.params.id);
+  if(!post||!post.poll)return res.status(400).json({error:'Опрос не найден'});
+  const poll=JSON.parse(post.poll);
+  if(optionIndex<0||optionIndex>=poll.length)return res.status(400).json({error:'Неверный вариант'});
+  db.prepare('INSERT OR REPLACE INTO poll_votes(postId,userId,optionIndex,createdAt)VALUES(?,?,?,?)').run(req.params.id,req.userId,optionIndex,new Date().toISOString());
+  const votes=db.prepare('SELECT optionIndex,COUNT(*) as n FROM poll_votes WHERE postId=? GROUP BY optionIndex').all(req.params.id);
+  poll.forEach((opt,i)=>{const v=votes.find(v=>v.optionIndex===i);opt.votes=v?.n||0;});
+  const myVote=optionIndex;
+  res.json({poll,myVote});
+});
+
+// Поиск музыки через Deezer (прокси для обхода CORS)
+app.get('/api/music/search',async(req,res)=>{
+  const{q}=req.query;
+  if(!q)return res.json({data:[]});
+  try{
+    const r=await fetch('https://api.deezer.com/search?q='+encodeURIComponent(q)+'&limit=10&output=json');
+    const d=await r.json();
+    res.json(d);
+  }catch(e){res.json({data:[]});}
+});
+
 // SEARCH
 app.get('/api/search',(req,res)=>{
   const{q,type='all'}=req.query;
@@ -644,6 +876,33 @@ app.get('/api/search',(req,res)=>{
   if(type==='all'||type==='posts')result.posts=db.prepare(`SELECT * FROM posts WHERE text LIKE? ORDER BY createdAt DESC LIMIT 10`).all(lk).map(r=>enrichPost(r,null));
   if(type==='all'||type==='tags'){const tags=new Set();db.prepare(`SELECT text FROM posts`).all().forEach(r=>{r.text.match(/#(\w+)/g)?.forEach(t=>{if(t.toLowerCase().includes(q.toLowerCase()))tags.add(t)})});result.tags=[...tags].slice(0,10)}
   res.json(result);
+});
+
+
+// Deezer API proxy (обход CORS)
+app.get('/api/music/search',(req,res)=>{
+  const q=req.query.q;
+  if(!q||q.length<2)return res.json({data:[]});
+  const https=require('https');
+  const url='https://api.deezer.com/search?q='+encodeURIComponent(q)+'&limit=8&output=json';
+  https.get(url,(r)=>{
+    let body='';
+    r.on('data',chunk=>body+=chunk);
+    r.on('end',()=>{
+      try{
+        const data=JSON.parse(body);
+        const tracks=(data.data||[]).map(t=>({
+          id:t.id,
+          title:t.title,
+          artist:t.artist?.name||'',
+          album:t.album?.title||'',
+          cover:t.album?.cover_medium||t.album?.cover||'',
+          preview:t.preview||''
+        }));
+        res.json({data:tracks});
+      }catch(e){res.json({data:[]});}
+    });
+  }).on('error',()=>res.json({data:[]}));
 });
 
 app.get('*',(req,res)=>{
@@ -671,7 +930,9 @@ wss.on('connection',(ws)=>{
       const{toId,encryptedText,iv,senderPublicKey,plainText,images=[],voiceData,voiceDur}=msg;
       if(!toId)return;
       const id=uuid();const now=new Date().toISOString();
-      S.insMsg.run(id,uid,toId,plainText||null,JSON.stringify(images),voiceData||null,voiceDur||0,encryptedText||null,iv||null,senderPublicKey||null,now);
+      const ttlVal=msg.ttl||0;
+      S.insMsg.run(id,uid,toId,plainText||null,JSON.stringify(images),voiceData||null,voiceDur||0,encryptedText||null,iv||null,senderPublicKey||null,ttlVal,now);
+      if(ttlVal>0) setTimeout(()=>{try{db.prepare('DELETE FROM messages WHERE id=?').run(id);}catch{}},ttlVal*1000);
       const saved=db.prepare(`SELECT * FROM messages WHERE id=?`).get(id);
       const payload={...saved,images:safeJ(saved.images),read:false};
       const rws=wsClients.get(toId);if(rws?.readyState===WebSocket.OPEN)rws.send(JSON.stringify({type:'message',message:payload}));

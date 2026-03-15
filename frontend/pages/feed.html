@@ -464,7 +464,45 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .sk-foot-btn{height:10px;width:50px;border-radius:6px}
 
 /* ── THEME VARIANTS ──────────────────────────────────── */
-body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.light{--bg:#FFFFFF;--s1:#F3F4F6;--s2:#E9EAEC;--s3:#D9DADD;--br:rgba(0,0,0,.12);--br2:rgba(0,0,0,.08);--tx:#111827;--mu:#6B7280;--mu2:#9CA3AF}
+/* ── Светлая тема: перекрытие белого текста ── */
+body.light .sn-user-name,
+body.light .sn-handle,
+body.light .sn-item,
+body.light .sn-label,
+body.light .pn,
+body.light .pt,
+body.light .pbody,
+body.light .p-body,
+body.light .p-name,
+body.light .p-time,
+body.light .cmt-nm,
+body.light .cmt-tx,
+body.light .sg-nm,
+body.light .sg-hd,
+body.light .tr-tag,
+body.light .tr-cnt,
+body.light .not-title,
+body.light .not-body { color: var(--tx); }
+body.light .sn-ava-ini,
+body.light .pa,
+body.light .cmp-ava,
+body.light .sv-a,
+body.light .cca { color: #fff; } /* инициалы на цветном фоне — оставить белыми */
+body.light .sn-logo-text { -webkit-text-fill-color: unset; background: linear-gradient(135deg,#7C3AED,#2563EB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .post,
+body.light .compose,
+body.light .sk-card,
+body.light .notif-item,
+body.light .sg-card,
+body.light .ch-item { background: var(--s1); border-color: var(--br); }
+body.light .cmp-ta,
+body.light .search-inp,
+body.light input,
+body.light textarea { background: var(--s2); color: var(--tx); border-color: var(--br); }
+body.light .cmp-ta::placeholder,
+body.light input::placeholder,
+body.light textarea::placeholder { color: var(--mu); }
 body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
 body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
 
@@ -530,6 +568,136 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .cmtreply-inp:focus{border-color:var(--v)}
 .cmtreply-send{background:var(--v);border:none;color:#fff;padding:7px 14px;border-radius:10px;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.75rem;flex-shrink:0}
 .cmt-nested{margin-left:36px;border-left:2px solid var(--br);padding-left:8px;margin-top:4px}
+
+
+/* Реакции на посты */
+.react-bar{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:6px 0 2px;min-height:0}
+.react-pill{display:inline-flex;align-items:center;gap:4px;background:var(--s3);border:1px solid var(--br);border-radius:20px;padding:3px 9px;font-size:.78rem;cursor:pointer;transition:all .15s;user-select:none}
+.react-pill:hover{background:rgba(124,58,237,.12);border-color:var(--vl)}
+.react-pill.mine{background:rgba(124,58,237,.15);border-color:var(--v);color:var(--vl)}
+.react-pill .cnt{font-weight:600;color:var(--mu)}
+.react-pill.mine .cnt{color:var(--vl)}
+.react-picker{display:none;position:absolute;bottom:calc(100% + 6px);left:0;background:var(--s1);border:1px solid var(--br);border-radius:16px;padding:8px 10px;box-shadow:0 8px 28px rgba(0,0,0,.4);z-index:50;flex-direction:row;gap:4px}
+.react-picker.open{display:flex}
+.react-opt{font-size:1.3rem;cursor:pointer;padding:4px 5px;border-radius:10px;transition:transform .1s,background .1s;line-height:1}
+.react-opt:hover{transform:scale(1.3);background:rgba(124,58,237,.1)}
+.react-wrap{position:relative}
+
+
+/* ── Музыка к историям и постам ── */
+.music-search-wrap{margin-bottom:12px}
+.music-inp{width:100%;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--br);border-radius:11px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;transition:border-color .2s}
+.music-inp:focus{border-color:var(--vl)}
+.music-results{max-height:200px;overflow-y:auto;border:1px solid var(--br);border-radius:11px;margin-top:6px;display:none;background:var(--s2)}
+.music-results.open{display:block}
+.music-result-item{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;transition:background .12s}
+.music-result-item:hover{background:rgba(124,58,237,.12)}
+.music-result-cover{width:38px;height:38px;border-radius:7px;object-fit:cover;flex-shrink:0;background:var(--s3)}
+.music-result-info{flex:1;min-width:0}
+.music-result-title{font-size:.82rem;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-result-artist{font-size:.72rem;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-pill{display:flex;align-items:center;gap:8px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:12px;padding:7px 11px;margin-top:6px}
+.music-pill-cover{width:32px;height:32px;border-radius:6px;object-fit:cover;flex-shrink:0}
+.music-pill-info{flex:1;min-width:0}
+.music-pill-title{font-size:.75rem;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-pill-artist{font-size:.68rem;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-pill-play{width:26px;height:26px;border-radius:50%;background:var(--v);border:none;cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+.music-pill-remove{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);border:none;cursor:pointer;display:grid;place-items:center;flex-shrink:0;color:var(--mu)}
+/* Плашка трека на посте/истории */
+.track-card{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);border-radius:14px;padding:8px 12px;margin-top:8px;cursor:pointer}
+.track-card-cover{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.track-card-info{flex:1;min-width:0}
+.track-card-title{font-size:.78rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-card-artist{font-size:.68rem;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track-card-icon{font-size:.85rem;flex-shrink:0;animation:spin 3s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.track-wave{display:flex;align-items:flex-end;gap:2px;height:16px;flex-shrink:0}
+.track-wave span{width:3px;background:rgba(255,255,255,.7);border-radius:2px;animation:wave 1s ease-in-out infinite}
+.track-wave span:nth-child(1){animation-delay:0s;height:6px}
+.track-wave span:nth-child(2){animation-delay:.15s;height:12px}
+.track-wave span:nth-child(3){animation-delay:.3s;height:8px}
+.track-wave span:nth-child(4){animation-delay:.45s;height:14px}
+.track-wave span:nth-child(5){animation-delay:.6s;height:5px}
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+
+/* ── Опросы ── */
+.poll-wrap{border:1px solid var(--br);border-radius:14px;padding:12px 14px;margin-top:10px;background:rgba(124,58,237,.04)}
+.poll-option{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.poll-option input{flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:8px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none}
+.poll-option input:focus{border-color:var(--vl)}
+.poll-rm{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px;font-size:.9rem;flex-shrink:0}
+.poll-rm:hover{color:var(--er)}
+.poll-add{background:none;border:1px dashed var(--br);border-radius:10px;padding:7px 14px;color:var(--mu);cursor:pointer;font-size:.78rem;width:100%;font-family:'DM Sans',sans-serif;transition:all .15s}
+.poll-add:hover{border-color:var(--vl);color:var(--vl)}
+.poll-label{font-size:.72rem;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+/* Результаты опроса в ленте */
+.poll-results{margin-top:10px}
+.poll-res-opt{margin-bottom:8px;cursor:pointer}
+.poll-res-bar-wrap{background:var(--s3);border-radius:8px;height:36px;position:relative;overflow:hidden;display:flex;align-items:center;padding:0 12px;gap:8px;transition:all .2s}
+.poll-res-bar-wrap:hover{background:var(--s2)}
+.poll-res-bar{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(124,58,237,.25),rgba(37,99,235,.15));border-radius:8px;transition:width .5s cubic-bezier(.22,1,.36,1)}
+.poll-res-bar.mine{background:linear-gradient(90deg,rgba(124,58,237,.4),rgba(37,99,235,.3))}
+.poll-res-text{position:relative;z-index:1;font-size:.83rem;flex:1;display:flex;align-items:center;gap:6px}
+.poll-res-pct{position:relative;z-index:1;font-size:.78rem;font-weight:700;color:var(--mu)}
+.poll-voted-mark{font-size:.7rem;color:var(--vl)}
+.poll-total{font-size:.72rem;color:var(--mu);margin-top:6px;text-align:right}
+
+
+/* ── Цитата поста ── */
+.quote-block{border:1px solid var(--br);border-radius:12px;padding:10px 14px;margin-top:8px;background:var(--s2);cursor:pointer;transition:background .15s}
+.quote-block:hover{background:var(--s3)}
+.quote-ava{width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;font-size:.6rem;font-weight:800;color:#fff;vertical-align:middle;margin-right:5px;flex-shrink:0}
+.quote-author{font-size:.78rem;font-weight:700;color:var(--tx)}
+.quote-text{font-size:.8rem;color:var(--mu);margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* В форме создания */
+.cmp-quote{border:1px solid var(--br);border-radius:12px;padding:10px 14px;margin-top:8px;background:var(--s2);display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.cmp-quote-text{font-size:.8rem;color:var(--mu);flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.cmp-quote-rm{background:none;border:none;color:var(--mu);cursor:pointer;padding:2px;font-size:.85rem}
+
+
+/* ── Музыка к посту ── */
+.music-search-wrap{border:1px solid var(--br);border-radius:14px;padding:12px 14px;margin-top:8px}
+.music-search-inp{width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:8px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none}
+.music-search-inp:focus{border-color:var(--vl)}
+.music-results{margin-top:8px;display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto}
+.music-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:background .15s}
+.music-item:hover{background:var(--s3)}
+.music-thumb{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.music-info{flex:1;min-width:0}
+.music-title{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-artist{font-size:.72rem;color:var(--mu)}
+.music-dur{font-size:.7rem;color:var(--mu);flex-shrink:0}
+/* Плашка трека на посте */
+.post-track{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--br);border-radius:14px;padding:10px 14px;margin-top:8px;cursor:pointer;transition:background .15s}
+.post-track:hover{background:var(--s3)}
+.post-track-thumb{width:44px;height:44px;border-radius:10px;object-fit:cover;flex-shrink:0}
+.post-track-info{flex:1;min-width:0}
+.post-track-name{font-size:.83rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-track-artist{font-size:.73rem;color:var(--mu)}
+.post-track-play{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--v),var(--b));display:grid;place-items:center;flex-shrink:0;border:none;cursor:pointer}
+.post-track-play svg{width:12px;height:12px;fill:#fff;margin-left:2px}
+.post-track-wave{display:flex;align-items:flex-end;gap:2px;height:16px;flex-shrink:0}
+.post-track-wave span{width:3px;background:var(--vl);border-radius:2px;animation:wave-bar .8s ease-in-out infinite alternate}
+.post-track-wave span:nth-child(2){animation-delay:.15s}
+.post-track-wave span:nth-child(3){animation-delay:.3s}
+.post-track-wave span:nth-child(4){animation-delay:.45s}
+@keyframes wave-bar{from{height:4px}to{height:14px}}
+.post-track-wave.paused span{animation-play-state:paused}
+
+
+/* ── Кто лайкнул ── */
+.likers-pop{position:absolute;bottom:calc(100%+6px);left:0;background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:8px;z-index:60;min-width:180px;max-width:240px;box-shadow:0 8px 28px rgba(0,0,0,.4);display:none}
+.likers-pop.open{display:block}
+.liker-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:background .12s;font-size:.8rem}
+.liker-row:hover{background:var(--s3)}
+.liker-ava{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:.62rem;font-weight:800;color:#fff;flex-shrink:0}
+
+
+/* ── Отложенная публикация ── */
+.sched-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 12px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;font-size:.78rem;color:var(--vl)}
+.sched-row input[type=datetime-local]{background:none;border:none;color:var(--vl);font-size:.78rem;outline:none;font-family:'DM Sans',sans-serif;flex:1}
+.sched-rm{background:none;border:none;color:var(--mu);cursor:pointer;font-size:.9rem}
 
 </style>
 </head>
@@ -647,6 +815,20 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
               oninput="onCmpInput(this)" onkeydown="onCmpKey(event)" maxlength="500"></textarea>
             <div id="ac-wrap" style="display:none;position:absolute;top:calc(100%+4px);left:0;right:0;z-index:60"></div>
             <div class="cmp-imgs" id="cmp-imgs"></div>
+          <div class="poll-wrap" id="poll-wrap" style="display:none">
+            <div class="poll-label">Варианты опроса</div>
+            <div id="poll-options">
+              <div class="poll-option"><input placeholder="Вариант 1" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button></div>
+              <div class="poll-option"><input placeholder="Вариант 2" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button></div>
+            </div>
+            <button class="poll-add" onclick="addPollOpt()">+ Добавить вариант</button>
+          </div>
+          <div class="music-search-wrap" id="music-search-wrap" style="display:none">
+            <input class="music-search-inp" id="music-inp" placeholder="🎵 Поиск треков..." oninput="searchMusic(this.value)">
+            <div class="music-results" id="music-results"></div>
+          </div>
+          <div id="cmp-track" style="display:none"></div>
+          <div id="sched-row" style="display:none" class="sched-row">📅&nbsp;<input type="datetime-local" id="sched-dt" min=""><span onclick="clearSchedule()" class="sched-rm">✕</span></div>
           </div>
         </div>
         <div class="cmp-bar">
@@ -660,6 +842,15 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
             <button class="cmp-tool" title="Место" onclick="addLocation()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </button>
+            <button class="cmp-tool" title="Музыка" id="music-toggle-btn" onclick="toggleMusicSearch()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            </button>
+            <button class="cmp-tool" title="Запланировать" onclick="toggleSchedule()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+            </button>
+            <button class="cmp-tool" title="Опрос" id="poll-toggle-btn" onclick="togglePoll()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </button>
           </div>
           <div class="cmp-right-bar">
             <span class="cmp-cnt" id="cmp-cnt">500</span>
@@ -672,6 +863,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
       <!-- TABS -->
       <div class="ftabs">
         <button class="ftab on" id="tab-all" onclick="switchTab(this,'all')">Все</button>
+        <button class="ftab" id="tab-for_you" onclick="switchTab(this,'for_you')">✨ Для тебя</button>
         <button class="ftab" id="tab-following" onclick="switchTab(this,'following')">Подписки</button>
         <button class="ftab" id="tab-trending" onclick="switchTab(this,'trending')">Популярное</button>
         <button class="ftab" id="tab-bookmarks" onclick="switchTab(this,'bookmarks')">Закладки</button>
@@ -791,7 +983,8 @@ const API = {
   
   // Посты
   async getPosts(tab = 'all', offset = 0, limit = 20) {
-    const uid = this.me?.id || '';
+    const stored = localStorage.getItem('weave_current_user');
+    const uid = stored ? JSON.parse(stored).id : '';
     return this.request(`/posts?tab=${tab}&userId=${uid}&offset=${offset}&limit=${limit}`);
   },
   
@@ -1074,6 +1267,7 @@ function renderFeed() {
   if (!posts.length) {
     const messages = {
       all: 'Постов пока нет',
+      for_you: 'Заполни интересы в настройках — подберём контент специально для тебя ✨',
       following: 'Подпишись на кого-нибудь',
       trending: 'Нет постов',
       bookmarks: 'Нет закладок'
@@ -1116,7 +1310,7 @@ function buildPost(p, index) {
           ${p.author?.isVerified ? verifiedBadge(14) : ''}
           ${p.edited ? '<span style="font-size:.68rem;color:var(--mu2);font-weight:400;margin-left:4px">(изм.)</span>' : ''}
         </div>
-        <div class="pt">@${p.author?.username} · ${formatTime(p.createdAt)}</div>
+        <div class="pt">@${p.author?.username} · ${formatTime(p.createdAt)}${p.pinned ? " · 📌 Закреплён" : ""}</div>
       </div>
       <div class="pmenu-wrap">
         <button class="pmenu-btn" onclick="toggleDrop(event, '${p.id}')">
@@ -1126,6 +1320,10 @@ function buildPost(p, index) {
         </button>
         <div class="pdrop" id="dd-${p.id}" style="display:none">
           ${isOwner ? `
+            <div class="pd-it" id="pin-${p.id}" onclick="pinPost('${p.id}',this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+              <span id="pin-lbl-${p.id}">${p.pinned?'Открепить':'Закрепить'}</span>
+            </div>
             <div class="pd-it" onclick="openEdit('${p.id}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -1139,6 +1337,10 @@ function buildPost(p, index) {
               </svg>Удалить
             </div>
           ` : `
+            <div class="pd-it" onclick="quotePost('${p.id}')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+              Цитировать
+            </div>
             <div class="pd-it" onclick="reportPost('${p.id}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
@@ -1155,15 +1357,34 @@ function buildPost(p, index) {
         </div>
       </div>
     </div>
-    <div class="pbody" id="ptxt-${p.id}" ondblclick="doubleTapLike(event,'${p.id}')" style="cursor:default">${formatText(p.text)}</div>
+    \${p.track ? `<div class="post-track" onclick="playTrack('\${p.track.preview}','\${p.id}')">
+      <img class="post-track-thumb" src="\${p.track.cover}" alt="">
+      <div class="post-track-info">
+        <div class="post-track-name">\${esc(p.track.title)}</div>
+        <div class="post-track-artist">\${esc(p.track.artist)}</div>
+      </div>
+      <div class="post-track-wave paused" id="wave-\${p.id}">
+        <span style="height:6px"></span><span style="height:10px"></span><span style="height:14px"></span><span style="height:8px"></span>
+      </div>
+      <button class="post-track-play" id="play-\${p.id}">
+        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+    </div>` : ''}
+    \${p.quotePost ? `<div class="quote-block"" onclick="location.href='feed.html?post=\${p.quotePost.id}'">
+      <span class="quote-ava" style="background:\${avbg(p.quotePost.author?.avatarColor||0)}">\${((p.quotePost.author?.firstName?.[0]||'')+(p.quotePost.author?.lastName?.[0]||'')).toUpperCase()}</span>
+      <span class="quote-author">@\${esc(p.quotePost.author?.username||'')}</span>
+      <div class="quote-text">\${esc(p.quotePost.text||'')}</div>
+    </div>` : ''}
+    <div class="pbody" id="ptxt-\${p.id}" ondblclick="doubleTapLike(event,'${p.id}')" style="cursor:default">${formatText(p.text)}</div>
     ${imgs}
     <div class="pacts">
-      <button class="pact ${p.liked ? 'liked' : ''}" onclick="toggleLike('${p.id}', this)">
+      <div style="position:relative"><button class="pact ${p.liked ? 'liked' : ''}" onclick="toggleLike('${p.id}', this)">
         <svg id="ht-${p.id}" viewBox="0 0 24 24" fill="${p.liked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
-        <span id="lk-${p.id}">${p.likes}</span>
+        <span id="lk-${p.id}" onclick="showLikers('${p.id}',event)" style="cursor:pointer">${p.likes}</span>
       </button>
+      <div class="likers-pop" id="likers-${p.id}"></div></div>
       <button class="pact" onclick="toggleComments('${p.id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -1175,7 +1396,20 @@ function buildPost(p, index) {
           <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
         </svg>
       </button>
+      <div class="react-wrap">
+        <button class="pact" onclick="toggleReactPicker('${p.id}',event)" title="Реакция"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+        <div class="react-picker" id="rp-${p.id}">
+          <span class="react-opt" onclick="doReact('${p.id}','❤️',event)">❤️</span>
+          <span class="react-opt" onclick="doReact('${p.id}','😂',event)">😂</span>
+          <span class="react-opt" onclick="doReact('${p.id}','🔥',event)">🔥</span>
+          <span class="react-opt" onclick="doReact('${p.id}','👏',event)">👏</span>
+          <span class="react-opt" onclick="doReact('${p.id}','😮',event)">😮</span>
+          <span class="react-opt" onclick="doReact('${p.id}','😢',event)">😢</span>
+        </div>
+      </div>
     </div>
+    ${p.track ? buildTrackCard(p.track, p.id) : ''}
+    <div class="react-bar" id="rb-${p.id}"></div>
     <div class="cs" id="cs-${p.id}">
       <div class="cs-sort">
         <span id="ccl-${p.id}">${p.comments || 0} комментариев</span>
@@ -1613,6 +1847,17 @@ function addMyStory() {
             <svg viewBox="0 0 24 24" width="15" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 14.14 14.14"/></svg>
             Фон
           </button>
+          <button onclick="toggleMusicSearch('story-music-wrap')" style="padding:9px;background:rgba(255,255,255,.05);border:1px solid var(--br2);border-radius:11px;color:var(--tx);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.84rem;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s" onmouseover="this.style.background='rgba(124,58,237,.15)'" onmouseout="this.style.background='rgba(255,255,255,.05)'">
+            <svg viewBox="0 0 24 24" width="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            Музыка
+          </button>
+        </div>
+        <div id="story-music-wrap" style="display:none;margin-bottom:10px">
+          <div class="music-search-wrap">
+            <input class="music-inp" id="story-music-inp" placeholder="Поиск трека… (исполнитель или название)" oninput="searchMusic(this.value,'story-music-results','story')">
+            <div class="music-results" id="story-music-results"></div>
+          </div>
+          <div id="story-music-pill"></div>
         </div>
 
         <textarea id="story-text-inp" placeholder="Добавь текст к истории…" maxlength="200"
@@ -1677,8 +1922,10 @@ async function submitStory() {
     text: text,
     bg: STORY_BGS[storyBgIdx],
     image: hasImg ? imgEl.src : null,
-    time: 'только что'
+    time: 'только что',
+    track: _selectedTrack['story'] || null
   };
+  stopPreview();
 
   try {
     await API.createStory([slide]);
@@ -1726,12 +1973,37 @@ function renderSV() {
   const body = document.getElementById('sv-body');
   body.style.background = slide.bg || 'var(--s2)';
 
+  const trackHtml = slide.track?.title ? `
+    <div style="position:absolute;bottom:80px;left:16px;right:16px;display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);border-radius:14px;padding:8px 12px;cursor:pointer" onclick="svPlayTrack('${slide.track.preview||''}',this)">
+      <img src="${slide.track.cover||''}" style="width:36px;height:36px;border-radius:7px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.75rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${slide.track.title}</div>
+        <div style="font-size:.66rem;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${slide.track.artist||''}</div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:2px;height:16px" id="sv-wave">
+        <span style="width:3px;height:6px;background:rgba(255,255,255,.7);border-radius:2px;animation:wave 1s ease-in-out infinite"></span>
+        <span style="width:3px;height:12px;background:rgba(255,255,255,.7);border-radius:2px;animation:wave 1s ease-in-out .15s infinite"></span>
+        <span style="width:3px;height:8px;background:rgba(255,255,255,.7);border-radius:2px;animation:wave 1s ease-in-out .3s infinite"></span>
+        <span style="width:3px;height:14px;background:rgba(255,255,255,.7);border-radius:2px;animation:wave 1s ease-in-out .45s infinite"></span>
+        <span style="width:3px;height:5px;background:rgba(255,255,255,.7);border-radius:2px;animation:wave 1s ease-in-out .6s infinite"></span>
+      </div>
+    </div>` : '';
   if (slide.type === 'image' && slide.image) {
     body.innerHTML = `
       <img src="${slide.image}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
-      ${slide.text ? `<div style="position:absolute;bottom:70px;left:0;right:0;text-align:center;color:#fff;font-size:1.1rem;font-weight:600;padding:0 20px;text-shadow:0 2px 8px rgba(0,0,0,.7)">${slide.text}</div>` : ''}`;
+      ${slide.text ? `<div style="position:absolute;bottom:${slide.track?.title?'140px':'70px'};left:0;right:0;text-align:center;color:#fff;font-size:1.1rem;font-weight:600;padding:0 20px;text-shadow:0 2px 8px rgba(0,0,0,.7)">${slide.text}</div>` : ''}
+      ${trackHtml}`;
   } else {
-    body.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;font-size:1.3rem;font-weight:600;color:#fff;word-break:break-word;text-shadow:0 2px 8px rgba(0,0,0,.4)">${slide.text || ''}</div>`;
+    body.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:30px;text-align:center;font-size:1.3rem;font-weight:600;color:#fff;word-break:break-word;text-shadow:0 2px 8px rgba(0,0,0,.4)">${slide.text || ''}</div>${trackHtml}`;
+  }
+  // Автоплей трека истории
+  if (slide.track?.preview) {
+    stopPreview();
+    _musicAudio = new Audio(slide.track.preview);
+    _musicAudio.volume = 0.7;
+    _musicAudio.play().catch(()=>{});
+  } else {
+    stopPreview();
   }
 
   // Progress bars
@@ -1790,6 +2062,7 @@ function closeSV(e) {
   if (e) e.stopPropagation();
   clearTimeout(svTimer);
   document.getElementById('sv').classList.remove('open');
+  stopPreview();
 }
 
 // ==================== ПУБЛИКАЦИЯ ПОСТА ====================
@@ -1853,16 +2126,26 @@ function removeImage(index) {
 async function publish() {
   const ta = document.getElementById('cmp-ta');
   const text = ta.value.trim();
-  
-  if (!text && !pendImgs.length) return;
+  const pollData = getPollData();
+  if (pollData === false) return; // ошибка валидации опроса
+  if (!text && !pendImgs.length && !pollData) return;
+  const scheduledAt = getScheduledAt();
   
   try {
     const newPost = await API.createPost({
       text,
-      images: pendImgs
+      images: pendImgs,
+      poll: pollData,
+      quoteId: pendQuote?.id || null,
+      track: pendTrack || null,
+      scheduledAt: scheduledAt || null
     });
     
     ta.value = '';
+    // Сбросить доп. поля
+    if (pollActive) togglePoll();
+    clearQuote(); clearTrack(); clearSchedule();
+    document.getElementById('poll-options') && (document.getElementById('poll-options').innerHTML = '<div class="poll-option"><input placeholder="Вариант 1" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button></div><div class="poll-option"><input placeholder="Вариант 2" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button></div>');
     ta.style.height = 'auto';
     pendImgs = [];
     renderPendingImages();
@@ -1870,6 +2153,7 @@ async function publish() {
     document.getElementById('cmp-cnt').textContent = '500';
     
     await loadPosts();
+    _selectedTrack['post']=null; document.getElementById('post-music-pill').innerHTML=''; document.getElementById('post-music-wrap').style.display='none';
     showToast('✓ Пост опубликован!');
   } catch (error) {
     showToast('Ошибка: ' + error.message);
@@ -2096,11 +2380,50 @@ function addLocation() {
 }
 
 function sharePost(postId) {
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(`${location.origin}/post/${postId}`);
-  }
-  showToast('🔗 Ссылка скопирована!');
   closeDrops();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  // Sheet с опциями
+  const existing = document.getElementById('share-sheet');
+  if (existing) existing.remove();
+  const sheet = document.createElement('div');
+  sheet.id = 'share-sheet';
+  sheet.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--s1);border-top:1px solid var(--br);border-radius:20px 20px 0 0;padding:16px;animation:slideUp .2s ease';
+  sheet.innerHTML = `
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem;margin-bottom:12px;text-align:center">Поделиться</div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div onclick="repostPost('${postId}')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(124,58,237,.1)'" onmouseout="this.style.background=''">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        Репостнуть в ленту
+      </div>
+      <div onclick="copyPostLink('${postId}')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:12px;cursor:pointer;font-size:.88rem" onmouseover="this.style.background='rgba(124,58,237,.1)'" onmouseout="this.style.background=''">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Скопировать ссылку
+      </div>
+    </div>
+    <button onclick="this.closest('#share-sheet').remove()" style="width:100%;margin-top:10px;padding:11px;border-radius:12px;border:1px solid var(--br);background:none;color:var(--mu);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Отмена</button>
+  `;
+  document.body.appendChild(sheet);
+  sheet.onclick = (e) => { if(e.target===sheet) sheet.remove(); };
+}
+
+function copyPostLink(postId) {
+  const url = location.origin + '/pages/feed.html?post=' + postId;
+  if (navigator.clipboard) navigator.clipboard.writeText(url);
+  showToast('🔗 Ссылка скопирована!');
+  document.getElementById('share-sheet')?.remove();
+}
+
+async function repostPost(postId) {
+  document.getElementById('share-sheet')?.remove();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  try {
+    const text = '↩ Репост @' + (post.author?.username||'') + ':\n' + (post.text||'');
+    await API.createPost({text, images: post.images||[]});
+    showToast('✅ Репост опубликован!');
+    await loadPosts(true);
+  } catch(e) { showToast('Ошибка репоста','err'); }
 }
 
 function reportPost(postId) {
@@ -2579,6 +2902,355 @@ async function sendReply(commentId, postId) {
     if (container) { container.innerHTML = ''; container.style.display = 'none'; }
     await loadComments(postId);
   } catch(e) { showToast('Ошибка отправки', 'err'); }
+}
+
+// ── Реакции ──
+const EMOJIS = ['❤️','😂','🔥','👏','😮','😢'];
+
+function toggleReactPicker(postId, e) {
+  e.stopPropagation();
+  document.querySelectorAll('.react-picker.open').forEach(el => {
+    if (el.id !== 'rp-'+postId) el.classList.remove('open');
+  });
+  document.getElementById('rp-'+postId)?.classList.toggle('open');
+}
+
+async function doReact(postId, emoji, e) {
+  e.stopPropagation();
+  document.getElementById('rp-'+postId)?.classList.remove('open');
+  try {
+    const res = await API.request('/posts/'+postId+'/react', {
+      method:'POST', body: JSON.stringify({emoji})
+    });
+    const post = posts.find(p => p.id === postId);
+    if (post) { post._reactions = res.reactions; post._myEmoji = res.myEmoji; }
+    renderReactBar(postId, res.reactions, res.myEmoji);
+  } catch(e) { showToast('Ошибка реакции','err'); }
+}
+
+function renderReactBar(postId, reactions, myEmoji) {
+  const bar = document.getElementById('rb-'+postId);
+  if (!bar) return;
+  if (!reactions?.length) { bar.innerHTML = ''; return; }
+  bar.innerHTML = reactions.map(r =>
+    `<span class="react-pill${myEmoji===r.emoji?' mine':''}" onclick="doReact('${postId}','${r.emoji}',event)">
+      ${r.emoji}<span class="cnt">${r.n}</span>
+    </span>`
+  ).join('');
+}
+
+// Закрывать пикер при клике вне
+document.addEventListener('click', () => {
+  document.querySelectorAll('.react-picker.open').forEach(el => el.classList.remove('open'));
+});
+
+// ── Закреп поста ──
+async function pinPost(postId, btn) {
+  closeDrops();
+  try {
+    const res = await API.request('/posts/'+postId+'/pin', {method:'POST'});
+    const post = posts.find(p => p.id === postId);
+    if (post) post.pinned = res.pinned;
+    const lbl = document.getElementById('pin-lbl-'+postId);
+    if (lbl) lbl.textContent = res.pinned ? 'Открепить' : 'Закрепить';
+    const pt = document.querySelector('#post-'+postId+' .pt');
+    if (pt) {
+      const base = pt.textContent.replace(' · 📌 Закреплён','').trim();
+      pt.textContent = base + (res.pinned ? ' · 📌 Закреплён' : '');
+    }
+    showToast(res.pinned ? '📌 Пост закреплён' : 'Откреплён');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+// ══ МУЗЫКА (Deezer) ══
+let _musicAudio = null;   // текущий Audio объект
+let _selectedTrack = {};  // {story: {...}, post: {...}}
+let _musicTimer = {};
+
+
+
+async 
+
+
+
+function removeTrack(context) {
+  _selectedTrack[context] = null;
+  document.getElementById(context + '-music-pill').innerHTML = '';
+  stopPreview();
+}
+
+function previewTrack(url, btn) {
+  if (_musicAudio && !_musicAudio.paused) {
+    stopPreview();
+    return;
+  }
+  stopPreview();
+  _musicAudio = new Audio(url);
+  _musicAudio.volume = 0.7;
+  _musicAudio.play().catch(() => {});
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="11" fill="white" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+  _musicAudio.onended = () => {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="11" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+  };
+}
+
+function stopPreview() {
+  if (_musicAudio) { _musicAudio.pause(); _musicAudio.currentTime = 0; _musicAudio = null; }
+}
+
+// Рендер плашки трека на посте в ленте
+function buildTrackCard(track, postId) {
+  if (!track?.title) return '';
+  return `<div class="track-card" onclick="playTrackOnPost('${postId}',event)" id="tc-${postId}">
+    <img class="track-card-cover" src="${track.cover||''}" onerror="this.style.display='none'">
+    <div class="track-card-info">
+      <div class="track-card-title">${track.title}</div>
+      <div class="track-card-artist">${track.artist||''}</div>
+    </div>
+    ${track.preview ? `<div class="track-wave" id="tw-${postId}" style="display:none"><span></span><span></span><span></span><span></span><span></span></div>
+    <svg id="ti-${postId}" viewBox="0 0 24 24" width="16" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>` : ''}
+  </div>`;
+}
+
+let _postTrackAudio = null, _postTrackId = null;
+function playTrackOnPost(postId, e) {
+  e.stopPropagation();
+  const post = posts.find(p => p.id === postId);
+  if (!post?.track?.preview) return;
+  if (_postTrackId === postId && _postTrackAudio && !_postTrackAudio.paused) {
+    _postTrackAudio.pause();
+    document.getElementById('tw-'+postId).style.display='none';
+    document.getElementById('ti-'+postId).style.display='';
+    _postTrackId = null;
+    return;
+  }
+  if (_postTrackAudio) {
+    _postTrackAudio.pause();
+    if (_postTrackId) {
+      document.getElementById('tw-'+_postTrackId)?.style && (document.getElementById('tw-'+_postTrackId).style.display='none');
+      document.getElementById('ti-'+_postTrackId)?.style && (document.getElementById('ti-'+_postTrackId).style.display='');
+    }
+  }
+  _postTrackAudio = new Audio(post.track.preview);
+  _postTrackAudio.volume = 0.7;
+  _postTrackAudio.play();
+  _postTrackId = postId;
+  document.getElementById('tw-'+postId).style.display='flex';
+  document.getElementById('ti-'+postId).style.display='none';
+  _postTrackAudio.onended = () => {
+    document.getElementById('tw-'+postId)?.style && (document.getElementById('tw-'+postId).style.display='none');
+    document.getElementById('ti-'+postId)?.style && (document.getElementById('ti-'+postId).style.display='');
+    _postTrackId = null;
+  };
+}
+
+function svPlayTrack(url, card) {
+  if (!url) return;
+  if (_musicAudio && !_musicAudio.paused) {
+    _musicAudio.pause();
+    return;
+  }
+  stopPreview();
+  _musicAudio = new Audio(url);
+  _musicAudio.volume = 0.7;
+  _musicAudio.play().catch(()=>{});
+}
+
+// ══ ОПРОСЫ ══
+let pollActive = false;
+function togglePoll() {
+  pollActive = !pollActive;
+  const wrap = document.getElementById('poll-wrap');
+  const btn = document.getElementById('poll-toggle-btn');
+  if (wrap) wrap.style.display = pollActive ? 'block' : 'none';
+  if (btn) btn.style.color = pollActive ? 'var(--v)' : '';
+  if (pollActive) document.getElementById('poll-options')?.querySelector('input')?.focus();
+}
+function addPollOpt() {
+  const opts = document.getElementById('poll-options');
+  if (!opts) return;
+  const count = opts.querySelectorAll('.poll-option').length;
+  if (count >= 4) { showToast('Максимум 4 варианта'); return; }
+  const div = document.createElement('div');
+  div.className = 'poll-option';
+  div.innerHTML = `<input placeholder="Вариант ${count+1}" maxlength="60"><button class="poll-rm" onclick="removePollOpt(this)">✕</button>`;
+  opts.appendChild(div);
+  div.querySelector('input').focus();
+}
+function removePollOpt(btn) {
+  const opts = btn.closest('#poll-options');
+  if (opts.querySelectorAll('.poll-option').length <= 2) { showToast('Минимум 2 варианта'); return; }
+  btn.closest('.poll-option').remove();
+}
+function getPollData() {
+  if (!pollActive) return null;
+  const inputs = document.querySelectorAll('#poll-options input');
+  const options = Array.from(inputs).map(i => i.value.trim()).filter(Boolean);
+  if (options.length < 2) { showToast('Заполните хотя бы 2 варианта','err'); return false; }
+  return options;
+}
+function renderPollResult(postId, poll, myVote) {
+  const total = poll.reduce((s, o) => s + (o.votes||0), 0);
+  const bar = document.getElementById('rb-'+postId);
+  if (!bar) return;
+  const html = `<div class="poll-results">${poll.map((o,i) => {
+    const pct = total ? Math.round((o.votes||0)/total*100) : 0;
+    const mine = myVote === i;
+    return `<div class="poll-res-opt" onclick="votePost('${postId}',${i})">
+      <div class="poll-res-bar-wrap">
+        <div class="poll-res-bar${mine?' mine':''}" style="width:${pct}%"></div>
+        <div class="poll-res-text">${mine?'<span class="poll-voted-mark">✓</span>':''}${o.text}</div>
+        <div class="poll-res-pct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('')}
+  <div class="poll-total">${total} голосов</div></div>`;
+  bar.innerHTML = html;
+}
+async function votePost(postId, optIdx) {
+  try {
+    const res = await API.request('/posts/'+postId+'/vote', {method:'POST',body:JSON.stringify({optionIndex:optIdx})});
+    const post = posts.find(p=>p.id===postId);
+    if (post) { post._poll = res.poll; post._myVote = res.myVote; }
+    renderPollResult(postId, res.poll, res.myVote);
+  } catch(e) { showToast('Ошибка голосования','err'); }
+}
+
+// ══ ЦИТАТА ПОСТА ══
+let pendQuote = null;
+function quotePost(postId) {
+  closeDrops();
+  const post = posts.find(p => p.id === postId);
+  if (!post) return;
+  pendQuote = post;
+  const ta = document.getElementById('cmp-ta');
+  if (ta) { ta.focus(); ta.scrollIntoView({behavior:'smooth',block:'center'}); }
+  const el = document.getElementById('cmp-quote-block');
+  if (!el) {
+    const div = document.createElement('div');
+    div.id = 'cmp-quote-block';
+    div.className = 'cmp-quote';
+    div.innerHTML = `<div class="cmp-quote-text">↩ @${post.author?.username}: ${post.text?.slice(0,60)||'[медиа]'}</div><button class="cmp-quote-rm" onclick="clearQuote()">✕</button>`;
+    document.getElementById('cmp-imgs').after(div);
+  } else {
+    el.querySelector('.cmp-quote-text').textContent = `↩ @${post.author?.username}: ${post.text?.slice(0,60)||'[медиа]'}`;
+    el.style.display = 'flex';
+  }
+  showToast('Цитата добавлена к посту');
+}
+function clearQuote() {
+  pendQuote = null;
+  const el = document.getElementById('cmp-quote-block');
+  if (el) el.remove();
+}
+
+// ══ МУЗЫКА (Deezer) ══
+let musicActive = false, pendTrack = null, _musicTimer = null, _currentAudio = null;
+function toggleMusicSearch() {
+  musicActive = !musicActive;
+  const wrap = document.getElementById('music-search-wrap');
+  const btn = document.getElementById('music-toggle-btn');
+  if (wrap) wrap.style.display = musicActive ? 'block' : 'none';
+  if (btn) btn.style.color = musicActive ? 'var(--v)' : '';
+  if (musicActive) document.getElementById('music-inp')?.focus();
+}
+function searchMusic(q) {
+  clearTimeout(_musicTimer);
+  const res = document.getElementById('music-results');
+  if (!q.trim()) { if(res) res.innerHTML = ''; return; }
+  _musicTimer = setTimeout(async () => {
+    try {
+      // Через наш бекенд как прокси чтобы избежать CORS
+      const data = await fetch('/api/music/search?q='+encodeURIComponent(q)).then(r=>r.json());
+      if (!res) return;
+      if (!data.data?.length) { res.innerHTML = '<div style="color:var(--mu);font-size:.8rem;padding:8px">Ничего не найдено</div>'; return; }
+      res.innerHTML = data.data.slice(0,6).map(t => `
+        <div class="music-item" onclick="selectTrack(${JSON.stringify({id:t.id,title:t.title.replace(/'/g,'\\''),artist:t.artist.name.replace(/'/g,'\\''),cover:t.album.cover_medium,preview:t.preview,duration:t.duration}).replace(/"/g,'&quot;')})">
+          <img class="music-thumb" src="${t.album.cover_small}" alt="">
+          <div class="music-info">
+            <div class="music-title">${t.title}</div>
+            <div class="music-artist">${t.artist.name}</div>
+          </div>
+          <div class="music-dur">${Math.floor(t.duration/60)}:${String(t.duration%60).padStart(2,'0')}</div>
+        </div>`).join('');
+    } catch(e) {}
+  }, 400);
+}
+function selectTrack(track) {
+  pendTrack = track;
+  const wrap = document.getElementById('music-search-wrap');
+  if (wrap) wrap.style.display = 'none';
+  musicActive = false;
+  const el = document.getElementById('cmp-track');
+  if (el) {
+    el.style.display = 'block';
+    el.innerHTML = `<div class="post-track" style="margin-top:8px">
+      <img class="post-track-thumb" src="${track.cover}" alt="">
+      <div class="post-track-info"><div class="post-track-name">${track.title}</div><div class="post-track-artist">${track.artist}</div></div>
+      <button onclick="clearTrack()" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:.9rem;padding:4px">✕</button>
+    </div>`;
+  }
+}
+function clearTrack() { pendTrack = null; const el=document.getElementById('cmp-track'); if(el){el.style.display='none';el.innerHTML='';} }
+function playTrack(previewUrl, postId) {
+  if (_currentAudio) { _currentAudio.pause(); _currentAudio = null; }
+  if (!previewUrl) return;
+  const audio = new Audio(previewUrl);
+  _currentAudio = audio;
+  audio.play().catch(()=>showToast('Не удалось воспроизвести','err'));
+  const wave = document.getElementById('wave-'+postId);
+  const playBtn = document.getElementById('play-'+postId);
+  if (wave) wave.classList.remove('paused');
+  if (playBtn) playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+  audio.onended = () => {
+    if (wave) wave.classList.add('paused');
+    if (playBtn) playBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>';
+    _currentAudio = null;
+  };
+}
+
+// ══ КТО ЛАЙКНУЛ ══
+async function showLikers(postId, e) {
+  e.stopPropagation();
+  const pop = document.getElementById('likers-'+postId);
+  if (!pop) return;
+  document.querySelectorAll('.likers-pop.open').forEach(el => { if(el!==pop) el.classList.remove('open'); });
+  if (pop.classList.contains('open')) { pop.classList.remove('open'); return; }
+  pop.innerHTML = '<div style="padding:8px;color:var(--mu);font-size:.78rem">Загрузка...</div>';
+  pop.classList.add('open');
+  try {
+    const res = await API.request('/posts/'+postId+'/likers');
+    if (!res.likers?.length) { pop.innerHTML = '<div style="padding:8px;color:var(--mu);font-size:.78rem">Пока никто</div>'; return; }
+    pop.innerHTML = res.likers.slice(0,8).map(u => `
+      <div class="liker-row" onclick="location.href='profile.html?user=${u.username}'">
+        <div class="liker-ava" style="background:${avbg(u.avatarColor)}">${((u.firstName?.[0]||'')+(u.lastName?.[0]||'')).toUpperCase()}</div>
+        <div><div style="font-size:.8rem;font-weight:600">${u.firstName} ${u.lastName||''}</div><div style="font-size:.7rem;color:var(--mu)">@${u.username}</div></div>
+      </div>`).join('') + (res.likers.length>8?`<div style="padding:6px 8px;font-size:.72rem;color:var(--mu)">+${res.likers.length-8} ещё</div>`:'');
+  } catch(e) { pop.innerHTML = '<div style="padding:8px;color:var(--er);font-size:.78rem">Ошибка</div>'; }
+}
+document.addEventListener('click', () => document.querySelectorAll('.likers-pop.open').forEach(el=>el.classList.remove('open')));
+
+// ══ ОТЛОЖЕННАЯ ПУБЛИКАЦИЯ ══
+function toggleSchedule() {
+  const row = document.getElementById('sched-row');
+  if (!row) return;
+  const show = row.style.display === 'none';
+  row.style.display = show ? 'flex' : 'none';
+  if (show) {
+    const dt = document.getElementById('sched-dt');
+    const now = new Date(Date.now()+60*60*1000);
+    dt.min = new Date().toISOString().slice(0,16);
+    dt.value = now.toISOString().slice(0,16);
+  }
+}
+function clearSchedule() {
+  const row = document.getElementById('sched-row');
+  if (row) row.style.display = 'none';
+}
+function getScheduledAt() {
+  const dt = document.getElementById('sched-dt');
+  if (!dt || document.getElementById('sched-row')?.style.display === 'none') return null;
+  return dt.value ? new Date(dt.value).toISOString() : null;
 }
 </script>
 

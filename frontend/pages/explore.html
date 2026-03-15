@@ -94,7 +94,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .trends-list{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px}
 .trend-card{background:var(--s2);border:1px solid var(--br);border-radius:14px;padding:14px 16px;cursor:pointer;transition:all .2s;animation:fadeUp .3s both}
 .trend-card:hover{border-color:rgba(124,58,237,.4);background:rgba(124,58,237,.06)}
-.trend-rank{font-size:.68rem;color:var(--mu2);margin-bottom:2px}
+.trend-rank{font-size:.7rem;font-weight:800;color:var(--mu);margin-bottom:4px;font-family:'Syne',sans-serif}
 .trend-tag{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;color:var(--vl)}
 .trend-cnt{font-size:.75rem;color:var(--mu);margin-top:2px}
 /* Posts grid */
@@ -110,9 +110,58 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .pc-img{width:100%;height:160px;object-fit:cover;border-radius:10px;margin-top:10px}
 .search-results{display:none}
 .search-results.show{display:block}
+/* Категории результатов */
+.res-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.res-tab{padding:6px 16px;border-radius:20px;border:1px solid var(--br);background:none;color:var(--mu);font-size:.8rem;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.res-tab.active{background:rgba(124,58,237,.15);border-color:var(--vl);color:var(--vl)}
+/* Пустой результат */
+.empty-search{text-align:center;padding:40px 20px;color:var(--mu)}
+.empty-search svg{opacity:.3;margin-bottom:12px}
+.empty-search p{font-size:.88rem}
+/* Скелетон поиска */
+.search-skel{display:flex;flex-direction:column;gap:10px}
+.search-skel-row{height:56px;border-radius:12px;background:var(--s2);animation:shimmer 1.4s infinite linear;background:linear-gradient(90deg,var(--s3) 25%,var(--s2) 50%,var(--s3) 75%);background-size:800px 100%}
 
 /* ── THEME VARIANTS ──────────────────────────────────── */
-body.light{--bg:#F0EFF8;--s1:#E8E6F5;--s2:#EAE8F8;--s3:#DDD9F5;--br:rgba(124,58,237,.15);--br2:rgba(0,0,0,.07);--tx:#1A1128;--mu:#7070A0;--mu2:#A0A0C0}
+body.light{--bg:#FFFFFF;--s1:#F3F4F6;--s2:#E9EAEC;--s3:#D9DADD;--br:rgba(0,0,0,.12);--br2:rgba(0,0,0,.08);--tx:#111827;--mu:#6B7280;--mu2:#9CA3AF}
+/* ── Светлая тема: перекрытие белого текста ── */
+body.light .sn-user-name,
+body.light .sn-handle,
+body.light .sn-item,
+body.light .sn-label,
+body.light .pn,
+body.light .pt,
+body.light .pbody,
+body.light .p-body,
+body.light .p-name,
+body.light .p-time,
+body.light .cmt-nm,
+body.light .cmt-tx,
+body.light .sg-nm,
+body.light .sg-hd,
+body.light .tr-tag,
+body.light .tr-cnt,
+body.light .not-title,
+body.light .not-body { color: var(--tx); }
+body.light .sn-ava-ini,
+body.light .pa,
+body.light .cmp-ava,
+body.light .sv-a,
+body.light .cca { color: #fff; } /* инициалы на цветном фоне — оставить белыми */
+body.light .sn-logo-text { -webkit-text-fill-color: unset; background: linear-gradient(135deg,#7C3AED,#2563EB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .post,
+body.light .compose,
+body.light .sk-card,
+body.light .notif-item,
+body.light .sg-card,
+body.light .ch-item { background: var(--s1); border-color: var(--br); }
+body.light .cmp-ta,
+body.light .search-inp,
+body.light input,
+body.light textarea { background: var(--s2); color: var(--tx); border-color: var(--br); }
+body.light .cmp-ta::placeholder,
+body.light input::placeholder,
+body.light textarea::placeholder { color: var(--mu); }
 body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
 body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
 
@@ -260,9 +309,21 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 
     <!-- SEARCH RESULTS -->
     <div id="search-results" class="search-results">
-      <div class="section-title" id="res-title">Результаты</div>
-      <div id="res-people" class="people-grid" style="margin-bottom:24px"></div>
-      <div id="res-posts" class="posts-grid"></div>
+      <div class="res-tabs">
+        <button class="res-tab active" onclick="filterResults('all',this)">Все</button>
+        <button class="res-tab" onclick="filterResults('people',this)">Люди</button>
+        <button class="res-tab" onclick="filterResults('posts',this)">Посты</button>
+        <button class="res-tab" onclick="filterResults('tags',this)">#Теги</button>
+      </div>
+      <div id="res-all">
+        <div id="res-people-wrap"></div>
+        <div id="res-posts-wrap"></div>
+        <div id="res-tags-wrap"></div>
+      </div>
+      <div id="res-empty" class="empty-search" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <p id="res-empty-text">Ничего не найдено</p>
+      </div>
     </div>
   </div>
 </div>
@@ -279,26 +340,45 @@ function fmtTime(iso){if(!iso)return'только что';const d=new Date(iso),
 let ME=null;
 function bootNav(){const s=localStorage.getItem('weave_current_user');if(!s&&!API.tok()){location.href='login.html';return}ME=s?JSON.parse(s):null;if(!ME){location.href='login.html';return}const ini=((ME.firstName?.[0]||'')+(ME.lastName?.[0]||'')).toUpperCase()||'?';const av=document.getElementById('sn-ava');if(av){av.textContent=ini;av.style.background=avBg(ME.avatarColor)}const nm=document.getElementById('sn-name');if(nm)nm.textContent=(ME.firstName+' '+(ME.lastName||'')).trim();const hd=document.getElementById('sn-handle');if(hd)hd.textContent='@'+ME.username;const adm=document.getElementById('nav-admin');if(adm&&(ME.isAdmin||ME.isModerator))adm.style.display='flex';}
 
-const TAGS=['#webdev','#дизайн','#frontend','#javascript','#vue','#react','#css','#ui','#мотивация','#фото','#музыка','#путешествия'];
-const TRENDS=[['#webdev',24100],['#дизайн',18400],['#frontend',12700],['#javascript',9800],['#vue',7200],['#react',6900],['#css',5400],['#ui',4100]];
+// Хэштеги и тренды загружаются из реальных постов
 
 window.addEventListener('DOMContentLoaded',async()=>{
   bootNav();
-  renderTags(); renderTrends();
-  await loadPeople(); await loadPosts();
+  await Promise.all([loadRealTrends(), loadPeople(), loadPosts()]);
 });
 
-function renderTags(){
-  document.getElementById('tags-row').innerHTML=TAGS.map(t=>`<div class="tag-chip" onclick="searchTag('${t}')">${t}</div>`).join('');
-}
+async function loadRealTrends(){
+  try{
+    const trends = await API.request('/trends').catch(()=>[]);
+    const tagsEl = document.getElementById('tags-row');
+    const trendsEl = document.getElementById('trends-list');
 
-function renderTrends(){
-  document.getElementById('trends-list').innerHTML=TRENDS.map(([tag,cnt],i)=>`
-    <div class="trend-card" onclick="searchTag('${tag}')" style="animation-delay:${i*.05}s">
-      <div class="trend-rank">${i+1} · Тренд</div>
-      <div class="trend-tag">${tag}</div>
-      <div class="trend-cnt">${(cnt/1000).toFixed(1)}K постов</div>
-    </div>`).join('');
+    // Хэштеги — горизонтальная прокрутка
+    if(tagsEl){
+      if(!trends.length){
+        tagsEl.style.display='none';
+      } else {
+        tagsEl.innerHTML = trends.slice(0,10).map(t=>
+          `<div class="tag-chip" onclick="searchTag('${esc(t.tag)}')">${esc(t.tag)}</div>`
+        ).join('');
+        tagsEl.style.display='flex';
+      }
+    }
+
+    // Тренды — карточки
+    if(trendsEl){
+      if(!trends.length){
+        trendsEl.innerHTML='<div style="color:var(--mu);font-size:.84rem;padding:16px 0;grid-column:1/-1">Хэштегов пока нет — публикуй посты с #тегами</div>';
+      } else {
+        trendsEl.innerHTML = trends.map((t,i)=>`
+          <div class="trend-card" onclick="searchTag('${esc(t.tag)}')" style="animation-delay:${i*.05}s">
+            <div class="trend-rank">${i+1}</div>
+            <div class="trend-tag">${esc(t.tag)}</div>
+            <div class="trend-cnt">${t.count} ${t.count===1?'пост':t.count<5?'поста':'постов'}</div>
+          </div>`).join('');
+      }
+    }
+  }catch(e){}
 }
 
 async function loadPeople(){
@@ -356,21 +436,96 @@ function postCard(p,i){
   </div>`;
 }
 
-let searchTmr;
+let searchTmr, _lastResults = {users:[], posts:[], tags:[]};
 async function onSearch(q){
   clearTimeout(searchTmr);
   const dv=document.getElementById('default-view');
   const sr=document.getElementById('search-results');
-  if(!q.trim()){dv.style.display='';sr.classList.remove('show');return}
-  dv.style.display='none'; sr.classList.add('show');
-  searchTmr=setTimeout(async()=>{
+  if(!q.trim()){
+    dv.style.display='';
+    sr.classList.remove('show');
+    return;
+  }
+  dv.style.display='none';
+  sr.classList.add('show');
+
+  // Показать скелетон пока грузим
+  document.getElementById('res-people-wrap').innerHTML = '<div class="search-skel"><div class="search-skel-row"></div><div class="search-skel-row"></div></div>';
+  document.getElementById('res-posts-wrap').innerHTML = '';
+  document.getElementById('res-tags-wrap').innerHTML = '';
+  document.getElementById('res-empty').style.display = 'none';
+
+  searchTmr = setTimeout(async()=>{
     try{
-      const res=await API.request('/search?q='+encodeURIComponent(q));
-      document.getElementById('res-title').textContent=`Результаты для "${q}"`;
-      document.getElementById('res-people').innerHTML=(res.users||[]).map((u,i)=>personCard(u,i)).join('')||'<div style="color:var(--mu);font-size:.85rem">Пользователи не найдены</div>';
-      document.getElementById('res-posts').innerHTML=(res.posts||[]).map((p,i)=>postCard(p,i)).join('')||'<div style="color:var(--mu);font-size:.85rem">Посты не найдены</div>';
-    }catch(e){showToast('Ошибка поиска','err')}
-  },300);
+      const res = await API.request('/search?q='+encodeURIComponent(q));
+      _lastResults = {
+        users: res.users||[],
+        posts: res.posts||[],
+        tags: res.tags||[]
+      };
+      renderResults();
+    }catch(e){ showToast('Ошибка поиска','err'); }
+  }, 280);
+}
+
+function renderResults(){
+  const {users, posts, tags} = _lastResults;
+  const total = users.length + posts.length + tags.length;
+
+  // Люди
+  const pw = document.getElementById('res-people-wrap');
+  if(users.length){
+    pw.innerHTML = `<div class="section-title" style="margin-bottom:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Люди</div>
+      <div class="people-grid" style="margin-bottom:24px">${users.map((u,i)=>personCard(u,i)).join('')}</div>`;
+  } else {
+    pw.innerHTML = '';
+  }
+
+  // Посты
+  const psw = document.getElementById('res-posts-wrap');
+  if(posts.length){
+    psw.innerHTML = `<div class="section-title" style="margin-bottom:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Посты</div>
+      <div class="posts-grid">${posts.map((p,i)=>postCard(p,i)).join('')}</div>`;
+  } else {
+    psw.innerHTML = '';
+  }
+
+  // Теги
+  const tw = document.getElementById('res-tags-wrap');
+  if(tags.length){
+    tw.innerHTML = `<div class="section-title" style="margin:24px 0 12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Теги</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">${tags.map(t=>`<div class="tag-chip" onclick="searchTag('${esc(t)}')">${esc(t)}</div>`).join('')}</div>`;
+  } else {
+    tw.innerHTML = '';
+  }
+
+  // Пустое состояние
+  const emptyEl = document.getElementById('res-empty');
+  if(!total){
+    const q = document.getElementById('q')?.value || '';
+    document.getElementById('res-empty-text').textContent = `По запросу «${q}» ничего не найдено`;
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+  }
+}
+
+function filterResults(type, btn){
+  document.querySelectorAll('.res-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const pw = document.getElementById('res-people-wrap');
+  const psw = document.getElementById('res-posts-wrap');
+  const tw = document.getElementById('res-tags-wrap');
+  if(type==='all'){ if(pw)pw.style.display=''; if(psw)psw.style.display=''; if(tw)tw.style.display=''; }
+  else if(type==='people'){ if(pw)pw.style.display=''; if(psw)psw.style.display='none'; if(tw)tw.style.display='none'; }
+  else if(type==='posts'){ if(pw)pw.style.display='none'; if(psw)psw.style.display=''; if(tw)tw.style.display='none'; }
+  else if(type==='tags'){ if(pw)pw.style.display='none'; if(psw)psw.style.display='none'; if(tw)tw.style.display=''; }
 }
 
 function searchTag(tag){
