@@ -94,9 +94,15 @@ const app    = express();
 // ── Security headers (helmet) ──
 app.use(compression()); // gzip/brotli сжатие ответов
 app.use(helmet({
-  contentSecurityPolicy: false, // отключаем CSP — мешает inline scripts
-  crossOriginEmbedderPolicy: false
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  xXssProtection: false
 }));
+// Явно разрешаем eval (нужен для некоторых библиотек)
+app.use((req,res,next)=>{
+  res.removeHeader('Content-Security-Policy');
+  next();
+});
 app.use((req,res,next)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('X-Frame-Options','DENY');

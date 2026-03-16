@@ -703,7 +703,7 @@ function renderHeader(){
   const _phName=document.getElementById('ph-bio-name');
   if(_phName) _phName.innerHTML=esc((u.firstName+' '+(u.lastName||'')).trim())+(u.isVerified?verifiedBadge(16):'');
   document.getElementById('ph-bio-text').textContent=u.bio||'';
-  renderProfileLinks(u.profileLinks||[]);
+  renderProfileLinks(Array.isArray(u.profileLinks)?u.profileLinks:u.website?[{url:u.website,label:u.website.replace(/^https?:\/\//,'')}]:[]);
   initCover(u);
   // Обложка-фото
   if(u.coverImageUrl){
@@ -966,7 +966,6 @@ function closeCoverCrop() {
   document.getElementById('cover-crop-modal').classList.remove('open');
 }
 
-async // applyCoverCrop объявлена ниже
 
 
 // Touch/mouse drag для кроппера
@@ -997,7 +996,6 @@ async // applyCoverCrop объявлена ниже
 // ══════════════════════════════════════════════════════
 let highlights = [];
 
-async // loadHighlights объявлена ниже
 
 
 // renderHighlights объявлена ниже
@@ -1022,7 +1020,6 @@ function closeHlModal() {
   document.getElementById('hl-create-modal').style.display = 'none';
 }
 
-async // createHighlight объявлена ниже
 
 
 // ══════════════════════════════════════════════════════
@@ -1086,7 +1083,6 @@ async function pinProfilePost(postId) {
   } catch(e) { showToast('Ошибка','err'); }
 }
 
-async // deleteProfilePost объявлена ниже
 
 
 // ══════════════════════════════════════════════════════
@@ -1409,6 +1405,7 @@ function initCoverCropEvents() {
 
 // ══ ССЫЛКИ ПРОФИЛЯ ══
 function renderProfileLinks(links) {
+  if(!Array.isArray(links)) links = [];
   const el = document.getElementById('ph-links');
   if (!el || !links?.length) return;
   const icons = {

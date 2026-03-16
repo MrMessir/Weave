@@ -768,6 +768,28 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .hk-row:last-child{border:none}
 .hk-key{background:var(--s3);border:1px solid var(--br);border-radius:6px;padding:2px 8px;font-family:monospace;font-size:.78rem;color:var(--mu)}
 
+
+/* ── Превью трека в поиске ── */
+.music-item{position:relative}
+.music-preview-btn{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.music-preview-btn.idle{background:var(--s3);color:var(--mu)}
+.music-preview-btn.idle:hover{background:rgba(124,58,237,.15);color:var(--vl)}
+.music-preview-btn.playing{background:linear-gradient(135deg,var(--v),var(--b));color:#fff}
+.music-preview-btn svg{width:12px;height:12px}
+/* Волна при воспроизведении */
+.music-wave{display:flex;align-items:flex-end;gap:2px;height:14px;margin-left:2px}
+.music-wave span{width:3px;background:var(--vl);border-radius:2px;animation:mwave .7s ease-in-out infinite alternate}
+.music-wave span:nth-child(2){animation-delay:.15s;height:8px}
+.music-wave span:nth-child(3){animation-delay:.3s;height:12px}
+.music-wave span:nth-child(4){animation-delay:.45s;height:6px}
+.music-wave span:nth-child(5){animation-delay:.6s;height:10px}
+@keyframes mwave{from{height:3px}to{height:14px}}
+.music-wave.paused span{animation-play-state:paused}
+/* Прогресс-бар превью */
+.music-preview-progress{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--br);border-radius:0 0 10px 10px;overflow:hidden;opacity:0;transition:opacity .2s}
+.music-item:hover .music-preview-progress{opacity:1}
+.music-preview-progress-bar{height:100%;background:linear-gradient(90deg,var(--v),var(--b));width:0;transition:width .5s linear}
+
 </style>
 </head>
 <body>
@@ -3287,6 +3309,7 @@ function toggleMusicSearch() {
   musicActive = !musicActive;
   const wrap = document.getElementById('music-search-wrap');
   const btn = document.getElementById('music-toggle-btn');
+  if (!musicActive) stopAllPreview(); // стоп при закрытии
   if (wrap) wrap.style.display = musicActive ? 'block' : 'none';
   if (btn) btn.style.color = musicActive ? 'var(--v)' : '';
   if (musicActive) document.getElementById('music-inp')?.focus();
@@ -3304,13 +3327,22 @@ function searchMusic(q) {
       // Сохраняем треки глобально для клика
       window._musicResults = data.data.slice(0,6);
       res.innerHTML = window._musicResults.map((t,idx) => `
-        <div class="music-item" onclick="selectTrackByIdx(${idx})">
-          <img class="music-thumb" src="${t.album.cover_small}" alt="">
-          <div class="music-info">
+        <div class="music-item" id="mi-${idx}">
+          <img class="music-thumb" src="${t.album.cover_small}" alt="" onclick="selectTrackByIdx(${idx})" style="cursor:pointer">
+          <div class="music-info" onclick="selectTrackByIdx(${idx})" style="cursor:pointer;flex:1;min-width:0">
             <div class="music-title">${esc2(t.title)}</div>
-            <div class="music-artist">${esc2(t.artist.name)}</div>
+            <div class="music-artist" style="display:flex;align-items:center;gap:4px">
+              <span>${esc2(t.artist.name)}</span>
+              <div class="music-wave paused" id="mw-${idx}"><span></span><span></span><span></span><span></span><span></span></div>
+            </div>
           </div>
-          <div class="music-dur">${Math.floor(t.duration/60)}:${String(t.duration%60).padStart(2,'0')}</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+            <span style="font-size:.7rem;color:var(--mu)">${Math.floor(t.duration/60)}:${String(t.duration%60).padStart(2,'0')}</span>
+            ${t.preview ? `<button class="music-preview-btn idle" id="mpb-${idx}" onclick="togglePreview(${idx},event)" title="Прослушать 30 сек">
+              <svg id="mpb-ico-${idx}" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>` : `<span style="font-size:.65rem;color:var(--mu2)">нет</span>`}
+          </div>
+          <div class="music-preview-progress"><div class="music-preview-progress-bar" id="mpp-${idx}"></div></div>
         </div>`).join('');
     } catch(e) {}
   }, 400);
@@ -3330,6 +3362,7 @@ function selectTrackByIdx(idx) {
   });
 }
 function selectTrack(track) {
+  stopAllPreview(); // остановить превью при выборе
   pendTrack = track;
   const wrap = document.getElementById('music-search-wrap');
   if (wrap) wrap.style.display = 'none';
@@ -3844,6 +3877,88 @@ function observeSeenPosts() {
       _seenObserver.observe(el);
     }
   });
+}
+
+// ── Превью треков в поиске ──
+let _previewAudio = null;
+let _previewIdx = null;
+let _previewTimer = null;
+
+function togglePreview(idx, e) {
+  e.stopPropagation();
+  const results = window._musicResults || [];
+  const track = results[idx];
+  if (!track?.preview) return;
+
+  // Если уже играет этот трек — пауза
+  if (_previewIdx === idx && _previewAudio && !_previewAudio.paused) {
+    _previewAudio.pause();
+    _setPreviewState(idx, 'idle');
+    return;
+  }
+
+  // Остановить предыдущий
+  if (_previewAudio) {
+    _previewAudio.pause();
+    _previewAudio = null;
+    if (_previewIdx !== null) _setPreviewState(_previewIdx, 'idle');
+  }
+  clearInterval(_previewTimer);
+
+  // Запустить новый
+  _previewIdx = idx;
+  const audio = new Audio(track.preview);
+  _previewAudio = audio;
+  _setPreviewState(idx, 'playing');
+
+  audio.play().catch(() => {
+    _setPreviewState(idx, 'idle');
+    showToast('Не удалось воспроизвести','err');
+  });
+
+  // Обновлять прогресс-бар
+  _previewTimer = setInterval(() => {
+    if (!_previewAudio || _previewAudio.paused) { clearInterval(_previewTimer); return; }
+    const pct = (_previewAudio.currentTime / (_previewAudio.duration||30)) * 100;
+    const bar = document.getElementById('mpp-'+idx);
+    if (bar) bar.style.width = pct + '%';
+  }, 300);
+
+  audio.onended = () => {
+    _setPreviewState(idx, 'idle');
+    clearInterval(_previewTimer);
+    const bar = document.getElementById('mpp-'+idx);
+    if (bar) bar.style.width = '0';
+    _previewIdx = null;
+    _previewAudio = null;
+  };
+}
+
+function _setPreviewState(idx, state) {
+  const btn = document.getElementById('mpb-'+idx);
+  const ico = document.getElementById('mpb-ico-'+idx);
+  const wave = document.getElementById('mw-'+idx);
+  if (!btn) return;
+
+  if (state === 'playing') {
+    btn.className = 'music-preview-btn playing';
+    if (ico) ico.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    if (wave) wave.classList.remove('paused');
+  } else {
+    btn.className = 'music-preview-btn idle';
+    if (ico) ico.innerHTML = '<polygon points="5,3 19,12 5,21"/>';
+    if (wave) wave.classList.add('paused');
+    // Сбросить прогресс
+    const bar = document.getElementById('mpp-'+idx);
+    if (bar) bar.style.width = '0';
+  }
+}
+
+// Остановить превью при закрытии поиска или выборе трека
+function stopAllPreview() {
+  if (_previewAudio) { _previewAudio.pause(); _previewAudio = null; }
+  if (_previewIdx !== null) { _setPreviewState(_previewIdx, 'idle'); _previewIdx = null; }
+  clearInterval(_previewTimer);
 }
 </script>
 
