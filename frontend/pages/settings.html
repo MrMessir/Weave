@@ -513,6 +513,9 @@ body.light .topbar{background:rgba(240,239,248,.9)}
             <textarea id="p-bio" maxlength="160" rows="2" placeholder="Биография…" oninput="$('bio-cnt').textContent=this.value.length+' / 160'" style="background:none;border:none;outline:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;resize:none;max-height:80px;text-align:right;width:200px"></textarea>
           </div>
           <div class="fr"><div class="fi yw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div class="fmeta"><div class="flabel">Сайт</div></div><input class="finput" id="p-website" placeholder="https://…"></div>
+          <div class="s-group-label" style="margin-top:16px">Ссылки (до 5)</div>
+          <div id="profile-links-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
+          <button onclick="addProfileLink()" style="background:none;border:1px dashed var(--br);border-radius:10px;padding:8px 14px;color:var(--mu);cursor:pointer;font-size:.78rem;width:100%;font-family:'Syne',sans-serif;transition:all .15s" onmouseover="this.style.borderColor='var(--vl)';this.style.color='var(--vl)'" onmouseout="this.style.borderColor='var(--br)';this.style.color='var(--mu)'">+ Добавить ссылку</button>
           <div class="fg-row">
             <div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
             <div class="fmeta"><div class="flabel">Статус</div><div class="fdesc">Показывается под ником</div></div>
@@ -637,7 +640,7 @@ body.light .topbar{background:rgba(240,239,248,.9)}
         </div>
 
         <div class="fg">
-          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="fmeta"><div class="flabel">Тихие часы</div><div class="fdesc">Не беспокоить ночью</div></div><div class="tog" id="tog-quiet" onclick="toggleQuiet(this)"></div></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="fmeta"><div class="flabel">Тихие часы</div><div class="fdesc">Не беспокоить ночью</div></div><div class="tog" id="tog-quiet" onclick="togPref('quiet',this)"></div></div>
           <div class="fr" id="quiet-times" style="display:none">
             <div class="fi yw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
             <div class="fmeta"><div class="flabel">Период</div></div>
@@ -647,6 +650,11 @@ body.light .topbar{background:rgba(240,239,248,.9)}
               <input type="time" id="q-to" value="08:00" style="background:none;border:none;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.82rem;outline:none;color-scheme:dark" onchange="savePref('q-to',this.value)">
             </div>
           </div>
+        </div>
+        <div class="fg" style="margin-top:8px">
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></div><div class="fmeta"><div class="flabel">Звук уведомлений</div><div class="fdesc">Тихий звук при лайке и сообщении</div></div><div class="tog" id="tog-sound" onclick="togPref('soundEnabled',this)"></div></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="fmeta"><div class="flabel">Скрывать просмотренные посты</div><div class="fdesc">Уже увиденные не показываются в ленте</div></div><div class="tog" id="tog-hide-seen" onclick="togPref('hideSeen',this)"></div></div>
+          <div class="fr"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div><div class="fmeta"><div class="flabel">Push-уведомления</div><div class="fdesc">Уведомления когда вкладка закрыта</div></div><div class="tog" id="tog-push-notif" onclick="enablePush(this)"></div></div>
         </div>
         <button class="save-btn" onclick="toast('✓ Настройки уведомлений сохранены','ok')">Сохранить</button>
       </div>
@@ -969,6 +977,7 @@ async function saveProfile(){
   const bio      =($('p-bio')?.value||'').trim();
   const website  =($('p-website')?.value||'').trim();
   const status   =($('p-status')?.value||'').trim()||null;
+  const profileLinks = _profileLinks.filter(l=>l.url?.trim());
   const city     =($('p-city')?.value||'').trim();
   const phone    =($('p-phone')?.value||'').trim();
   const birthday =($('p-birthday')?.value||'');
@@ -982,13 +991,14 @@ async function saveProfile(){
     // Сжимаем фото если есть (max 400px, quality 0.75)
     let avatarUrl = ME.avatarUrl || null;
     if (pendAvaSrc) {
-      avatarUrl = await compressImage(pendAvaSrc, 400, 0.75);
+      const compressed = await compressImage(pendAvaSrc, 400, 0.75);
+      avatarUrl = await uploadToCloudinary(compressed);
     } else if (pendAvaSrc === null && !$('ava-img')?.classList.contains('show')) {
       avatarUrl = null; // удалено
     }
     const updated=await API.request('/users/profile',{
       method:'PUT',
-      body:JSON.stringify({firstName,lastName,username,bio,website,city,phone,birthday,avatarColor:selAvaColor,avatarUrl,status})
+      body:JSON.stringify({firstName,lastName,username,bio,website,city,phone,birthday,avatarColor:selAvaColor,avatarUrl,status,profileLinks})
     });
     Object.assign(ME, updated, {avatarColor:selAvaColor, avatarUrl, status});
     if(avatarUrl) ME.avatarBase64=avatarUrl;
@@ -1413,6 +1423,81 @@ function applyCrop() {
   closeCrop();
   if (_cropCallback) _cropCallback(result);
 }
+
+// ── Cloudinary загрузка (если настроен) ──
+async function uploadToCloudinary(dataUrl) {
+  try {
+    const res = await API.request('/upload', {
+      method: 'POST',
+      body: JSON.stringify({data: dataUrl, folder: 'avatars'})
+    });
+    return res.url; // возвращает CDN URL
+  } catch(e) {
+    // Если Cloudinary не настроен — возвращаем base64
+    return dataUrl;
+  }
+}
+
+async function enablePush(el) {
+  if (!('Notification' in window)) { toast('Браузер не поддерживает уведомления','err'); return; }
+  const perm = await Notification.requestPermission();
+  if (perm === 'granted') {
+    togPref('pushEnabled', el);
+    toast('🔔 Push-уведомления включены','ok');
+  } else {
+    toast('Разрешите уведомления в браузере','err');
+    el.classList.remove('on');
+  }
+}
+
+// ── Ссылки профиля ──
+let _profileLinks = [];
+function renderLinksEditor() {
+  const el = document.getElementById('profile-links-list');
+  if (!el) return;
+  el.innerHTML = _profileLinks.map((l,i) => `
+    <div style="display:flex;gap:6px;align-items:center">
+      <select style="background:var(--s2);border:1px solid var(--br2);border-radius:9px;padding:7px 8px;color:var(--tx);font-size:.8rem;outline:none" onchange="_profileLinks[${i}].type=this.value">
+        <option value="default"${l.type==='default'?' selected':''}>🔗 Ссылка</option>
+        <option value="instagram"${l.type==='instagram'?' selected':''}>📷 Instagram</option>
+        <option value="telegram"${l.type==='telegram'?' selected':''}>✈️ Telegram</option>
+        <option value="youtube"${l.type==='youtube'?' selected':''}>▶️ YouTube</option>
+      </select>
+      <input style="flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:9px;padding:7px 10px;color:var(--tx);font-size:.82rem;outline:none" placeholder="https://..." value="${esc2(l.url||'')}" oninput="_profileLinks[${i}].url=this.value" onchange="_profileLinks[${i}].label=this.value.replace(/^https?:\/\//,'').split('/')[0]">
+      <button onclick="_profileLinks.splice(${i},1);renderLinksEditor()" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:1rem;padding:4px">✕</button>
+    </div>`).join('');
+}
+function addProfileLink() {
+  if (_profileLinks.length >= 5) { toast('Максимум 5 ссылок','err'); return; }
+  _profileLinks.push({type:'default', url:'', label:''});
+  renderLinksEditor();
+}
+// esc2 объявлена ниже
+
+
+// Ссылки профиля
+let _profileLinks = [];
+function initLinks(links) {
+  _profileLinks = Array.isArray(links) ? links : [];
+  renderLinkInputs();
+}
+function renderLinkInputs() {
+  const cont = document.getElementById('links-inputs');
+  const addBtn = document.getElementById('add-link-btn');
+  if (!cont) return;
+  cont.innerHTML = _profileLinks.map((l,i) => `
+    <div style="display:flex;gap:6px;margin-bottom:6px">
+      <input value="${esc2(l)}" onchange="_profileLinks[${i}]=this.value" style="flex:1;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:8px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none" placeholder="https://...">
+      <button onclick="_profileLinks.splice(${i},1);renderLinkInputs()" style="background:none;border:1px solid var(--br);border-radius:8px;color:var(--er);cursor:pointer;padding:0 10px;font-size:.9rem">✕</button>
+    </div>`).join('');
+  if (addBtn) addBtn.style.display = _profileLinks.length >= 5 ? 'none' : 'block';
+}
+function addLinkInput() {
+  if (_profileLinks.length >= 5) return;
+  _profileLinks.push('');
+  renderLinkInputs();
+}
+function esc2(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 </script>
 
 

@@ -200,6 +200,16 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .mob-nav-btn span{line-height:1}
 .mob-nav-badge{position:absolute;top:7px;right:calc(50% - 19px);min-width:14px;height:14px;border-radius:7px;background:var(--er);color:#fff;font-size:.54rem;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 2px;border:2px solid var(--bg)}
 .mob-nav-btn.active svg{stroke:var(--vl)}
+
+/* История поиска */
+.search-hist{background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:8px;margin-top:6px;display:none}
+.search-hist.show{display:block}
+.sh-title{font-size:.7rem;color:var(--mu);padding:2px 8px 6px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between}
+.sh-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:9px;cursor:pointer;font-size:.84rem;transition:background .12s}
+.sh-item:hover{background:var(--s3)}
+.sh-item svg{flex-shrink:0;opacity:.5;width:14px;height:14px}
+.sh-clear{background:none;border:none;color:var(--mu);cursor:pointer;font-size:.75rem;padding:0}
+
 </style>
 </head>
 <body>
@@ -279,7 +289,11 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
   <div class="topbar">
     <div class="topbar-search" style="max-width:100%">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" placeholder="Поиск людей, постов, тегов…" id="q" oninput="onSearch(this.value)" autocomplete="off">
+      <input type="text" placeholder="Поиск людей, постов, тегов…" id="q" oninput="onSearch(this.value)" onfocus="showSearchHist()" autocomplete="off">
+      <div class="search-hist" id="search-hist">
+        <div class="sh-title">Недавние <button class="sh-clear" onclick="clearSearchHist()">Очистить</button></div>
+        <div id="sh-items"></div>
+      </div>
     </div>
   </div>
 
@@ -464,6 +478,7 @@ async function onSearch(q){
         tags: res.tags||[]
       };
       renderResults();
+    saveToHist(q);
     }catch(e){ showToast('Ошибка поиска','err'); }
   }, 280);
 }
@@ -584,5 +599,43 @@ function verifiedBadge(size=14){
   </svg>`;
 }
 
+
+// История поиска
+const SH_KEY = 'weave_search_hist';
+function getSearchHist() { try { return JSON.parse(localStorage.getItem(SH_KEY)||'[]'); } catch{ return []; } }
+function saveToHist(q) {
+  if (!q.trim()) return;
+  let h = getSearchHist().filter(x => x !== q);
+  h.unshift(q);
+  h = h.slice(0, 10);
+  localStorage.setItem(SH_KEY, JSON.stringify(h));
+}
+function showSearchHist() {
+  const hist = getSearchHist();
+  const el = document.getElementById('sh-items');
+  const wrap = document.getElementById('search-hist');
+  if (!hist.length || !el || !wrap) return;
+  el.innerHTML = hist.map(q =>
+    `<div class="sh-item" onclick="pickHist('${esc(q)}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      ${esc(q)}
+    </div>`
+  ).join('');
+  wrap.classList.add('show');
+}
+function pickHist(q) {
+  document.getElementById('q').value = q;
+  document.getElementById('search-hist')?.classList.remove('show');
+  onSearch(q);
+}
+function clearSearchHist() {
+  localStorage.removeItem(SH_KEY);
+  document.getElementById('search-hist')?.classList.remove('show');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.topbar-search')) {
+    document.getElementById('search-hist')?.classList.remove('show');
+  }
+});
 </script>
 </body></html>

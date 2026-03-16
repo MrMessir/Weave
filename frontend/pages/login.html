@@ -486,6 +486,15 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.warn('SW ошибка:', err));
   });
 }
+
+// Показать сообщение после верификации
+const vp = new URLSearchParams(location.search);
+if(vp.get('verified')==='ok') {
+  setTimeout(()=>{const el=document.getElementById('toast');if(el){el.textContent='✅ Email подтверждён! Добро пожаловать.';el.style.display='block';setTimeout(()=>el.style.display='none',4000);}},300);
+}
+if(vp.get('verified')==='expired') {
+  setTimeout(()=>{const el=document.getElementById('toast');if(el){el.textContent='⚠️ Ссылка устарела. Войди и запроси новое письмо.';el.style.display='block';setTimeout(()=>el.style.display='none',5000);}},300);
+}
 </script>
 </body>
 </html>

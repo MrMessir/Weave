@@ -63,6 +63,98 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 @media(max-width:600px){
   .mob-nav{display:flex!important}:root{--nav-w:0px}.sidenav{display:none}.main{margin-left:0}}
 
+
+/* ── Обложка профиля ── */
+.ph-cover{width:100%;height:140px;border-radius:0 0 16px 16px;margin-bottom:-70px;position:relative;background:linear-gradient(135deg,#1a0533,#0a1628);transition:background .3s}
+.ph-cover-edit{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.5);border:none;color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:.72rem;font-family:'Syne',sans-serif;font-weight:700;display:none;gap:5px;align-items:center;backdrop-filter:blur(4px)}
+.ph-cover-edit:hover{background:rgba(0,0,0,.7)}
+.ph-cover:hover .ph-cover-edit{display:flex}
+/* Пикер цвета обложки */
+.cover-picker{position:absolute;bottom:44px;right:12px;background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:12px;z-index:50;display:none;box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.cover-picker.open{display:block}
+.cover-picker-title{font-size:.72rem;color:var(--mu);margin-bottom:8px;font-family:'Syne',sans-serif;font-weight:700}
+.cover-swatches{display:grid;grid-template-columns:repeat(4,32px);gap:6px}
+.cover-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:transform .15s,border-color .15s}
+.cover-swatch:hover{transform:scale(1.1)}
+.cover-swatch.sel{border-color:#fff}
+@media(max-width:600px){.ph-cover{height:100px;margin-bottom:-50px}}
+
+
+/* ── Шапка-обои с кроппером ── */
+.ph-cover{width:100%;height:200px;border-radius:0;margin-bottom:-80px;position:relative;background:linear-gradient(135deg,#1a0533,#0a1628);overflow:hidden;transition:background .3s}
+.ph-cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:none;transition:none}
+.ph-cover-img.loaded{display:block}
+.ph-cover-actions{position:absolute;bottom:10px;right:10px;display:none;gap:6px}
+.ph-cover:hover .ph-cover-actions{display:flex}
+.ph-cover-btn{background:rgba(0,0,0,.55);border:none;color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:.72rem;font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:4px;backdrop-filter:blur(6px);transition:background .15s}
+.ph-cover-btn:hover{background:rgba(0,0,0,.8)}
+/* Кроппер обоев */
+.cover-crop-modal{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.cover-crop-modal.open{display:flex}
+.cover-crop-wrap{position:relative;width:min(700px,96vw);height:200px;overflow:hidden;cursor:move;background:#000;border-radius:8px;touch-action:none}
+.cover-crop-inner{position:absolute;transform-origin:0 0}
+.cover-crop-inner img{display:block;pointer-events:none;user-select:none}
+.cover-crop-overlay{position:absolute;inset:0;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4);border-radius:8px;pointer-events:none}
+.cover-crop-controls{display:flex;align-items:center;gap:12px;color:#fff;font-size:.82rem}
+.cover-crop-controls input[type=range]{width:180px;accent-color:#7C3AED}
+.cover-crop-btns{display:flex;gap:10px}
+.cover-crop-btns button{padding:10px 24px;border-radius:12px;border:none;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem}
+.ccb-cancel{background:rgba(255,255,255,.12);color:#fff}
+.ccb-save{background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff}
+/* ── Хайлайты (вечные истории) ── */
+.highlights-row{display:flex;gap:14px;padding:12px 0 16px;overflow-x:auto;scrollbar-width:none}
+.highlights-row::-webkit-scrollbar{display:none}
+.hl-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
+.hl-ring{width:64px;height:64px;border-radius:50%;padding:2px;background:linear-gradient(135deg,var(--v),var(--b))}
+.hl-inner{width:100%;height:100%;border-radius:50%;background:var(--s2);overflow:hidden;border:2.5px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.hl-inner img{width:100%;height:100%;object-fit:cover}
+.hl-label{font-size:.68rem;color:var(--tx);font-weight:600;max-width:64px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hl-add{background:var(--s2);border:1.5px dashed var(--br);display:grid;place-items:center;font-size:1.4rem;color:var(--mu)}
+.hl-add:hover{border-color:var(--vl);color:var(--vl)}
+/* ── Сетка постов (медиа-вкладка) ── */
+.media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:4px}
+.mg-item{aspect-ratio:1;overflow:hidden;position:relative;cursor:pointer;background:var(--s3)}
+.mg-item img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
+.mg-item:hover img{transform:scale(1.04)}
+.mg-item-multi{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border-radius:4px;padding:2px 5px;font-size:.65rem;color:#fff}
+/* ── Ссылки профиля ── */
+.profile-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pl-link{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--br);border-radius:20px;padding:4px 12px;font-size:.78rem;color:var(--vl);text-decoration:none;transition:all .15s}
+.pl-link:hover{background:rgba(124,58,237,.12);border-color:var(--vl)}
+.pl-link svg{flex-shrink:0;opacity:.7}
+/* ── Статистика профиля ── */
+.profile-stats-detail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;padding:12px;background:var(--s2);border-radius:14px}
+.psd-item{text-align:center}
+.psd-val{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--tx)}
+.psd-lbl{font-size:.68rem;color:var(--mu);margin-top:2px}
+/* ── QR кнопка ── */
+.qr-modal{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.7);align-items:center;justify-content:center}
+.qr-modal.open{display:flex}
+.qr-box{background:var(--s1);border-radius:20px;padding:28px;text-align:center;width:280px}
+.qr-title{font-family:'Syne',sans-serif;font-weight:800;margin-bottom:4px}
+.qr-sub{font-size:.78rem;color:var(--mu);margin-bottom:16px}
+canvas#qr-canvas{border-radius:12px;background:#fff;padding:12px}
+.qr-share-btn{width:100%;margin-top:14px;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer}
+/* ── Три точки на посте ── */
+.post-menu-wrap{position:relative;flex-shrink:0}
+.post-menu-btn{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px 8px;border-radius:8px;line-height:1;font-size:1.2rem;transition:color .15s}
+.post-menu-btn:hover{color:var(--tx);background:var(--s3)}
+.post-drop{position:absolute;right:0;top:28px;background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:6px;min-width:160px;z-index:50;box-shadow:0 8px 28px rgba(0,0,0,.4);display:none}
+.post-drop.open{display:block}
+.pd-row{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--tx);transition:background .12s}
+.pd-row:hover{background:var(--s3)}
+.pd-row.red{color:var(--er)}
+.pd-row.red:hover{background:rgba(248,113,113,.1)}
+.pd-row svg{width:14px;height:14px;flex-shrink:0;opacity:.75}
+/* ── Закреп на профиле ── */
+.pinned-section{margin-bottom:0}
+.pinned-label{font-size:.72rem;color:var(--mu);display:flex;align-items:center;gap:5px;padding:8px 0 4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+@media(max-width:600px){
+  .ph-cover{height:140px;margin-bottom:-60px}
+  .media-grid{grid-template-columns:repeat(3,1fr)}
+  .profile-stats-detail{grid-template-columns:repeat(3,1fr)}
+}
+
 /* PROFILE HEADER */
 .profile-hero{max-width:860px;margin:0 auto;padding:28px 24px 0}
 .ph-top{display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap;margin-bottom:20px}
@@ -273,6 +365,68 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 @media(max-width:600px){
   input,textarea,select{font-size:16px!important}
 }
+
+/* ── Обложка с фото ── */
+.ph-cover{background-size:cover;background-position:center;background-repeat:no-repeat}
+.ph-cover-btns{position:absolute;bottom:10px;right:12px;display:none;gap:6px}
+.ph-cover:hover .ph-cover-btns{display:flex}
+.ph-cover-btn{background:rgba(0,0,0,.55);border:none;color:#fff;padding:5px 11px;border-radius:9px;cursor:pointer;font-size:.7rem;font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:4px;backdrop-filter:blur(4px);white-space:nowrap}
+.ph-cover-btn:hover{background:rgba(0,0,0,.75)}
+
+/* ── Виджет ссылок ── */
+.ph-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ph-link{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:4px 10px;font-size:.78rem;color:var(--tx);text-decoration:none;transition:all .15s}
+.ph-link:hover{border-color:var(--vl);color:var(--vl)}
+.ph-link svg{width:12px;height:12px;flex-shrink:0}
+
+/* ── Закреплённые посты ── */
+.pinned-section{max-width:860px;margin:0 auto;padding:0 24px 12px}
+.pinned-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.78rem;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.pinned-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.pinned-thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:pointer;position:relative;background:var(--s3)}
+.pinned-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.pinned-thumb-text{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;font-size:.75rem;color:var(--tx);overflow:hidden}
+.pinned-thumb-rm{position:absolute;top:4px;right:4px;background:rgba(0,0,0,.6);border:none;color:#fff;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:.7rem;display:none;align-items:center;justify-content:center}
+.pinned-thumb:hover .pinned-thumb-rm{display:flex}
+
+/* ── Highlights (закреплённые истории) ── */
+.highlights-bar{max-width:860px;margin:0 auto;padding:0 24px 16px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none}
+.highlights-bar::-webkit-scrollbar{display:none}
+.hl-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
+.hl-ring{width:64px;height:64px;border-radius:50%;background:var(--s3);border:2px solid var(--br);overflow:hidden;transition:border-color .15s;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.hl-ring:hover{border-color:var(--vl)}
+.hl-ring img{width:100%;height:100%;object-fit:cover}
+.hl-label{font-size:.68rem;color:var(--mu);max-width:64px;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.hl-add{border:2px dashed var(--br);background:none}
+.hl-add:hover{border-color:var(--vl)}
+
+/* ── Меню поста (3 точки) ── */
+.p-menu-wrap{position:relative;margin-left:auto;flex-shrink:0}
+.p-menu-btn{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px 6px;border-radius:7px;transition:all .15s;line-height:0}
+.p-menu-btn:hover{background:var(--s3);color:var(--tx)}
+.p-menu-btn svg{width:16px;height:16px}
+.p-drop{position:absolute;right:0;top:28px;z-index:50;background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:5px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
+.p-drop.open{display:block}
+.p-drop-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.82rem;color:var(--tx);transition:background .12s;white-space:nowrap}
+.p-drop-item:hover{background:rgba(124,58,237,.12);color:var(--vl)}
+.p-drop-item.red:hover{background:rgba(248,113,113,.1);color:var(--er)}
+.p-drop-item svg{width:14px;height:14px;flex-shrink:0;opacity:.7}
+.p-drop-sep{height:1px;background:var(--br);margin:3px 0}
+
+/* ── Статистика профиля ── */
+.ph-stat-views{font-size:.75rem;color:var(--mu);margin-top:6px;display:flex;align-items:center;gap:4px}
+
+/* ── Публикация с редактором ── */
+.post-editor-bar{display:flex;gap:6px;padding:8px 0;border-top:1px solid var(--br2);margin-top:8px;flex-wrap:wrap}
+.post-editor-btn{background:none;border:1px solid var(--br2);border-radius:8px;padding:5px 10px;color:var(--mu);cursor:pointer;font-size:.75rem;font-family:'Syne',sans-serif;font-weight:600;transition:all .15s;display:flex;align-items:center;gap:4px}
+.post-editor-btn:hover{border-color:var(--vl);color:var(--vl)}
+.post-editor-btn.active{background:rgba(124,58,237,.15);border-color:var(--v);color:var(--vl)}
+
+@media(max-width:600px){
+  .pinned-grid{grid-template-columns:repeat(3,1fr)}
+  .highlights-bar{padding:0 12px 12px}
+}
+
 </style>
 </head>
 <body>
@@ -362,6 +516,21 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 </div>
   </div>
 
+  <div class="ph-cover" id="ph-cover">
+    <div class="ph-cover-btns" id="ph-cover-btns">
+      <button class="ph-cover-btn" onclick="openCoverImageUpload()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Фото
+      </button>
+      <button class="ph-cover-btn" onclick="toggleCoverPicker(event)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17 11h4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8h4"/><path d="M12 12V3"/><polyline points="9 6 12 3 15 6"/></svg>Цвет
+      </button>
+    </div>
+    <div class="cover-picker" id="cover-picker">
+      <div class="cover-picker-title">Цвет шапки</div>
+      <div class="cover-swatches" id="cover-swatches"></div>
+    </div>
+  </div>
+  <input type="file" id="cover-file-inp" accept="image/*" style="display:none" onchange="onCoverFileSelect(this)">
   <div class="profile-hero">
     <div class="ph-top">
       <div class="ph-ava-wrap">
@@ -386,12 +555,38 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
           <div id="ph-status" style="font-size:.78rem;color:var(--vl);margin-top:2px;display:none"></div>
           <div class="ph-bio-text" id="ph-bio-text"></div>
           <a class="ph-bio-link" id="ph-bio-link" href="#" target="_blank" style="display:none"></a>
+          <div class="ph-links" id="ph-links"></div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="stories-bar" id="stories-bar"></div>
+
+  <!-- Highlights -->
+  <div class="highlights-bar" id="highlights-bar"></div>
+
+  <!-- Закреплённые посты -->
+  <div class="pinned-section" id="pinned-section" style="display:none">
+    <div class="pinned-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+      Закреплено
+    </div>
+    <div class="pinned-grid" id="pinned-grid"></div>
+  </div>
+
+    <!-- Хайлайты -->
+  <div class="highlights-row" id="highlights-row" style="padding:12px 0 0"></div>
+
+  <!-- Ссылки профиля -->
+  <div class="profile-links" id="profile-links"></div>
+
+  <!-- Детальная статистика (только для владельца) -->
+  <div class="profile-stats-detail" id="profile-stats-detail" style="display:none">
+    <div class="psd-item"><div class="psd-val" id="psd-views">0</div><div class="psd-lbl">Просмотров</div></div>
+    <div class="psd-item"><div class="psd-val" id="psd-reach">0</div><div class="psd-lbl">Охват</div></div>
+    <div class="psd-item"><div class="psd-val" id="psd-growth">+0</div><div class="psd-lbl">Прирост</div></div>
+  </div>
 
   <div class="profile-tabs">
     <button class="ptab active" onclick="switchTab('posts',this)">
@@ -405,6 +600,9 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
     </button>
     <button class="ptab" id="tab-saved-btn" onclick="switchTab('saved',this)" style="display:none">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>СОХРАНЕНО
+    </button>
+    <button class="ptab" onclick="switchTab('featured',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>ИЗБРАННОЕ
     </button>
   </div>
 
@@ -457,6 +655,7 @@ let profileUser=null, profilePosts=[], stories=[], allPosts=[];
 let isOwn=false, currentTab='posts';
 let svStories=[], svIdx=0, svSlide=0, svTimer=null;
 
+window.addEventListener('load', () => { initCoverCropEvents(); });
 window.addEventListener('DOMContentLoaded', async()=>{
   bootNav();
   const q=new URLSearchParams(location.search).get('user');
@@ -475,7 +674,7 @@ async function loadProfile(username){
     renderHeader();
     document.title='Weave — @'+profileUser.username;
     document.getElementById('topbar-name').textContent='@'+profileUser.username;
-    await Promise.all([loadPosts(), loadStories()]);
+    await Promise.all([loadPosts(), loadStories(), loadHighlights()]);
     if(isOwn) document.getElementById('tab-saved-btn').style.display='';
   }catch(e){console.error('Profile load error:',e);showToast('Ошибка: '+(e?.message||e),'err')}
 }
@@ -504,6 +703,23 @@ function renderHeader(){
   const _phName=document.getElementById('ph-bio-name');
   if(_phName) _phName.innerHTML=esc((u.firstName+' '+(u.lastName||'')).trim())+(u.isVerified?verifiedBadge(16):'');
   document.getElementById('ph-bio-text').textContent=u.bio||'';
+  renderProfileLinks(u.profileLinks||[]);
+  initCover(u);
+  // Обложка-фото
+  if(u.coverImageUrl){
+    const ci=document.getElementById('ph-cover-img');
+    if(ci){ci.src=u.coverImageUrl;ci.classList.add('loaded');}
+  }
+  // Кнопки обложки только для владельца
+  if(isOwn){
+    const ca=document.getElementById('ph-cover-actions');
+    if(ca) ca.style.display='flex';
+  }
+  // Ссылки профиля
+  const links = u.profileLinks ? (Array.isArray(u.profileLinks)?u.profileLinks:JSON.parse(u.profileLinks||'[]')) : [];
+  renderProfileLinks(links);
+  // Статистика
+  loadProfileStats();
   const stEl=document.getElementById('ph-status');
   if(stEl&&u.status){stEl.textContent=u.status;stEl.style.display='block';}
   if(u.website){const lnk=document.getElementById('ph-bio-link');lnk.href=u.website.startsWith('http')?u.website:'https://'+u.website;lnk.textContent=u.website.replace(/^https?:\/\//,'');lnk.style.display=''}
@@ -514,7 +730,7 @@ function renderHeader(){
 
   const ac=document.getElementById('ph-actions');
   if(isOwn){
-    ac.innerHTML=`<button class="btn-prim" onclick="location.href='settings.html'">Редактировать</button><button class="btn-sec" onclick="location.href='settings.html'">⚙</button>`;
+    ac.innerHTML=`<button class="btn-prim" onclick="location.href='settings.html'">Редактировать</button><button class="btn-sec" onclick="openQR()" title="QR-код"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg></button>`;
   }else{
     ac.innerHTML=`<button class="btn-prim" id="btn-follow" onclick="doFollow()">${u.isFollowing?'✓ Читаю':'Подписаться'}</button>
       <button class="btn-sec" onclick="location.href='messages.html?user=${u.id}'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>`;
@@ -527,6 +743,7 @@ async function loadPosts(){
     allPosts=Array.isArray(_pd)?_pd:(_pd.posts||[]);
     profilePosts=[...allPosts];
     renderPosts();
+    renderPinnedPosts();
   }catch(e){document.getElementById('posts-wrap').innerHTML='<div class="empty-tab">Не удалось загрузить посты</div>'}
 }
 
@@ -561,11 +778,36 @@ function buildPost(p,i){
   if(p.images?.length){const n=Math.min(p.images.length,4);imgs=`<div class="p-imgs i${n}">`+p.images.slice(0,4).map(s=>`<img class="p-img" src="${s}" onclick="openLB('${s}')" loading="lazy">`).join('')+'</div>'}
   const txt=esc(p.text||'').replace(/#(\w+)/g,'<span class="tag" onclick="location.href=\'explore.html\'">#$1</span>').replace(/@(\w+)/g,'<span class="mention" onclick="location.href=\'profile.html?user=$1\'">@$1</span>');
   return `<div class="post" style="animation-delay:${i*.05}s">
-    <div class="p-head">
-      <div class="p-av" style="background:${bg}" onclick="location.href='profile.html?user=${p.author?.username}'">${ini}</div>
-      <div class="p-meta">
+    <div class="p-head" style="display:flex;align-items:flex-start;gap:8px">
+      <div class="p-av" style="background:${bg};flex-shrink:0" onclick="location.href='profile.html?user=${p.author?.username}'">${ini}</div>
+      <div class="p-meta" style="flex:1;min-width:0">
         <div class="p-name" onclick="location.href='profile.html?user=${p.author?.username}'">${esc(p.author?.firstName||'')} ${esc(p.author?.lastName||'')}</div>
         <div class="p-time">@${esc(p.author?.username||'')} · ${fmtTime(p.createdAt)}</div>
+      </div>
+      <div class="p-menu-wrap">
+        <button class="p-menu-btn" onclick="togglePostMenu('pm-${p.id}',event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+        <div class="p-drop" id="pm-${p.id}">
+          ${isOwn ? `
+          <div class="p-drop-item" onclick="togglePinPost('${p.id}');closePostMenus()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+            ${(profileUser?.pinnedPostIds||[]).includes(p.id)?'Открепить':'Закрепить'}
+          </div>
+          <div class="p-drop-item" onclick="editPost('${p.id}');closePostMenus()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"/></svg>
+            Редактировать
+          </div>
+          <div class="p-drop-sep"></div>
+          <div class="p-drop-item red" onclick="deleteProfilePost('${p.id}');closePostMenus()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+            Удалить
+          </div>` : `
+          <div class="p-drop-item" onclick="reportProfilePost('${p.id}');closePostMenus()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+            Пожаловаться
+          </div>`}
+        </div>
       </div>
     </div>
     <div class="p-body">${txt}</div>
@@ -593,15 +835,19 @@ function switchTab(tab, btn){
   const wrap=document.getElementById('posts-wrap');
   if(tab==='posts'){profilePosts=[...allPosts];renderPosts()}
   else if(tab==='media'){
-    const mediaPosts=allPosts.filter(p=>p.images?.length);
-    profilePosts=mediaPosts;
-    if(!mediaPosts.length){wrap.innerHTML='<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/></svg><p>Нет медиафайлов</p></div>';return}
-    renderPosts();
+    renderMediaGrid(allPosts);
+    return;
   }else if(tab==='replies'){
     wrap.innerHTML='<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>Нет ответов</p></div>';
   }else if(tab==='saved'){
     profilePosts=allPosts.filter(p=>p.bookmarked);
     if(!profilePosts.length){wrap.innerHTML='<div class="empty-tab"><p>Нет сохранённых постов</p></div>';return}
+    renderPosts();
+  }else if(tab==='featured'){
+    // Закреплённые посты — сетка 3x3
+    const pinned=allPosts.filter(p=>p.pinned);
+    if(!pinned.length){wrap.innerHTML='<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><p>Нет избранных постов</p></div>';return}
+    profilePosts=pinned;
     renderPosts();
   }
 }
@@ -671,6 +917,212 @@ function addStory(){location.href='feed.html#add-story'}
 function openLB(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open')}
 function closeLB(){document.getElementById('lb').classList.remove('open')}
 
+
+// ══════════════════════════════════════════════════════
+//  КРОППЕР ОБЛОЖКИ
+// ══════════════════════════════════════════════════════
+let _cc = {x:0, y:0, z:1, drag:false, sx:0, sy:0, imgW:0, imgH:0, wrapW:0, src:null};
+
+function openCoverUpload() {
+  document.getElementById('cover-file-inp').click();
+}
+
+function onCoverFile(inp) {
+  const f = inp.files[0]; if (!f) return;
+  if (f.size > 15*1024*1024) { showToast('Файл слишком большой (макс 15MB)','err'); return; }
+  const r = new FileReader();
+  r.onload = e => openCoverCrop(e.target.result);
+  r.readAsDataURL(f);
+  inp.value = '';
+}
+
+// openCoverCrop объявлена ниже
+
+
+function _ccFit() {
+  // Авто-фит: изображение покрывает всю область
+  const scaleW = _cc.wrapW / _cc.imgW;
+  const scaleH = 200 / _cc.imgH;
+  _cc.z = Math.max(scaleW, scaleH);
+  _cc.x = (_cc.wrapW - _cc.imgW * _cc.z) / 2;
+  _cc.y = (200 - _cc.imgH * _cc.z) / 2;
+  document.getElementById('cover-crop-zoom').value = _cc.z;
+  document.getElementById('cover-zoom-val').textContent = _cc.z.toFixed(1) + '×';
+}
+
+function _ccDraw() {
+  const inner = document.getElementById('cover-crop-inner');
+  inner.style.transform = `translate(${_cc.x}px, ${_cc.y}px) scale(${_cc.z})`;
+  inner.style.transformOrigin = '0 0';
+}
+
+function coverCropZoom(v) {
+  _cc.z = parseFloat(v);
+  document.getElementById('cover-zoom-val').textContent = _cc.z.toFixed(1) + '×';
+  _ccDraw();
+}
+
+function closeCoverCrop() {
+  document.getElementById('cover-crop-modal').classList.remove('open');
+}
+
+async // applyCoverCrop объявлена ниже
+
+
+// Touch/mouse drag для кроппера
+(function() {
+  const wrap = document.getElementById('cover-crop-wrap');
+  if (!wrap) return;
+  wrap.addEventListener('mousedown', e => { _cc.drag=true; _cc.sx=e.clientX-_cc.x; _cc.sy=e.clientY-_cc.y; e.preventDefault(); });
+  document.addEventListener('mousemove', e => { if(!_cc.drag) return; _cc.x=e.clientX-_cc.sx; _cc.y=e.clientY-_cc.sy; _ccDraw(); });
+  document.addEventListener('mouseup', () => _cc.drag=false);
+  wrap.addEventListener('touchstart', e => { const t=e.touches[0]; _cc.drag=true; _cc.sx=t.clientX-_cc.x; _cc.sy=t.clientY-_cc.y; e.preventDefault(); }, {passive:false});
+  wrap.addEventListener('touchmove', e => { if(!_cc.drag) return; const t=e.touches[0]; _cc.x=t.clientX-_cc.sx; _cc.y=t.clientY-_cc.sy; _ccDraw(); e.preventDefault(); }, {passive:false});
+  wrap.addEventListener('touchend', () => _cc.drag=false);
+  // Pinch zoom
+  let _lastPinch=0;
+  wrap.addEventListener('touchstart', e => { if(e.touches.length===2) _lastPinch=Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY); });
+  wrap.addEventListener('touchmove', e => {
+    if(e.touches.length!==2) return;
+    const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX, e.touches[0].clientY-e.touches[1].clientY);
+    _cc.z=Math.max(0.5, Math.min(3, _cc.z*(d/_lastPinch))); _lastPinch=d;
+    document.getElementById('cover-crop-zoom').value=_cc.z;
+    document.getElementById('cover-zoom-val').textContent=_cc.z.toFixed(1)+'×';
+    _ccDraw(); e.preventDefault();
+  }, {passive:false});
+})();
+
+// ══════════════════════════════════════════════════════
+//  ХАЙЛАЙТЫ (ВЕЧНЫЕ ИСТОРИИ)
+// ══════════════════════════════════════════════════════
+let highlights = [];
+
+async // loadHighlights объявлена ниже
+
+
+// renderHighlights объявлена ниже
+
+
+// openHighlight объявлена ниже
+
+
+function openHlModal() {
+  document.getElementById('hl-create-modal').style.display = 'flex';
+  // Показать список историй
+  const list = document.getElementById('hl-stories-list');
+  if (!list) return;
+  list.innerHTML = stories.map(s => `
+    <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:.82rem">
+      <input type="checkbox" value="${s.id}" style="accent-color:var(--v)">
+      <span>${s.slides?.[0]?.text || fmtTime(s.createdAt)}</span>
+    </label>`).join('') || '<div style="color:var(--mu);font-size:.8rem">Нет историй для добавления</div>';
+}
+
+function closeHlModal() {
+  document.getElementById('hl-create-modal').style.display = 'none';
+}
+
+async // createHighlight объявлена ниже
+
+
+// ══════════════════════════════════════════════════════
+//  ССЫЛКИ ПРОФИЛЯ
+// ══════════════════════════════════════════════════════
+// renderProfileLinks объявлена ниже
+
+
+// ══════════════════════════════════════════════════════
+//  QR-КОД ПРОФИЛЯ
+// ══════════════════════════════════════════════════════
+function openQR() {
+  const modal = document.getElementById('qr-modal');
+  if (!modal) return;
+  modal.classList.add('open');
+  document.getElementById('qr-username').textContent = '@' + profileUser.username;
+  const url = location.origin + '/pages/profile.html?user=' + profileUser.username;
+  // Простой QR через Google Charts API (бесплатно, без ключа)
+  const canvas = document.getElementById('qr-canvas');
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => ctx.drawImage(img, 0, 0, 200, 200);
+  img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}&format=png`;
+}
+
+async function shareQR() {
+  const url = location.origin + '/pages/profile.html?user=' + profileUser.username;
+  if (navigator.share) {
+    await navigator.share({title: 'Мой профиль на Weave', url});
+  } else {
+    navigator.clipboard?.writeText(url);
+    showToast('🔗 Ссылка скопирована');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  ТРИ ТОЧКИ НА ПОСТЕ + ЗАКРЕП
+// ══════════════════════════════════════════════════════
+let _openPostDrop = null;
+
+function togglePostDrop(postId, e) {
+  e.stopPropagation();
+  const drop = document.getElementById('pdrop-'+postId);
+  if (!drop) return;
+  if (_openPostDrop && _openPostDrop !== drop) _openPostDrop.classList.remove('open');
+  drop.classList.toggle('open');
+  _openPostDrop = drop.classList.contains('open') ? drop : null;
+}
+
+document.addEventListener('click', () => {
+  if (_openPostDrop) { _openPostDrop.classList.remove('open'); _openPostDrop = null; }
+});
+
+async function pinProfilePost(postId) {
+  if (_openPostDrop) { _openPostDrop.classList.remove('open'); _openPostDrop=null; }
+  try {
+    await API.request('/posts/'+postId+'/pin', {method:'POST'});
+    await loadPosts();
+    showToast('📌 Пост закреплён');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+async // deleteProfilePost объявлена ниже
+
+
+// ══════════════════════════════════════════════════════
+//  МЕДИА-СЕТКА (Instagram-style)
+// ══════════════════════════════════════════════════════
+function renderMediaGrid(posts) {
+  const wrap = document.getElementById('posts-wrap');
+  const media = posts.filter(p => p.images?.length);
+  if (!media.length) {
+    wrap.innerHTML = '<div class="empty-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>Нет медиафайлов</p></div>';
+    return;
+  }
+  wrap.innerHTML = `<div class="media-grid">${media.map(p => `
+    <div class="mg-item" onclick="openLB('${p.images[0]}')">
+      <img src="${p.images[0]}" loading="lazy" alt="">
+      ${p.images.length>1 ? `<div class="mg-item-multi">🖼 ${p.images.length}</div>` : ''}
+    </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════════
+//  СТАТИСТИКА ПРОФИЛЯ
+// ══════════════════════════════════════════════════════
+async function loadProfileStats() {
+  if (!isOwn) return;
+  const el = document.getElementById('profile-stats-detail');
+  if (el) el.style.display = 'grid';
+  try {
+    // Примерная статистика на основе постов/подписчиков
+    const followers = profileUser.stats?.followers || 0;
+    const posts = profileUser.stats?.posts || 0;
+    document.getElementById('psd-views').textContent = (followers * posts * 3).toLocaleString('ru');
+    document.getElementById('psd-reach').textContent = Math.round(followers * 0.6).toLocaleString('ru');
+    const weekAgo = new Date(Date.now()-7*86400000).toISOString();
+    document.getElementById('psd-growth').textContent = '+' + Math.round(followers * 0.08);
+  } catch(e) {}
+}
 </script>
 <script src="theme.js">
 // Бейдж уведомлений
@@ -798,6 +1250,308 @@ async function fwFollow(uid, btn) {
 
 // Закрыть по Escape
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFwModal(); });
+
+// ── Кастомная обложка профиля (только верифицированные) ──
+const COVER_GRADIENTS = [
+  'linear-gradient(135deg,#1a0533,#0a1628)',
+  'linear-gradient(135deg,#7C3AED,#2563EB)',
+  'linear-gradient(135deg,#DB2777,#7C3AED)',
+  'linear-gradient(135deg,#059669,#2563EB)',
+  'linear-gradient(135deg,#D97706,#DB2777)',
+  'linear-gradient(135deg,#06B6D4,#7C3AED)',
+  'linear-gradient(135deg,#DC2626,#D97706)',
+  'linear-gradient(135deg,#0F172A,#1E3A5F)',
+  'linear-gradient(135deg,#14532D,#065F46)',
+  'linear-gradient(135deg,#1E1B4B,#312E81)',
+  'linear-gradient(135deg,#450A0A,#7F1D1D)',
+  'linear-gradient(135deg,#0C4A6E,#164E63)',
+];
+
+function initCover(u) {
+  const cover = document.getElementById('ph-cover');
+  if (!cover) return;
+  if (u.coverImageUrl) {
+    cover.style.backgroundImage = 'url('+u.coverImageUrl+')';
+    cover.style.backgroundSize = 'cover';
+    cover.style.backgroundPosition = 'center';
+  } else if (u.coverColor) {
+    cover.style.background = u.coverColor;
+  }
+  // Показать кнопки только владельцу
+  if (isOwn) {
+    const btns = document.getElementById('ph-cover-btns');
+    if (btns) btns.style.display = 'flex';
+    // Инициализировать свотчи
+    const swatches = document.getElementById('cover-swatches');
+    if (swatches) {
+      swatches.innerHTML = COVER_GRADIENTS.map((g,i) =>
+        `<div class="cover-swatch${u.coverColor===g?' sel':''}" style="background:${g}" onclick="selectCover('${g}',this)"></div>`
+      ).join('');
+    }
+  }
+}
+
+function toggleCoverPicker(e) {
+  e.stopPropagation();
+  document.getElementById('cover-picker')?.classList.toggle('open');
+}
+
+async function selectCover(gradient, el) {
+  document.querySelectorAll('.cover-swatch').forEach(s => s.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('ph-cover').style.background = gradient;
+  document.getElementById('cover-picker')?.classList.remove('open');
+  // Сохранить
+  try {
+    await API.request('/users/profile', {method:'PUT', body: JSON.stringify({
+      firstName: profileUser.firstName,
+      lastName: profileUser.lastName || '',
+      username: profileUser.username,
+      bio: profileUser.bio || '',
+      website: profileUser.website || '',
+      coverColor: gradient
+    })});
+    showToast('✅ Обложка обновлена');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+document.addEventListener('click', () => document.getElementById('cover-picker')?.classList.remove('open'));
+
+// ══ ОБЛОЖКА — фото с кроппером ══
+function openCoverImageUpload() {
+  document.getElementById('cover-file-inp')?.click();
+}
+
+function onCoverFileSelect(inp) {
+  const f = inp.files[0];
+  if (!f) return;
+  if (f.size > 10*1024*1024) { showToast('Макс 10МБ','err'); return; }
+  const r = new FileReader();
+  r.onload = e => {
+    // Открыть кроппер с соотношением 16:9 для обложки
+    openCoverCrop(e.target.result);
+  };
+  r.readAsDataURL(f);
+  inp.value = '';
+}
+
+// Кроппер обложки (соотношение ~6:1)
+let _coverCropSrc = null, _coverX = 0, _coverY = 0, _coverZ = 1, _coverDrag = false, _coverSX = 0, _coverSY = 0;
+function openCoverCrop(src) {
+  _coverCropSrc = src; _coverX=0; _coverY=0; _coverZ=1;
+  const img = new Image();
+  img.onload = () => {
+    const modal = document.getElementById('cover-crop-modal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    _coverCropImg = img;
+    drawCoverCrop();
+  };
+  img.src = src;
+}
+let _coverCropImg = null;
+function drawCoverCrop() {
+  const canvas = document.getElementById('cover-crop-canvas');
+  const wrap = document.getElementById('cover-crop-wrap');
+  if (!canvas || !wrap || !_coverCropImg) return;
+  const W = wrap.offsetWidth, H = Math.round(W/5);
+  canvas.width = W; canvas.height = H; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  const aspect = _coverCropImg.width/_coverCropImg.height;
+  let dw, dh;
+  if (aspect > W/H) { dh=H*_coverZ; dw=dh*aspect; }
+  else { dw=W*_coverZ; dh=dw/aspect; }
+  ctx.drawImage(_coverCropImg, (W-dw)/2+_coverX, (H-dh)/2+_coverY, dw, dh);
+}
+function applyCoverCrop() {
+  const canvas = document.getElementById('cover-crop-canvas');
+  const out = document.createElement('canvas');
+  out.width = canvas.width; out.height = canvas.height;
+  out.getContext('2d').drawImage(canvas,0,0);
+  const dataUrl = out.toDataURL('image/jpeg',0.9);
+  document.getElementById('cover-crop-modal').style.display = 'none';
+  // Применить
+  document.getElementById('ph-cover').style.backgroundImage = 'url('+dataUrl+')';
+  document.getElementById('ph-cover').style.background = '';
+  // Сохранить
+  saveCoverImage(dataUrl);
+}
+async function saveCoverImage(dataUrl) {
+  try {
+    await API.request('/users/profile', {method:'PUT', body:JSON.stringify({
+      firstName: profileUser.firstName,
+      lastName: profileUser.lastName||'',
+      username: profileUser.username,
+      bio: profileUser.bio||'',
+      website: profileUser.website||'',
+      coverImageUrl: dataUrl
+    })});
+    showToast('✅ Обложка сохранена');
+  } catch(e) { showToast('Ошибка сохранения','err'); }
+}
+
+// Drag & zoom для кроппера обложки
+function initCoverCropEvents() {
+  const wrap = document.getElementById('cover-crop-wrap');
+  if (!wrap) return;
+  wrap.addEventListener('mousedown', e=>{ _coverDrag=true; _coverSX=e.clientX-_coverX; _coverSY=e.clientY-_coverY; });
+  document.addEventListener('mousemove', e=>{ if(!_coverDrag) return; _coverX=e.clientX-_coverSX; _coverY=e.clientY-_coverSY; drawCoverCrop(); });
+  document.addEventListener('mouseup', ()=>_coverDrag=false);
+  wrap.addEventListener('touchstart', e=>{ const t=e.touches[0]; _coverDrag=true; _coverSX=t.clientX-_coverX; _coverSY=t.clientY-_coverY; },{passive:true});
+  wrap.addEventListener('touchmove', e=>{ if(!_coverDrag) return; const t=e.touches[0]; _coverX=t.clientX-_coverSX; _coverY=t.clientY-_coverSY; drawCoverCrop(); e.preventDefault(); },{passive:false});
+  wrap.addEventListener('touchend', ()=>_coverDrag=false);
+  // Pinch zoom
+  let _ld=0;
+  wrap.addEventListener('touchstart', e=>{ if(e.touches.length===2) _ld=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); });
+  wrap.addEventListener('touchmove', e=>{ if(e.touches.length===2){ const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY); _coverZ=Math.max(1,Math.min(4,_coverZ*(d/_ld))); _ld=d; const sl=document.getElementById('cover-zoom-sl'); if(sl) sl.value=_coverZ; drawCoverCrop(); e.preventDefault(); } },{passive:false});
+}
+
+// ══ ССЫЛКИ ПРОФИЛЯ ══
+function renderProfileLinks(links) {
+  const el = document.getElementById('ph-links');
+  if (!el || !links?.length) return;
+  const icons = {
+    instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>',
+    telegram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="m22 2-11 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>',
+    youtube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>',
+    default: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>'
+  };
+  el.innerHTML = links.map(l => {
+    const type = l.type || 'default';
+    const href = l.url.startsWith('http') ? l.url : 'https://'+l.url;
+    return `<a class="ph-link" href="${esc(href)}" target="_blank" rel="noopener">${icons[type]||icons.default} ${esc(l.label||l.url)}</a>`;
+  }).join('');
+}
+
+// ══ HIGHLIGHTS ══
+let allHighlights = [];
+async function loadHighlights() {
+  if (!profileUser) return;
+  try {
+    allHighlights = await API.request('/highlights/'+profileUser.id);
+    renderHighlights();
+  } catch(e) {}
+}
+
+function renderHighlights() {
+  const bar = document.getElementById('highlights-bar');
+  if (!bar) return;
+  let html = '';
+  if (isOwn) {
+    html += `<div class="hl-item" onclick="createHighlight()">
+      <div class="hl-ring hl-add" style="font-size:1.8rem;color:var(--mu)">+</div>
+      <div class="hl-label">Новый</div>
+    </div>`;
+  }
+  html += allHighlights.map(h => `
+    <div class="hl-item" onclick="openHighlight('${h.id}')">
+      <div class="hl-ring">${h.cover ? `<img src="${esc(h.cover)}" alt="">` : '📌'}</div>
+      <div class="hl-label">${esc(h.title)}</div>
+    </div>`).join('');
+  bar.innerHTML = html;
+  bar.style.display = (isOwn || allHighlights.length) ? 'flex' : 'none';
+}
+
+async function createHighlight() {
+  const title = prompt('Название альбома (например: Путешествия, Еда):');
+  if (!title?.trim()) return;
+  try {
+    const h = await API.request('/highlights', {method:'POST', body:JSON.stringify({title: title.trim()})});
+    allHighlights.unshift(h);
+    renderHighlights();
+    showToast('✅ Альбом создан');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+function openHighlight(id) {
+  const h = allHighlights.find(x => x.id === id);
+  if (!h) return;
+  showToast('📌 ' + h.title + ' — ' + (h.storyIds?.length||0) + ' историй');
+}
+
+// ══ ЗАКРЕП ПОСТОВ ══
+async function togglePinPost(postId) {
+  const pinned = (profileUser?.pinnedPostIds||[]);
+  const newPinned = pinned.includes(postId)
+    ? pinned.filter(id => id !== postId)
+    : [...pinned.slice(0,2), postId]; // макс 3
+  try {
+    await API.request('/users/profile', {method:'PUT', body:JSON.stringify({
+      firstName: profileUser.firstName,
+      lastName: profileUser.lastName||'',
+      username: profileUser.username,
+      bio: profileUser.bio||'',
+      website: profileUser.website||'',
+      pinnedPostIds: newPinned
+    })});
+    if (profileUser) profileUser.pinnedPostIds = newPinned;
+    renderPinnedPosts();
+    showToast(newPinned.includes(postId) ? '📌 Пост закреплён' : 'Откреплён');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+function renderPinnedPosts() {
+  const section = document.getElementById('pinned-section');
+  const grid = document.getElementById('pinned-grid');
+  if (!section || !grid) return;
+  const pinnedIds = profileUser?.pinnedPostIds || [];
+  if (!pinnedIds.length || !isOwn && !pinnedIds.length) { section.style.display='none'; return; }
+  const pinnedPosts = pinnedIds.map(id => allPosts.find(p => p.id === id)).filter(Boolean);
+  if (!pinnedPosts.length) { section.style.display='none'; return; }
+  section.style.display = 'block';
+  grid.innerHTML = pinnedPosts.map(p => {
+    const img = p.images?.[0];
+    return `<div class="pinned-thumb" onclick="scrollToPost('${p.id}')">
+      ${img ? `<img src="${esc(img)}" alt="">` : `<div class="pinned-thumb-text">${esc((p.text||'').slice(0,60))}</div>`}
+      ${isOwn ? `<button class="pinned-thumb-rm" onclick="event.stopPropagation();togglePinPost('${p.id}')">✕</button>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function scrollToPost(postId) {
+  const el = document.getElementById('post-'+postId);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// ══ МЕНЮ ПОСТА ══
+function togglePostMenu(menuId, e) {
+  e.stopPropagation();
+  document.querySelectorAll('.p-drop.open').forEach(m => { if(m.id!==menuId) m.classList.remove('open'); });
+  document.getElementById(menuId)?.classList.toggle('open');
+}
+function closePostMenus() {
+  document.querySelectorAll('.p-drop.open').forEach(m => m.classList.remove('open'));
+}
+document.addEventListener('click', closePostMenus);
+
+async function editPost(postId) {
+  const p = allPosts.find(x => x.id===postId);
+  if (!p) return;
+  const newText = prompt('Редактировать пост:', p.text||'');
+  if (newText===null) return;
+  try {
+    await API.request('/posts/'+postId, {method:'PUT', body:JSON.stringify({text:newText})});
+    p.text = newText;
+    renderPosts();
+    showToast('✅ Пост обновлён');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+async function deleteProfilePost(postId) {
+  if (!confirm('Удалить пост?')) return;
+  try {
+    await API.request('/posts/'+postId, {method:'DELETE'});
+    allPosts = allPosts.filter(p => p.id!==postId);
+    profilePosts = profilePosts.filter(p => p.id!==postId);
+    renderPosts();
+    showToast('Пост удалён');
+  } catch(e) { showToast('Ошибка','err'); }
+}
+
+function reportProfilePost(postId) {
+  showToast('🚩 Жалоба отправлена');
+}
 </script>
 
 <!-- Follow Modal -->
@@ -812,6 +1566,75 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFwModal
     </div>
     <div class="fw-list" id="fw-list">
       <div class="fw-empty">Загрузка…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Кроппер обложки -->
+<div class="cover-crop-modal" id="cover-crop-modal">
+  <div style="color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;margin-bottom:4px">Выбери область обоев</div>
+  <div style="color:rgba(255,255,255,.5);font-size:.78rem;margin-bottom:12px">Двигай и масштабируй</div>
+  <div class="cover-crop-wrap" id="cover-crop-wrap">
+    <div class="cover-crop-inner" id="cover-crop-inner">
+      <img id="cover-crop-img" alt="">
+    </div>
+    <div class="cover-crop-overlay"></div>
+  </div>
+  <div class="cover-crop-controls">
+    <span style="opacity:.5">−</span>
+    <input type="range" id="cover-crop-zoom" min="0.5" max="3" step="0.01" value="1" oninput="coverCropZoom(this.value)">
+    <span style="opacity:.5">+</span>
+    <span style="opacity:.5;margin-left:8px;font-size:.75rem">Зум: <span id="cover-zoom-val">1.0×</span></span>
+  </div>
+  <div class="cover-crop-btns">
+    <button class="ccb-cancel" onclick="closeCoverCrop()">Отмена</button>
+    <button class="ccb-save" onclick="applyCoverCrop()">Сохранить</button>
+  </div>
+</div>
+
+<!-- QR-код профиля -->
+<div class="qr-modal" id="qr-modal" onclick="this.classList.remove('open')">
+  <div class="qr-box" onclick="event.stopPropagation()">
+    <div class="qr-title">Мой профиль</div>
+    <div class="qr-sub" id="qr-username"></div>
+    <canvas id="qr-canvas" width="200" height="200"></canvas>
+    <button class="qr-share-btn" onclick="shareQR()">Поделиться QR</button>
+    <button onclick="document.getElementById('qr-modal').classList.remove('open')" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1px solid var(--br);background:none;color:var(--mu);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Закрыть</button>
+  </div>
+</div>
+
+<!-- Модал создания хайлайта -->
+<div id="hl-create-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);align-items:center;justify-content:center">
+  <div style="background:var(--s1);border-radius:20px;padding:24px;width:100%;max-width:340px;margin:16px">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;margin-bottom:16px">Новый хайлайт</div>
+    <input id="hl-title-inp" placeholder="Название (напр. Лето 2024)" maxlength="30" style="width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:11px;padding:10px 14px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;margin-bottom:12px">
+    <div style="font-size:.75rem;color:var(--mu);margin-bottom:8px">Выбери истории:</div>
+    <div id="hl-stories-list" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:6px"></div>
+    <div style="display:flex;gap:8px;margin-top:16px">
+      <button onclick="closeHlModal()" style="flex:1;padding:10px;border-radius:11px;border:1px solid var(--br);background:none;color:var(--mu);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Отмена</button>
+      <button onclick="createHighlight()" style="flex:1;padding:10px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Создать</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cover crop modal -->
+<div id="cover-crop-modal" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.88);align-items:center;justify-content:center;padding:16px;flex-direction:column;gap:12px">
+  <div style="background:var(--s1);border-radius:20px;padding:16px;width:100%;max-width:560px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem">Обрезать обложку</div>
+      <div style="font-size:.75rem;color:var(--mu)">Перетаскивай · Щипок для зума</div>
+    </div>
+    <div id="cover-crop-wrap" style="position:relative;width:100%;background:#000;border-radius:12px;overflow:hidden;cursor:move;touch-action:none">
+      <canvas id="cover-crop-canvas" style="display:block;width:100%"></canvas>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.75rem;color:var(--mu)">
+      <span>−</span>
+      <input type="range" id="cover-zoom-sl" min="1" max="4" step="0.01" value="1" style="flex:1;accent-color:var(--v)" oninput="_coverZ=parseFloat(this.value);drawCoverCrop()">
+      <span>+</span>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="document.getElementById('cover-crop-modal').style.display='none'" style="flex:1;padding:10px;border-radius:11px;border:1px solid var(--br);background:none;color:var(--mu);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Отмена</button>
+      <button onclick="applyCoverCrop()" style="flex:1;padding:10px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--v),var(--b));color:#fff;cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Применить</button>
     </div>
   </div>
 </div>

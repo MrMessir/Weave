@@ -1,5 +1,7 @@
 'use strict';
 const express      = require('express');
+const helmet       = require('helmet');
+const compression  = require('compression');
 const cors         = require('cors');
 const path         = require('path');
 const rateLimit    = require('express-rate-limit');
@@ -9,6 +11,76 @@ const http         = require('http');
 const WebSocket    = require('ws');
 
 const { DatabaseSync } = require('node:sqlite');
+// ── Email транспорт ──
+const nodemailer = require('nodemailer');
+const mailer = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.SMTP_PORT||'587'),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+
+async function sendEmail(to, subject, html) {
+  if(!process.env.SMTP_USER) {
+    console.log('[EMAIL] SMTP не настроен. Письмо для:', to, '|', subject);
+    return;
+  }
+  try {
+    await mailer.sendMail({
+      from: process.env.FROM_EMAIL || 'Weave <noreply@weave.app>',
+      to, subject, html
+    });
+  } catch(e) {
+    console.error('[EMAIL] Ошибка отправки:', e.message);
+  }
+}
+
+const APP_URL = process.env.APP_URL || 'http://localhost:3001';
+
+// ── Cloudinary для хранения медиа ──
+let cloudinaryEnabled = false;
+if(process.env.CLOUDINARY_URL || process.env.CLOUDINARY_CLOUD_NAME){
+  const cloudinary=require('cloudinary').v2;
+  if(process.env.CLOUDINARY_URL){
+    cloudinary.config({secure:true});
+  } else {
+    cloudinary.config({
+      cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+      api_key:process.env.CLOUDINARY_API_KEY,
+      api_secret:process.env.CLOUDINARY_API_SECRET,
+      secure:true
+    });
+  }
+  cloudinaryEnabled=true;
+  console.log('[Cloudinary] Подключён');
+  
+  // Эндпоинт загрузки изображения
+  app.post('/api/upload',auth,async(req,res)=>{
+    const{data,folder='weave'}=req.body;
+    if(!data)return res.status(400).json({error:'Нет данных'});
+    if(!data.startsWith('data:image/'))return res.status(400).json({error:'Только изображения'});
+    // Ограничение размера ~5MB в base64
+    if(data.length>7*1024*1024)return res.status(400).json({error:'Файл слишком большой'});
+    try{
+      const result=await cloudinary.uploader.upload(data,{
+        folder:`weave/${folder}`,
+        transformation:[{quality:'auto',fetch_format:'auto'},{width:1200,crop:'limit'}]
+      });
+      res.json({url:result.secure_url,publicId:result.public_id});
+    }catch(e){res.status(500).json({error:'Ошибка загрузки: '+e.message});}
+  });
+}
+
+// ── Sentry мониторинг ошибок ──
+if(process.env.SENTRY_DSN){
+  const Sentry=require('@sentry/node');
+  Sentry.init({dsn:process.env.SENTRY_DSN,tracesSampleRate:0.1});
+  console.log('[Sentry] Подключён');
+}
+
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data', 'weave.db');
 // Создать директорию если не существует (для Render Disk)
 const dbDir = path.dirname(DB_PATH);
@@ -18,6 +90,19 @@ if (!require('fs').existsSync(path.join(__dirname,'data')))
 const db = new DatabaseSync(DB_PATH);
 
 const app    = express();
+
+// ── Security headers (helmet) ──
+app.use(compression()); // gzip/brotli сжатие ответов
+app.use(helmet({
+  contentSecurityPolicy: false, // отключаем CSP — мешает inline scripts
+  crossOriginEmbedderPolicy: false
+}));
+app.use((req,res,next)=>{
+  res.setHeader('X-Content-Type-Options','nosniff');
+  res.setHeader('X-Frame-Options','DENY');
+  res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
+  next();
+});
 const server = http.createServer(app);
 const wss    = new WebSocket.Server({ server });
 const PORT   = process.env.PORT || 3001;
@@ -43,9 +128,18 @@ db.exec(`
 
 // Миграции для уже существующих БД (добавление новых столбцов безопасно игнорируется, если они уже есть)
 try{db.exec(`ALTER TABLE users ADD COLUMN isModerator INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN emailVerified INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS email_tokens(token TEXT PRIMARY KEY,userId TEXT,type TEXT,expiresAt TEXT,createdAt TEXT)`)}catch{}
 try{db.exec(`ALTER TABLE users ADD COLUMN isBanned INTEGER DEFAULT 0`)}catch{}
 try{db.exec(`ALTER TABLE users ADD COLUMN banReason TEXT DEFAULT ''`)}catch{}
 try{db.exec(`ALTER TABLE users ADD COLUMN avatarUrl TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN coverColor TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN coverImageUrl TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN profileLinks TEXT DEFAULT '[]'`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN pinnedPostIds TEXT DEFAULT '[]'`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN blockedUsers TEXT DEFAULT '[]'`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS highlights(id TEXT PRIMARY KEY,userId TEXT,title TEXT,cover TEXT,storyIds TEXT DEFAULT '[]',createdAt TEXT)`)}catch{}
+try{db.exec(`ALTER TABLE users ADD COLUMN seenPosts TEXT DEFAULT '[]'`)}catch{}
 try{db.exec(`ALTER TABLE users ADD COLUMN status TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`ALTER TABLE posts ADD COLUMN pinnedBy TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`CREATE TABLE IF NOT EXISTS post_reactions(postId TEXT,userId TEXT,emoji TEXT,createdAt TEXT,PRIMARY KEY(postId,userId))`)}catch{}
@@ -78,7 +172,7 @@ const S = {
   insUser:   db.prepare(`INSERT INTO users(id,firstName,lastName,username,email,password,avatarColor,bio,website,isAdmin,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?)`),
   getById:   db.prepare(`SELECT * FROM users WHERE id=?`),
   getByIdent:db.prepare(`SELECT * FROM users WHERE email=? OR username=?`),
-  updProf:   db.prepare(`UPDATE users SET firstName=?,lastName=?,bio=?,website=?,avatarColor=?,phone=?,city=?,birthday=?,interests=?,avatarUrl=?,status=? WHERE id=?`),
+  updProf:   db.prepare(`UPDATE users SET firstName=?,lastName=?,bio=?,website=?,avatarColor=?,phone=?,city=?,birthday=?,interests=?,avatarUrl=?,status=?,coverColor=?,coverImageUrl=?,profileLinks=?,pinnedPostIds=? WHERE id=?`),
   updUser:   db.prepare(`UPDATE users SET username=? WHERE id=?`),
   chkEmail:  db.prepare(`SELECT id FROM users WHERE email=?`),
   chkUser:   db.prepare(`SELECT id FROM users WHERE username=?`),
@@ -139,7 +233,7 @@ function enrichPost(r,vid){
     liked:vid?!!S.hasLike.get(r.id,vid):false,
     bookmarked:vid?!!S.hasBkm.get(vid,r.id):false,
     comments:db.prepare(`SELECT COUNT(*) as n FROM comments WHERE postId=?`).get(r.id).n,
-    author:a?{id:a.id,firstName:a.firstName,lastName:a.lastName,username:a.username,avatarColor:a.avatarColor,avatarUrl:a.avatarUrl||null,isVerified:!!a.isVerified,status:a.status||null}:null,pinned:!!r.pinnedBy
+    author:a?{id:a.id,firstName:a.firstName,lastName:a.lastName,username:a.username,avatarColor:a.avatarColor,avatarUrl:a.avatarUrl||null,isVerified:!!a.isVerified,status:a.status||null,coverColor:a.coverColor||null}:null,pinned:!!r.pinnedBy
   }
 }
 
@@ -167,12 +261,54 @@ app.use(cors({
   credentials: true
 }));
 // Health check для Railway/Render
+// ── Автобэкап SQLite каждые 24 часа ──
+const fs = require('fs');
+const BACKUP_DIR = process.env.BACKUP_DIR || path.join(__dirname,'data','backups');
+function runBackup(){
+  try{
+    if(!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR,{recursive:true});
+    const stamp=new Date().toISOString().replace(/[:.]/g,'-').slice(0,19);
+    const dest=path.join(BACKUP_DIR,`weave-${stamp}.db`);
+    fs.copyFileSync(DB_PATH,dest);
+    // Оставляем только последние 7 бэкапов
+    const files=fs.readdirSync(BACKUP_DIR)
+      .filter(f=>f.endsWith('.db'))
+      .sort()
+      .reverse();
+    files.slice(7).forEach(f=>fs.unlinkSync(path.join(BACKUP_DIR,f)));
+    console.log('[Backup] Создан:',dest,'(всего:',Math.min(files.length,7),')');
+  }catch(e){console.error('[Backup] Ошибка:',e.message);}
+}
+setInterval(runBackup, 24*60*60*1000); // каждые 24 часа
+// Бэкап при запуске
+setTimeout(runBackup, 5000);
+
 app.get('/api/health',(req,res)=>res.json({
   status:'ok',
-  uptime:process.uptime(),
+  uptime:Math.round(process.uptime()),
   time:new Date().toISOString(),
   dbPath:DB_PATH,
-  persistent:DB_PATH.startsWith('/data')
+  persistent:DB_PATH.startsWith('/data'),
+  cloudinary:cloudinaryEnabled,
+  sentry:!!process.env.SENTRY_DSN,
+  email:!!process.env.SMTP_USER,
+  version:'1.0.0'
+}));
+
+// Публичная документация API
+app.get('/api',(req,res)=>res.json({
+  name:'Weave API',
+  version:'1.0.0',
+  docs: APP_URL+'/api',
+  endpoints:{
+    auth:['POST /api/auth/register','POST /api/auth/login','POST /api/auth/logout'],
+    posts:['GET /api/posts','POST /api/posts','PUT /api/posts/:id','DELETE /api/posts/:id','POST /api/posts/:id/like','POST /api/posts/:id/react'],
+    users:['GET /api/users/me','PUT /api/users/profile','GET /api/users/:id','POST /api/users/:id/follow'],
+    messages:['GET /api/chats','GET /api/messages/:userId','POST /api/messages'],
+    search:['GET /api/search?q='],
+    media:['POST /api/upload'],
+    feed:['GET /feed.xml']
+  }
 }));
 
 // Service Worker — нужен заголовок scope
@@ -214,13 +350,35 @@ function requireAdminOrModerator(req,res,next){
 app.post('/api/auth/register',async(req,res)=>{
   try{
     const{firstName,lastName,username,email,password}=req.body;
+    // ── Валидация ──
     if(!firstName||!username||!email||!password)return res.status(400).json({error:'Заполните все поля'});
-    if(S.chkEmail.get(email))return res.status(400).json({error:'Email уже занят'});
-    if(S.chkUser.get(username))return res.status(400).json({error:'Ник уже занят'});
+    if(firstName.length>50)return res.status(400).json({error:'Имя слишком длинное'});
+    if(!/^[a-zA-Z0-9_]{2,32}$/.test(username))return res.status(400).json({error:'Ник: только латиница, цифры и _ (2-32 символа)'});
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return res.status(400).json({error:'Некорректный email'});
+    if(email.length>100)return res.status(400).json({error:'Email слишком длинный'});
+    if(password.length<6)return res.status(400).json({error:'Пароль минимум 6 символов'});
+    if(password.length>128)return res.status(400).json({error:'Пароль слишком длинный'});
+    if(S.chkEmail.get(email.toLowerCase()))return res.status(400).json({error:'Email уже занят'});
+    if(S.chkUser.get(username.toLowerCase()))return res.status(400).json({error:'Ник уже занят'});
     const id=uuid();
     S.insUser.run(id,firstName,lastName||'',username,email,await bcrypt.hash(password,10),Math.floor(Math.random()*6),'','',0,new Date().toISOString());
     const tok=uuid();S.insSess.run(tok,id,new Date().toISOString());
-    res.status(201).json({user:pub(S.getById.get(id)),token:tok});
+    // Отправить письмо подтверждения
+    const verifyToken=uuid();
+    const expiresAt=new Date(Date.now()+24*3600*1000).toISOString();
+    db.prepare('INSERT INTO email_tokens(token,userId,type,expiresAt,createdAt)VALUES(?,?,?,?,?)').run(verifyToken,id,'verify',expiresAt,new Date().toISOString());
+    sendEmail(email,'Подтвердите email на Weave',`
+      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px">
+        <h2 style="color:#7C3AED">Добро пожаловать в Weave!</h2>
+        <p>Привет, ${firstName}! Подтверди свой email чтобы активировать аккаунт.</p>
+        <a href="${APP_URL}/api/auth/verify-email?token=${verifyToken}" 
+           style="display:inline-block;background:linear-gradient(135deg,#7C3AED,#2563EB);color:#fff;text-decoration:none;padding:12px 28px;border-radius:12px;font-weight:700;margin:16px 0">
+          Подтвердить email
+        </a>
+        <p style="color:#999;font-size:.85rem">Ссылка действует 24 часа. Если ты не регистрировался — просто проигнорируй это письмо.</p>
+      </div>
+    `);
+    res.status(201).json({user:pub(S.getById.get(id)),token:tok,emailSent:!!process.env.SMTP_USER});
   }catch(e){console.error(e);res.status(500).json({error:'Ошибка регистрации'})}
 });
 app.post('/api/auth/login',async(req,res)=>{
@@ -234,6 +392,31 @@ app.post('/api/auth/login',async(req,res)=>{
 });
 // PASSWORD RESET (без email: токен генерируется, выдаётся через admin)
 const resetTokens=new Map(); // token -> {userId, expires}
+// Подтверждение email
+app.get('/api/auth/verify-email',(req,res)=>{
+  const{token}=req.query;
+  if(!token)return res.redirect(APP_URL+'/pages/login.html?error=invalid_token');
+  const row=db.prepare('SELECT * FROM email_tokens WHERE token=? AND type=?').get(token,'verify');
+  if(!row)return res.redirect(APP_URL+'/pages/login.html?verified=fail');
+  if(new Date(row.expiresAt)<new Date())return res.redirect(APP_URL+'/pages/login.html?verified=expired');
+  db.prepare('UPDATE users SET emailVerified=1 WHERE id=?').run(row.userId);
+  db.prepare('DELETE FROM email_tokens WHERE token=?').run(token);
+  res.redirect(APP_URL+'/pages/login.html?verified=ok');
+});
+
+// Повторная отправка письма подтверждения
+app.post('/api/auth/resend-verify',auth,(req,res)=>{
+  const u=S.getById.get(req.userId);
+  if(!u)return res.status(404).json({error:'Пользователь не найден'});
+  if(u.emailVerified)return res.json({message:'Email уже подтверждён'});
+  db.prepare('DELETE FROM email_tokens WHERE userId=? AND type=?').run(u.id,'verify');
+  const verifyToken=uuid();
+  const expiresAt=new Date(Date.now()+24*3600*1000).toISOString();
+  db.prepare('INSERT INTO email_tokens(token,userId,type,expiresAt,createdAt)VALUES(?,?,?,?,?)').run(verifyToken,u.id,'verify',expiresAt,new Date().toISOString());
+  sendEmail(u.email,'Подтвердите email на Weave',`<a href="${APP_URL}/api/auth/verify-email?token=${verifyToken}">Подтвердить email</a>`);
+  res.json({message:'Письмо отправлено'});
+});
+
 app.post('/api/auth/forgot-password',(req,res)=>{
   const{identifier}=req.body;
   if(!identifier)return res.status(400).json({error:'Введите email или никнейм'});
@@ -460,14 +643,18 @@ app.get('/api/users/me',auth,(req,res)=>{
 });
 app.put('/api/users/profile',auth,(req,res)=>{
   const u=S.getById.get(req.userId);if(!u)return res.status(404).json({error:'Не найден'});
-  const{firstName=u.firstName,lastName=u.lastName,bio=u.bio,website=u.website,avatarColor=u.avatarColor,phone=u.phone||'',city=u.city||'',birthday=u.birthday||'',interests=u.interests||'',avatarUrl:rawAvatarUrl=u.avatarUrl||null,status=u.status||null}=req.body;
+  const{firstName=u.firstName,lastName=u.lastName,bio=u.bio,website=u.website,avatarColor=u.avatarColor,phone=u.phone||'',city=u.city||'',birthday=u.birthday||'',interests=u.interests||'',avatarUrl:rawAvatarUrl=u.avatarUrl||null,status=u.status||null,coverColor=u.coverColor||null,coverImageUrl,profileLinks,pinnedPostIds}=req.body;
   // Валидация: только data: URL или null
   const avatarUrl=rawAvatarUrl===null?null:(typeof rawAvatarUrl==='string'&&rawAvatarUrl.startsWith('data:image/'))?rawAvatarUrl:u.avatarUrl||null;
   if(req.body.username&&req.body.username!==u.username){
     if(S.chkUser.get(req.body.username))return res.status(400).json({error:'Ник занят'});
     S.updUser.run(req.body.username,req.userId);
   }
-  S.updProf.run(firstName,lastName,bio,website,avatarColor,phone,city,birthday,interests,avatarUrl,status,req.userId);
+  // coverColor только для верифицированных
+  const allowCover = !!u.isVerified || !!u.isAdmin;
+  const finalCoverColor = allowCover ? (coverColor||u.coverColor||null) : u.coverColor||null;
+  const finalCoverImg = coverImageUrl !== undefined ? coverImageUrl : (u.coverImageUrl||null);
+  S.updProf.run(firstName,lastName,bio,website,avatarColor,phone,city,birthday,interests,avatarUrl,status,finalCoverColor,finalCoverImg,JSON.stringify(profileLinks||safeJ(u.profileLinks)||[]),JSON.stringify(pinnedPostIds||safeJ(u.pinnedPostIds)||[]),req.userId);
   res.json(pub(S.getById.get(req.userId)));
 });
 app.delete('/api/users/me',auth,(req,res)=>{
@@ -868,6 +1055,23 @@ app.get('/api/posts/:id/thread',auth,(req,res)=>{
   res.json(rows.map(r=>enrichPost(r,req.userId)));
 });
 
+// Highlights (закреплённые истории)
+app.get('/api/highlights/:userId',(req,res)=>{
+  const rows=db.prepare('SELECT * FROM highlights WHERE userId=? ORDER BY createdAt DESC').all(req.params.userId);
+  res.json(rows.map(r=>({...r,storyIds:safeJ(r.storyIds)})));
+});
+app.post('/api/highlights',auth,(req,res)=>{
+  const{title,cover,storyIds=[]}=req.body;
+  if(!title)return res.status(400).json({error:'Нужен заголовок'});
+  const id=uuid();
+  db.prepare('INSERT INTO highlights(id,userId,title,cover,storyIds,createdAt)VALUES(?,?,?,?,?,?)').run(id,req.userId,title,cover||null,JSON.stringify(storyIds),new Date().toISOString());
+  res.json({id,title,cover,storyIds});
+});
+app.delete('/api/highlights/:id',auth,(req,res)=>{
+  db.prepare('DELETE FROM highlights WHERE id=? AND userId=?').run(req.params.id,req.userId);
+  res.json({success:true});
+});
+
 // Кто лайкнул
 app.get('/api/posts/:id/likers',auth,(req,res)=>{
   const likers=db.prepare('SELECT u.id,u.firstName,u.lastName,u.username,u.avatarColor FROM post_likes pl JOIN users u ON u.id=pl.userId WHERE pl.postId=? ORDER BY pl.rowid DESC LIMIT 50').all(req.params.id);
@@ -935,6 +1139,60 @@ app.get('/api/music/search',(req,res)=>{
       }catch(e){res.json({data:[]});}
     });
   }).on('error',()=>res.json({data:[]}));
+});
+
+// Open Graph мета теги для постов
+app.get('/post/:id',(req,res)=>{
+  const post=S.getPost.get(req.params.id);
+  if(!post){return res.redirect('/pages/404.html');}
+  const author=S.getById.get(post.authorId);
+  const text=(post.text||'').slice(0,160).replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const images=safeJ(post.images);
+  const img=images[0]||(author?.avatarUrl)||'';
+  const title=`${author?.firstName||''} ${author?.lastName||''} (@${author?.username||''})`;
+  res.send(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>${title} — Weave</title>
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${text||'Пост на Weave'}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="${APP_URL}/post/${req.params.id}">
+    ${img?`<meta property="og:image" content="${img}">`:''}
+    <meta property="og:site_name" content="Weave">
+    <meta name="twitter:card" content="${img?'summary_large_image':'summary'}">
+    <meta name="twitter:title" content="${title}">
+    <meta name="twitter:description" content="${text||'Пост на Weave'}">
+    ${img?`<meta name="twitter:image" content="${img}">`:''}
+    <meta http-equiv="refresh" content="0;url=/pages/feed.html?post=${req.params.id}">
+  </head><body>Перенаправление...</body></html>`);
+});
+
+// RSS лента
+app.get('/feed.xml',(req,res)=>{
+  const rows=db.prepare('SELECT p.*,u.firstName,u.lastName,u.username FROM posts p JOIN users u ON u.id=p.authorId WHERE p.isHidden=0 ORDER BY p.createdAt DESC LIMIT 20').all();
+  const items=rows.map(r=>{
+    const text=(r.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return `<item>
+      <title>${r.firstName} ${r.lastName||''}: ${text.slice(0,80)||'[медиа]'}</title>
+      <link>${APP_URL}/post/${r.id}</link>
+      <description>${text}</description>
+      <author>${r.username}@weave</author>
+      <pubDate>${new Date(r.createdAt).toUTCString()}</pubDate>
+      <guid>${APP_URL}/post/${r.id}</guid>
+    </item>`;
+  }).join('');
+  res.setHeader('Content-Type','application/rss+xml; charset=utf-8');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Weave</title>
+    <link>${APP_URL}</link>
+    <description>Социальная сеть Weave</description>
+    <language>ru</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    ${items}
+  </channel>
+</rss>`);
 });
 
 app.get('*',(req,res)=>{
