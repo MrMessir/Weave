@@ -66,9 +66,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 
 /* ── Обложка профиля ── */
 .ph-cover{width:100%;height:140px;border-radius:0 0 16px 16px;margin-bottom:-70px;position:relative;background:linear-gradient(135deg,#1a0533,#0a1628);transition:background .3s}
-.ph-cover-edit{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.5);border:none;color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:.72rem;font-family:'Syne',sans-serif;font-weight:700;display:none;gap:5px;align-items:center;backdrop-filter:blur(4px)}
-.ph-cover-edit:hover{background:rgba(0,0,0,.7)}
-.ph-cover:hover .ph-cover-edit{display:flex}
+/* ph-cover-edit убран, используем ph-cover-btns */
 /* Пикер цвета обложки */
 .cover-picker{position:absolute;bottom:44px;right:12px;background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:12px;z-index:50;display:none;box-shadow:0 8px 28px rgba(0,0,0,.5)}
 .cover-picker.open{display:block}
@@ -86,8 +84,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .ph-cover-img.loaded{display:block}
 .ph-cover-actions{position:absolute;bottom:10px;right:10px;display:none;gap:6px}
 .ph-cover:hover .ph-cover-actions{display:flex}
-.ph-cover-btn{background:rgba(0,0,0,.55);border:none;color:#fff;padding:6px 12px;border-radius:10px;cursor:pointer;font-size:.72rem;font-family:'Syne',sans-serif;font-weight:700;display:flex;align-items:center;gap:4px;backdrop-filter:blur(6px);transition:background .15s}
-.ph-cover-btn:hover{background:rgba(0,0,0,.8)}
+/* ph-cover-btn объявлен ниже */
 /* Кроппер обоев */
 .cover-crop-modal{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .cover-crop-modal.open{display:flex}
@@ -519,10 +516,9 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
   <div class="ph-cover" id="ph-cover">
     <div class="ph-cover-btns" id="ph-cover-btns">
       <button class="ph-cover-btn" onclick="openCoverImageUpload()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Фото
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>Фото
       </button>
-      <button class="ph-cover-btn" onclick="toggleCoverPicker(event)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="13.5" cy="6.5" r="2.5"/><path d="M17 11h4v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8h4"/><path d="M12 12V3"/><polyline points="9 6 12 3 15 6"/></svg>Цвет
+      <button class="ph-cover-btn" onclick="toggleCoverPicker(event)"> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z"/><circle cx="6.5" cy="11.5" r="1.5"/><circle cx="9.5" cy="7.5" r="1.5"/><circle cx="14.5" cy="7.5" r="1.5"/><circle cx="17.5" cy="11.5" r="1.5"/></svg>Цвет
       </button>
     </div>
     <div class="cover-picker" id="cover-picker">
@@ -581,12 +577,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
   <!-- Ссылки профиля -->
   <div class="profile-links" id="profile-links"></div>
 
-  <!-- Детальная статистика (только для владельца) -->
-  <div class="profile-stats-detail" id="profile-stats-detail" style="display:none">
-    <div class="psd-item"><div class="psd-val" id="psd-views">0</div><div class="psd-lbl">Просмотров</div></div>
-    <div class="psd-item"><div class="psd-val" id="psd-reach">0</div><div class="psd-lbl">Охват</div></div>
-    <div class="psd-item"><div class="psd-val" id="psd-growth">+0</div><div class="psd-lbl">Прирост</div></div>
-  </div>
+
 
   <div class="profile-tabs">
     <button class="ptab active" onclick="switchTab('posts',this)">
@@ -719,7 +710,6 @@ function renderHeader(){
   const links = u.profileLinks ? (Array.isArray(u.profileLinks)?u.profileLinks:JSON.parse(u.profileLinks||'[]')) : [];
   renderProfileLinks(links);
   // Статистика
-  loadProfileStats();
   const stEl=document.getElementById('ph-status');
   if(stEl&&u.status){stEl.textContent=u.status;stEl.style.display='block';}
   if(u.website){const lnk=document.getElementById('ph-bio-link');lnk.href=u.website.startsWith('http')?u.website:'https://'+u.website;lnk.textContent=u.website.replace(/^https?:\/\//,'');lnk.style.display=''}
@@ -1105,20 +1095,7 @@ function renderMediaGrid(posts) {
 // ══════════════════════════════════════════════════════
 //  СТАТИСТИКА ПРОФИЛЯ
 // ══════════════════════════════════════════════════════
-async function loadProfileStats() {
-  if (!isOwn) return;
-  const el = document.getElementById('profile-stats-detail');
-  if (el) el.style.display = 'grid';
-  try {
-    // Примерная статистика на основе постов/подписчиков
-    const followers = profileUser.stats?.followers || 0;
-    const posts = profileUser.stats?.posts || 0;
-    document.getElementById('psd-views').textContent = (followers * posts * 3).toLocaleString('ru');
-    document.getElementById('psd-reach').textContent = Math.round(followers * 0.6).toLocaleString('ru');
-    const weekAgo = new Date(Date.now()-7*86400000).toISOString();
-    document.getElementById('psd-growth').textContent = '+' + Math.round(followers * 0.08);
-  } catch(e) {}
-}
+// loadProfileStats убрана — фейковые данные
 </script>
 <script src="theme.js">
 // Бейдж уведомлений
@@ -1435,19 +1412,15 @@ function renderHighlights() {
   const bar = document.getElementById('highlights-bar');
   if (!bar) return;
   let html = '';
-  if (isOwn) {
-    html += `<div class="hl-item" onclick="createHighlight()">
-      <div class="hl-ring hl-add" style="font-size:1.8rem;color:var(--mu)">+</div>
-      <div class="hl-label">Новый</div>
-    </div>`;
-  }
+  // Кнопка 'Новый хайлайт' перенесена в кнопку 'Редактировать профиль'
   html += allHighlights.map(h => `
     <div class="hl-item" onclick="openHighlight('${h.id}')">
       <div class="hl-ring">${h.cover ? `<img src="${esc(h.cover)}" alt="">` : '📌'}</div>
       <div class="hl-label">${esc(h.title)}</div>
     </div>`).join('');
   bar.innerHTML = html;
-  bar.style.display = (isOwn || allHighlights.length) ? 'flex' : 'none';
+  // Показывать highlights только если есть хайлайты (кнопку "Новый" не показываем если пусто)
+  bar.style.display = allHighlights.length ? 'flex' : 'none';
 }
 
 async function createHighlight() {

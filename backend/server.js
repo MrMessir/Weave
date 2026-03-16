@@ -1099,6 +1099,21 @@ app.post('/api/posts/:id/vote',auth,(req,res)=>{
 });
 
 // Поиск музыки через Deezer (прокси для обхода CORS)
+// Прокси для аудио превью Deezer (обход CORS)
+app.get('/api/music/preview',async(req,res)=>{
+  const{url}=req.query;
+  if(!url||!url.includes('dzcdn.net'))return res.status(400).json({error:'Invalid URL'});
+  try{
+    const r=await fetch(url,{headers:{'User-Agent':'Mozilla/5.0','Referer':'https://www.deezer.com'}});
+    if(!r.ok)return res.status(r.status).end();
+    res.setHeader('Content-Type','audio/mpeg');
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Cache-Control','public,max-age=3600');
+    const buf=await r.arrayBuffer();
+    res.send(Buffer.from(buf));
+  }catch(e){res.status(500).json({error:e.message});}
+});
+
 app.get('/api/music/search',async(req,res)=>{
   const{q}=req.query;
   if(!q)return res.json({data:[]});
