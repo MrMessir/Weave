@@ -256,16 +256,19 @@ async function seed(){
 
 // MIDDLEWARE
 app.use(cors({
-  origin: (origin, cb) => {
-    // В продакшене — разрешаем свой домен и всё что в ALLOWED_ORIGINS
-    if (!origin) return cb(null, true); // curl/postman/mobile
-    if (process.env.NODE_ENV !== 'production') return cb(null, true); // локально всё
-    const allowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s=>s.trim()).filter(Boolean);
-    if (!allowed.length || allowed.some(o => origin.startsWith(o))) return cb(null, true);
-    cb(new Error('CORS: не разрешён ' + origin));
+  origin:(origin,cb)=>{
+    if(!origin) return cb(null,true);
+    if(origin.includes('localhost') || origin.includes('127.0.0.1')) return cb(null,true);
+    if(origin.endsWith('.railway.app') || origin.endsWith('.up.railway.app')) return cb(null,true);
+    const allowed = [process.env.APP_URL,'https://weave.ru','https://www.weave.ru'].filter(Boolean);
+    if(allowed.includes(origin)) return cb(null,true);
+    cb(null,true); // разрешаем всё пока
   },
-  credentials: true
+  credentials:true,
+  methods:['GET','POST','PUT','DELETE','OPTIONS','PATCH'],
+  allowedHeaders:['Content-Type','Authorization'],
 }));
+app.options('*',cors());
 // Health check для Railway/Render
 // ── Автобэкап SQLite каждые 24 часа ──
 const fs = require('fs');
@@ -288,6 +291,22 @@ function runBackup(){
 setInterval(runBackup, 24*60*60*1000); // каждые 24 часа
 // Бэкап при запуске
 setTimeout(runBackup, 5000);
+
+// ── Уведомления helper ──
+function createNotif(userId, type, fromId, entityId='', text=''){
+  if(!userId || userId===fromId) return;
+  try{
+    const {v4:uuidv4}=require('uuid');
+    db.prepare(`INSERT OR IGNORE INTO notifications(id,userId,type,fromId,entityId,text,read,createdAt)
+      VALUES(?,?,?,?,?,?,0,?)`)
+      .run(uuidv4(),userId,type,fromId,entityId,text,new Date().toISOString());
+  }catch(e){}
+}
+
+// ── @mentions в постах ──
+function parseMentions(text){
+  return (text||'').match(/@(\w+)/g)?.map(m=>m.slice(1))||[];
+}
 
 app.get('/api/health',(req,res)=>res.json({
   status:'ok',
@@ -1257,7 +1276,7 @@ wss.on('connection',(ws)=>{
 });
 
 seed().then(()=>{
-  server.listen(PORT,()=>{
+  server.listen(PORT,'0.0.0.0',()=>{
     const uc=db.prepare(`SELECT COUNT(*) as n FROM users`).get().n;
     const pc=db.prepare(`SELECT COUNT(*) as n FROM posts`).get().n;
     console.log(`\n🚀 Weave на http://localhost:${PORT}`);
