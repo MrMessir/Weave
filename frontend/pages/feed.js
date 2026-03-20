@@ -476,5 +476,3 @@ const feedPage = {
     }
   }
 };
-
-window.feedPage = feedPage;

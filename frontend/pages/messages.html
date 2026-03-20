@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -17,7 +17,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
   <link rel="shortcut icon" href="/icons/icon-32.png">
-<title>Weave — Мессенджер</title>
+<title>Weave вЂ” РњРµСЃСЃРµРЅРґР¶РµСЂ</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -122,19 +122,25 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .mbbl{max-width:65%;padding:8px 12px;border-radius:16px;border-bottom-left-radius:4px;font-size:.87rem;line-height:1.5;word-break:break-word;background:var(--s3);border:1px solid var(--br2);color:var(--tx)}
 .me .mbbl{background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(37,99,235,.28));border-color:rgba(124,58,237,.35);border-bottom-left-radius:16px;border-bottom-right-radius:4px}
 .mbbl-img{max-width:220px;border-radius:10px;display:block;cursor:pointer;margin-top:4px}
+.mbbl-files{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.mbbl-file{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);text-decoration:none;color:inherit}
+.mbbl-file:hover{background:rgba(255,255,255,.1)}
+.mbbl-file-ic{width:24px;height:24px;border-radius:8px;background:rgba(124,58,237,.22);display:grid;place-items:center;font-size:.8rem;flex-shrink:0}
+.mbbl-file-nm{font-size:.76rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mbbl-file-sz{font-size:.65rem;color:var(--mu)}
 .mftr{display:flex;align-items:center;gap:4px;margin-top:2px;justify-content:flex-end}
 .mtm{font-size:.6rem;color:var(--mu2)}
 .mst{width:11px;height:11px;color:var(--mu2)}
 .mst.rd{color:var(--vl)}
 
-/* Реакции на сообщения */
+/* Р РµР°РєС†РёРё РЅР° СЃРѕРѕР±С‰РµРЅРёСЏ */
 .msg-reacts{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
 .msg-react{display:inline-flex;align-items:center;gap:3px;background:var(--s3);border:1px solid var(--br);border-radius:12px;padding:2px 7px;font-size:.75rem;cursor:pointer;transition:all .13s;user-select:none}
 .msg-react:hover{background:var(--s2);border-color:var(--vl)}
 .msg-react.mine{background:rgba(124,58,237,.15);border-color:var(--v)}
 .msg-react .rn{font-weight:600;color:var(--mu);font-size:.7rem}
 .msg-react.mine .rn{color:var(--vl)}
-/* Пикер реакций на сообщение */
+/* РџРёРєРµСЂ СЂРµР°РєС†РёР№ РЅР° СЃРѕРѕР±С‰РµРЅРёРµ */
 .msg-react-picker{position:absolute;bottom:100%;background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:6px 8px;display:none;flex-direction:row;gap:3px;z-index:100;box-shadow:0 6px 24px rgba(0,0,0,.35)}
 .msg-react-picker.open{display:flex}
 .msg-react-opt{font-size:1.2rem;cursor:pointer;padding:3px 4px;border-radius:8px;transition:transform .1s}
@@ -153,6 +159,13 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .inp-img{position:relative;width:66px;height:66px;border-radius:9px;overflow:hidden}
 .inp-img img{width:100%;height:100%;object-fit:cover}
 .inp-img-rm{position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.8);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;font-size:9px}
+.inp-files{display:flex;flex-direction:column;gap:6px;padding:0 0 8px 42px}
+.inp-file{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:10px;background:var(--s3);border:1px solid var(--br2)}
+.inp-file-ic{width:22px;height:22px;border-radius:7px;background:rgba(124,58,237,.2);display:grid;place-items:center;font-size:.75rem;flex-shrink:0}
+.inp-file-info{min-width:0;flex:1}
+.inp-file-nm{font-size:.75rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inp-file-sz{font-size:.63rem;color:var(--mu)}
+.inp-file-rm{width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.5);border:none;cursor:pointer;color:#fff;display:grid;place-items:center;font-size:10px;flex-shrink:0}
 .inp-row{display:flex;gap:8px;align-items:flex-end}
 .inp-att{width:34px;height:34px;border-radius:50%;background:none;border:1px solid var(--br2);color:var(--mu);display:grid;place-items:center;cursor:pointer;transition:all .18s;flex-shrink:0}
 .inp-att:hover{background:rgba(124,58,237,.15);color:var(--vl)}
@@ -189,7 +202,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 @media(max-width:860px){:root{--nav-w:68px}}
 @media(max-width:700px){.chats-col{position:absolute;width:84%;height:calc(100% - 56px);top:56px;z-index:50;display:none}.chats-col.show{display:flex}}
 
-/* ══ VOICE RECORDING — TELEGRAM STYLE ═══════════════════ */
+/* в•ђв•ђ VOICE RECORDING вЂ” TELEGRAM STYLE в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ */
 .voice-rec-btn{width:38px;height:38px;border-radius:50%;background:none;border:1px solid var(--br2);color:var(--mu);display:grid;place-items:center;cursor:pointer;transition:all .18s;flex-shrink:0;user-select:none;-webkit-user-select:none;touch-action:none}
 .voice-rec-btn svg{width:16px;height:16px;pointer-events:none}
 .voice-rec-btn:hover{background:rgba(124,58,237,.15);color:var(--vl)}
@@ -211,7 +224,7 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .v-lock-btn svg{width:13px;height:13px;pointer-events:none}
 .v-lock-btn:hover{background:var(--v);color:#fff}
 
-/* Locked state — preview bar before sending */
+/* Locked state вЂ” preview bar before sending */
 .v-locked-bar{display:none;align-items:center;gap:10px;padding:10px 14px 12px;background:var(--s2);border-top:1px solid var(--br)}
 .v-locked-bar.show{display:flex}
 .v-locked-wave{flex:1;height:28px;display:flex;align-items:center;gap:1.5px;overflow:hidden;cursor:pointer}
@@ -241,9 +254,9 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 .vm-dur{font-size:.68rem;color:rgba(255,255,255,.55);font-family:'Syne',sans-serif;font-weight:600}
 .me .vm-dur{color:rgba(255,255,255,.7)}
 
-/* ── THEME VARIANTS ──────────────────────────────────── */
+/* в”Ђв”Ђ THEME VARIANTS в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ */
 body.light{--bg:#FFFFFF;--s1:#F3F4F6;--s2:#E9EAEC;--s3:#D9DADD;--br:rgba(0,0,0,.12);--br2:rgba(0,0,0,.08);--tx:#111827;--mu:#6B7280;--mu2:#9CA3AF}
-/* ── Светлая тема: перекрытие белого текста ── */
+/* в”Ђв”Ђ РЎРІРµС‚Р»Р°СЏ С‚РµРјР°: РїРµСЂРµРєСЂС‹С‚РёРµ Р±РµР»РѕРіРѕ С‚РµРєСЃС‚Р° в”Ђв”Ђ */
 body.light .sn-user-name,
 body.light .sn-handle,
 body.light .sn-item,
@@ -266,7 +279,7 @@ body.light .sn-ava-ini,
 body.light .pa,
 body.light .cmp-ava,
 body.light .sv-a,
-body.light .cca { color: #fff; } /* инициалы на цветном фоне — оставить белыми */
+body.light .cca { color: #fff; } /* РёРЅРёС†РёР°Р»С‹ РЅР° С†РІРµС‚РЅРѕРј С„РѕРЅРµ вЂ” РѕСЃС‚Р°РІРёС‚СЊ Р±РµР»С‹РјРё */
 body.light .sn-logo-text { -webkit-text-fill-color: unset; background: linear-gradient(135deg,#7C3AED,#2563EB); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 body.light .post,
 body.light .compose,
@@ -284,7 +297,7 @@ body.light textarea::placeholder { color: var(--mu); }
 body.amoled{--bg:#000;--s1:#000;--s2:#0A0A12;--s3:#0E0E1A}
 body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 1px,transparent 1px)}
 
-/* ── Mobile bottom nav ── */
+/* в”Ђв”Ђ Mobile bottom nav в”Ђв”Ђ */
 @media(max-width:600px){
   .mob-nav{display:flex!important}
   :root{--nav-w:0px!important}
@@ -324,7 +337,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .mob-back-btn svg{width:22px;height:22px}
 @media(max-width:600px){.mob-back-btn{display:flex;align-items:center;justify-content:center}}
 
-/* ── Контекстное меню сообщения ── */
+/* в”Ђв”Ђ РљРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ СЃРѕРѕР±С‰РµРЅРёСЏ в”Ђв”Ђ */
 .msg-ctx{position:fixed;z-index:500;background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:6px;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,.35);animation:ctxIn .12s ease}
 @keyframes ctxIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
 .msg-ctx-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;cursor:pointer;font-size:.84rem;color:var(--tx);transition:background .12s}
@@ -333,7 +346,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .msg-ctx-item svg{flex-shrink:0;opacity:.75}
 .msg-ctx-sep{height:1px;background:var(--br);margin:4px 0}
 
-/* ── Закреплённое сообщение ── */
+/* в”Ђв”Ђ Р—Р°РєСЂРµРїР»С‘РЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ в”Ђв”Ђ */
 .pinned-bar{display:none;align-items:center;gap:10px;padding:8px 16px;background:var(--s2);border-bottom:1px solid var(--br);cursor:pointer;transition:background .15s}
 .pinned-bar:hover{background:var(--s3)}
 .pinned-bar.show{display:flex}
@@ -344,19 +357,19 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .pinned-bar-close{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px;opacity:.7}
 .pinned-bar-close:hover{opacity:1}
 
-/* ── Редактирование сообщения ── */
+/* в”Ђв”Ђ Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ в”Ђв”Ђ */
 .edit-bar{display:none;align-items:center;gap:10px;padding:8px 14px;background:rgba(124,58,237,.08);border-top:1px solid rgba(124,58,237,.2)}
 .edit-bar.show{display:flex}
 .edit-bar-txt{flex:1;font-size:.8rem;color:var(--vl)}
 .edit-bar-cancel{background:none;border:none;color:var(--mu);cursor:pointer;padding:4px}
 
-/* ── Группы ── */
+/* в”Ђв”Ђ Р“СЂСѓРїРїС‹ в”Ђв”Ђ */
 .group-badge{font-size:.62rem;background:rgba(124,58,237,.2);color:var(--vl);padding:2px 6px;border-radius:6px;font-family:'Syne',sans-serif;font-weight:700;margin-left:4px;vertical-align:middle}
 .grp-av{display:grid;grid-template-columns:1fr 1fr;gap:1px;width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0}
 .grp-av-part{background:var(--v);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#fff;font-weight:700}
 .grp-av-1{border-radius:50%}
 
-/* ── Создать группу modal ── */
+/* в”Ђв”Ђ РЎРѕР·РґР°С‚СЊ РіСЂСѓРїРїСѓ modal в”Ђв”Ђ */
 .grp-modal{display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);align-items:center;justify-content:center;padding:20px}
 .grp-modal.open{display:flex}
 .grp-box{background:var(--s1);border-radius:20px;padding:24px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:14px}
@@ -373,7 +386,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 .grp-btn-cancel{background:var(--s3);color:var(--tx)}
 .grp-btn-ok{background:linear-gradient(135deg,var(--v),var(--b));color:#fff}
 
-/* ── Ответ на сообщение ── */
+/* в”Ђв”Ђ РћС‚РІРµС‚ РЅР° СЃРѕРѕР±С‰РµРЅРёРµ в”Ђв”Ђ */
 .reply-bar{display:none;align-items:center;gap:10px;padding:8px 14px;background:rgba(124,58,237,.06);border-top:1px solid rgba(124,58,237,.15)}
 .reply-bar.show{display:flex}
 .reply-bar-line{width:3px;height:30px;border-radius:2px;background:var(--v);flex-shrink:0}
@@ -416,8 +429,8 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
   <a class="sn-user" href="profile.html" id="sn-user-card">
     <div class="sn-ava" id="sn-ava">?</div>
     <div class="sn-uinfo">
-      <div class="sn-uname" id="sn-name">Загрузка…</div>
-      <div class="sn-uhandle" id="sn-handle">@…</div>
+      <div class="sn-uname" id="sn-name">Р—Р°РіСЂСѓР·РєР°вЂ¦</div>
+      <div class="sn-uhandle" id="sn-handle">@вЂ¦</div>
     </div>
     <div class="sn-online"></div>
   </a>
@@ -425,24 +438,24 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
   <div class="sn-section">
     <div class="sn-it" onclick="window.location.href='feed.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Лента</span>
+      <span>Р›РµРЅС‚Р°</span>
     </div>
     <div class="sn-it" onclick="window.location.href='explore.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <span>Поиск</span>
+      <span>РџРѕРёСЃРє</span>
     </div>
     <div class="sn-it active" id="msg-nav" onclick="window.location.href='messages.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      <span>Сообщения</span>
+      <span>РЎРѕРѕР±С‰РµРЅРёСЏ</span>
       <span class="sn-badge" id="msg-badge" style="display:none">0</span>
     </div>
     <div class="sn-it" onclick="window.location.href='settings.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span>Настройки</span>
+      <span>РќР°СЃС‚СЂРѕР№РєРё</span>
     </div>
     <div class="sn-it" onclick="window.location.href='feed.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      <span>Закладки</span>
+      <span>Р—Р°РєР»Р°РґРєРё</span>
     </div>
   </div>
 
@@ -451,15 +464,15 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
   <div class="sn-section">
     <div class="sn-it" onclick="window.location.href='profile.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <span>Мой профиль</span>
+      <span>РњРѕР№ РїСЂРѕС„РёР»СЊ</span>
     </div>
     <div class="sn-it" id="nav-admin" style="display:none" onclick="window.location.href='admin.html'">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>Админка</span>
+      <span>РђРґРјРёРЅРєР°</span>
     </div>
     <div class="sn-it" onclick="logout()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      <span>Выйти</span>
+      <span>Р’С‹Р№С‚Рё</span>
     </div>
   </div>
 </nav>
@@ -467,74 +480,74 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 <div class="main">
   <div class="topbar">
     <div class="tb-title">
-      Мессенджер
+      РњРµСЃСЃРµРЅРґР¶РµСЂ
       <span class="e2e-pill">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        E2E шифрование
+        E2E С€РёС„СЂРѕРІР°РЅРёРµ
       </span>
     </div>
     <div class="ws-pill">
       <div class="ws-dot" id="wsdot"></div>
-      <span id="wslbl">соединение…</span>
+      <span id="wslbl">СЃРѕРµРґРёРЅРµРЅРёРµвЂ¦</span>
     </div>
   </div>
 
   <div class="messenger">
-    <!-- Список чатов -->
+    <!-- РЎРїРёСЃРѕРє С‡Р°С‚РѕРІ -->
     <div class="chats-col">
       <div class="ch-top">
         <div class="ch-head">
-          <span class="ch-title">Чаты</span>
+          <span class="ch-title">Р§Р°С‚С‹</span>
           <div style="display:flex;gap:6px">
-            <button class="ch-new" onclick="openCreateGroup()" title="Создать группу" style="background:rgba(124,58,237,.12)">
+            <button class="ch-new" onclick="openCreateGroup()" title="РЎРѕР·РґР°С‚СЊ РіСЂСѓРїРїСѓ" style="background:rgba(124,58,237,.12)">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </button>
-            <button class="ch-new" onclick="openNewChat()" title="Новый чат">
+            <button class="ch-new" onclick="openNewChat()" title="РќРѕРІС‹Р№ С‡Р°С‚">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </button>
           </div>
         </div>
         <div class="ch-search" id="ch-search-wrap">
           <svg class="ch-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <input type="text" id="ch-search-inp" placeholder="Поиск по чатам…" oninput="filterChats(this.value)" autocomplete="off">
-          <button class="ch-search-clear" onclick="clearChatSearch()" title="Очистить">✕</button>
+          <input type="text" id="ch-search-inp" placeholder="РџРѕРёСЃРє РїРѕ С‡Р°С‚Р°РјвЂ¦" oninput="filterChats(this.value)" autocomplete="off">
+          <button class="ch-search-clear" onclick="clearChatSearch()" title="РћС‡РёСЃС‚РёС‚СЊ">вњ•</button>
         </div>
       </div>
       <div class="ch-scroll" id="ch-list"></div>
     </div>
 
-    <!-- Диалог -->
+    <!-- Р”РёР°Р»РѕРі -->
     <div class="dialog">
       <div class="d-empty" id="d-empty">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <p>Выберите чат</p>
+        <p>Р’С‹Р±РµСЂРёС‚Рµ С‡Р°С‚</p>
       </div>
 
       <div class="d-view" id="d-view" style="position:relative">
         <!-- header -->
         <div class="d-hdr">
-      <button class="mob-back-btn" onclick="mobileBackToList()" title="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="mob-back-btn" onclick="mobileBackToList()" title="РќР°Р·Р°Рґ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
           <div class="d-hdr-av" id="d-av"></div>
           <div class="d-hdr-info">
             <div class="d-hdr-nm" id="d-nm"></div>
             <div class="d-hdr-sub">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              <span id="d-enc-lbl">сквозное шифрование</span>
+              <span id="d-enc-lbl">СЃРєРІРѕР·РЅРѕРµ С€РёС„СЂРѕРІР°РЅРёРµ</span>
             </div>
           </div>
-          <div class="d-hdr-btn" onclick="showKeyModal()" title="Ключи шифрования">
+          <div class="d-hdr-btn" onclick="showKeyModal()" title="РљР»СЋС‡Рё С€РёС„СЂРѕРІР°РЅРёСЏ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
           </div>
         </div>
 
-        <!-- Закреплённое сообщение -->
+        <!-- Р—Р°РєСЂРµРїР»С‘РЅРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ -->
         <div class="pinned-bar" id="pinned-bar" onclick="scrollToPinned()">
           <div class="pinned-bar-line"></div>
           <div class="pinned-bar-txt">
-            <div class="pinned-bar-label">📌 Закреплённое</div>
+            <div class="pinned-bar-label">рџ“Њ Р—Р°РєСЂРµРїР»С‘РЅРЅРѕРµ</div>
             <div class="pinned-bar-text" id="pinned-bar-text">...</div>
           </div>
-          <button class="pinned-bar-close" onclick="event.stopPropagation();unpinMsg()">✕</button>
+          <button class="pinned-bar-close" onclick="event.stopPropagation();unpinMsg()">вњ•</button>
         </div>
 
         <!-- messages -->
@@ -554,24 +567,29 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
             <div class="reply-bar-author" id="reply-bar-author"></div>
             <div class="reply-bar-text" id="reply-bar-text"></div>
           </div>
-          <button class="reply-cancel" onclick="cancelReply()">✕</button>
+          <button class="reply-cancel" onclick="cancelReply()">вњ•</button>
         </div>
         <div class="edit-bar" id="edit-bar">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--vl)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          <div class="edit-bar-txt" id="edit-bar-txt">Редактирование</div>
-          <button class="edit-bar-cancel" onclick="cancelEdit()">✕</button>
+          <div class="edit-bar-txt" id="edit-bar-txt">Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ</div>
+          <button class="edit-bar-cancel" onclick="cancelEdit()">вњ•</button>
         </div>
 
         <!-- input -->
         <div class="inp-wrap">
           <div class="inp-imgs" id="inp-imgs"></div>
+          <div class="inp-files" id="inp-files"></div>
           <div class="inp-row">
-            <button class="inp-att" onclick="document.getElementById('f-inp').click()" title="Прикрепить фото">
+            <button class="inp-att" onclick="document.getElementById('f-inp').click()" title="РџСЂРёРєСЂРµРїРёС‚СЊ С„РѕС‚Рѕ">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             </button>
             <input type="file" id="f-inp" accept="image/*" multiple style="display:none" onchange="attachImgs(this)">
+            <button class="inp-att" onclick="document.getElementById('ff-inp').click()" title="РџСЂРёРєСЂРµРїРёС‚СЊ С„Р°Р№Р»">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.2-9.19a4 4 0 1 1 5.65 5.65l-9.2 9.2a2 2 0 1 1-2.83-2.83l8.49-8.48"/></svg>
+            </button>
+            <input type="file" id="ff-inp" multiple style="display:none" onchange="attachFiles(this)">
             <div class="inp-box">
-              <textarea class="inp-ta" id="ta" placeholder="Сообщение…" rows="1"
+              <textarea class="inp-ta" id="ta" placeholder="РЎРѕРѕР±С‰РµРЅРёРµвЂ¦" rows="1"
                 oninput="onTaInput(this)"
                 onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"></textarea>
               <div class="emo-rel">
@@ -584,7 +602,7 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
             <button class="inp-send" id="send-btn" onclick="send()" disabled>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
-            <button class="voice-rec-btn" id="voice-btn" title="Зажмите для записи"
+            <button class="voice-rec-btn" id="voice-btn" title="Р—Р°Р¶РјРёС‚Рµ РґР»СЏ Р·Р°РїРёСЃРё"
               onmousedown="vStartHold(event)" onmouseup="vEndHold(event)" onmouseleave="vCancelIfNotLocked(event)"
               ontouchstart="vStartHold(event)" ontouchend="vEndHold(event)" ontouchcancel="cancelVoice()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
@@ -598,21 +616,21 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
           <div class="v-rec-wave" id="v-rec-wave"></div>
           <div class="v-rec-slide-hint" id="v-slide-hint">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12"><polyline points="19 12 5 12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Свайп — отмена
+            РЎРІР°Р№Рї вЂ” РѕС‚РјРµРЅР°
           </div>
-          <button class="v-lock-btn" id="v-lock-btn" onclick="lockVoice()" title="Зафиксировать">
+          <button class="v-lock-btn" id="v-lock-btn" onclick="lockVoice()" title="Р—Р°С„РёРєСЃРёСЂРѕРІР°С‚СЊ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </button>
         </div>
         <!-- Locked preview bar (after locking) -->
         <div class="v-locked-bar" id="v-locked-bar" style="position:relative">
-          <button class="v-locked-cancel" onclick="cancelVoice()" title="Удалить">
+          <button class="v-locked-cancel" onclick="cancelVoice()" title="РЈРґР°Р»РёС‚СЊ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
           </button>
           <div class="v-rec-dot" style="flex-shrink:0;animation:blink-dot 1s step-start infinite"></div>
           <span class="v-locked-time" id="v-locked-time">0:00</span>
           <div class="v-locked-wave" id="v-locked-wave" style="flex:1;height:28px;display:flex;align-items:center;gap:1.5px;overflow:hidden"></div>
-          <button class="v-locked-send" onclick="sendLockedVoice()" title="Отправить">
+          <button class="v-locked-send" onclick="sendLockedVoice()" title="РћС‚РїСЂР°РІРёС‚СЊ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
@@ -628,18 +646,18 @@ body.light::before{background-image:radial-gradient(circle,rgba(124,58,237,.07) 
 <div class="toast" id="toast-el"></div>
 
 <script>
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  E2E: ECDH P-256 + AES-GCM 256
-//  Правильный алгоритм:
-//    1. Каждый клиент генерирует пару ключей ECDH
-//    2. Публичные ключи обмениваются через сервер
-//    3. AES ключ = deriveKey(мой_приватный, чужой_публичный)
-//    4. У обоих получается одинаковый AES ключ
-// ══════════════════════════════════════════════════════
+//  РџСЂР°РІРёР»СЊРЅС‹Р№ Р°Р»РіРѕСЂРёС‚Рј:
+//    1. РљР°Р¶РґС‹Р№ РєР»РёРµРЅС‚ РіРµРЅРµСЂРёСЂСѓРµС‚ РїР°СЂСѓ РєР»СЋС‡РµР№ ECDH
+//    2. РџСѓР±Р»РёС‡РЅС‹Рµ РєР»СЋС‡Рё РѕР±РјРµРЅРёРІР°СЋС‚СЃСЏ С‡РµСЂРµР· СЃРµСЂРІРµСЂ
+//    3. AES РєР»СЋС‡ = deriveKey(РјРѕР№_РїСЂРёРІР°С‚РЅС‹Р№, С‡СѓР¶РѕР№_РїСѓР±Р»РёС‡РЅС‹Р№)
+//    4. РЈ РѕР±РѕРёС… РїРѕР»СѓС‡Р°РµС‚СЃСЏ РѕРґРёРЅР°РєРѕРІС‹Р№ AES РєР»СЋС‡
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 const E2E = {
   kp: null,      // KeyPair {privateKey, publicKey}
-  myPub: '',     // собственный публичный ключ base64
-  // peerPub[userId] = base64 публичный ключ собеседника
+  myPub: '',     // СЃРѕР±СЃС‚РІРµРЅРЅС‹Р№ РїСѓР±Р»РёС‡РЅС‹Р№ РєР»СЋС‡ base64
+  // peerPub[userId] = base64 РїСѓР±Р»РёС‡РЅС‹Р№ РєР»СЋС‡ СЃРѕР±РµСЃРµРґРЅРёРєР°
   peerPubs: {},
   // aesCache[peerPub_base64] = CryptoKey AES-GCM
   aesCache: {},
@@ -659,7 +677,7 @@ const E2E = {
     );
   },
 
-  // Правильный derive: мой приватный + чужой публичный
+  // РџСЂР°РІРёР»СЊРЅС‹Р№ derive: РјРѕР№ РїСЂРёРІР°С‚РЅС‹Р№ + С‡СѓР¶РѕР№ РїСѓР±Р»РёС‡РЅС‹Р№
   async getAES(peerPubB64) {
     if (this.aesCache[peerPubB64]) return this.aesCache[peerPubB64];
     const peerKey = await this.importPub(peerPubB64);
@@ -698,9 +716,9 @@ function b64dec(b64) {
   return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  API
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 const API = {
   base: '',  // same origin
   tok() { return localStorage.getItem('weave_token') || sessionStorage.getItem('weave_token') || ''; },
@@ -710,7 +728,7 @@ const API = {
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + this.tok(), ...o.headers }
     });
     if (res.status === 401) { logout(); throw 0; }
-    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'Ошибка ' + res.status); }
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'РћС€РёР±РєР° ' + res.status); }
     return res.json();
   },
   chats: ()      => API.r('/chats'),
@@ -719,23 +737,24 @@ const API = {
   user: id       => API.r('/users/' + id)
 };
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  STATE
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 let ME = null, WS = null;
 let allChats = [], filteredChats = [];
 let active = null;   // active chat object
 let msgs = [];
 let pendImgs = [];
+let pendFiles = [];
 let typTimer = null;
 let wsReady = false;
 let _wsRetry = 0;
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  BOOT
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 window.addEventListener('DOMContentLoaded', async () => {
-  // Load user — сначала из localStorage, потом всегда обновляем с сервера
+  // Load user вЂ” СЃРЅР°С‡Р°Р»Р° РёР· localStorage, РїРѕС‚РѕРј РІСЃРµРіРґР° РѕР±РЅРѕРІР»СЏРµРј СЃ СЃРµСЂРІРµСЂР°
   if (!API.tok()) { location.href = 'login.html'; return; }
   const saved = localStorage.getItem('weave_current_user');
   ME = saved ? JSON.parse(saved) : null;
@@ -774,9 +793,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   if (uid) openChat(uid);
 });
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  WEBSOCKET
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 function connectWS() {
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
   WS = new WebSocket(proto + '://' + location.host);
@@ -809,11 +828,11 @@ function connectWS() {
     if (m.type === 'message') {
       const msg = m.message;
       await decryptMsg(msg);
-      // Convert voiceData → blob URL
+      // Convert voiceData в†’ blob URL
       if (msg.voiceData && !msg.voice) {
         try {
           if (msg.voiceData.startsWith('data:')) {
-            // data: URL — конвертируем в blob через atob
+            // data: URL вЂ” РєРѕРЅРІРµСЂС‚РёСЂСѓРµРј РІ blob С‡РµСЂРµР· atob
             const arr = msg.voiceData.split(',');
             const mime = arr[0].match(/:(.*?);/)[1];
             const bstr = atob(arr[1]);
@@ -832,7 +851,8 @@ function connectWS() {
         // Send read receipt
         WS.send(JSON.stringify({ type: 'read', fromId: msg.fromId }));
       }
-      bumpPreview(msg.fromId === ME.id ? msg.toId : msg.fromId, msg.voice ? '🎙 Голосовое' : (msg._display || ''));
+      const incomingPreview = msg.voice ? 'рџЋ™ Р“РѕР»РѕСЃРѕРІРѕРµ' : (msg.files?.length ? 'рџ“Ћ Файл' : (msg._display || ''));
+      bumpPreview(msg.fromId === ME.id ? msg.toId : msg.fromId, incomingPreview);
     }
 
     // Our message was saved by server (update pending)
@@ -852,10 +872,10 @@ function connectWS() {
     // Read receipt: our messages were read
     if (m.type === 'read_receipt') {
       msgs.forEach(x => { if (x.fromId === ME.id) x.read = true; });
-      // Обновляем галочки точечно без полного ре-рендера
+      // РћР±РЅРѕРІР»СЏРµРј РіР°Р»РѕС‡РєРё С‚РѕС‡РµС‡РЅРѕ Р±РµР· РїРѕР»РЅРѕРіРѕ СЂРµ-СЂРµРЅРґРµСЂР°
       document.querySelectorAll('.mst').forEach(el => {
         el.classList.add('rd');
-        // Добавляем вторую галочку если её нет
+        // Р”РѕР±Р°РІР»СЏРµРј РІС‚РѕСЂСѓСЋ РіР°Р»РѕС‡РєСѓ РµСЃР»Рё РµС‘ РЅРµС‚
         if (!el.querySelector('polyline:nth-child(2)')) {
           const pl = document.createElementNS('http://www.w3.org/2000/svg','polyline');
           pl.setAttribute('points','23 6 14 17');
@@ -879,7 +899,7 @@ async function decryptMsg(msg) {
     try {
       msg._display = await E2E.decrypt(msg.senderPublicKey, msg.encryptedText, msg.iv);
     } catch {
-      msg._display = msg.text || '[не удалось расшифровать]';
+      msg._display = msg.text || '[РЅРµ СѓРґР°Р»РѕСЃСЊ СЂР°СЃС€РёС„СЂРѕРІР°С‚СЊ]';
     }
   } else {
     msg._display = msg.text || '';
@@ -888,12 +908,12 @@ async function decryptMsg(msg) {
 
 function wsUI(on) {
   $('wsdot').className = 'ws-dot' + (on ? ' on' : '');
-  $('wslbl').textContent = on ? 'подключено' : 'переподключение…';
+  $('wslbl').textContent = on ? 'РїРѕРґРєР»СЋС‡РµРЅРѕ' : 'РїРµСЂРµРїРѕРґРєР»СЋС‡РµРЅРёРµвЂ¦';
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  CHATS LIST
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 async function loadChats() {
   try {
     allChats = await API.chats();
@@ -909,17 +929,22 @@ function filterChats(q) {
   if (!ql) {
     filteredChats = [...allChats];
   } else {
-    filteredChats = allChats.filter(c =>
-      (c.firstName + ' ' + (c.lastName||'') + ' @' + (c.username||'')).toLowerCase().includes(ql)
-    );
+    filteredChats = allChats.filter(c => {
+      const hay = [
+        c.firstName, c.lastName, c.username,
+        c.lastMessage?.text,
+        c.lastMessage?.files?.map?.(f=>f?.name).join(' ')
+      ].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(ql);
+    });
   }
   renderChats();
-  // Показать "ничего не найдено"
+  // РџРѕРєР°Р·Р°С‚СЊ "РЅРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ"
   if (ql && !filteredChats.length) {
     const el = $('ch-list');
     if (el) el.innerHTML = `<div style="padding:24px;text-align:center;color:var(--mu);font-size:.82rem">
-      <div style="font-size:1.8rem;margin-bottom:8px">🔍</div>
-      Ничего не найдено по «${esc(q)}»
+      <div style="font-size:1.8rem;margin-bottom:8px">рџ”Ќ</div>
+      РќРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ РїРѕ В«${esc(q)}В»
     </div>`;
   }
 }
@@ -931,7 +956,7 @@ function clearChatSearch() {
 
 function renderChats() {
   const el = $('ch-list');
-  // Группы сверху
+  // Р“СЂСѓРїРїС‹ СЃРІРµСЂС…Сѓ
   const groupHtml = groups.map(g => {
     const on = activeGroup?.id === g.id;
     const colors = ['#7C3AED,#2563EB','#DB2777,#7C3AED','#059669,#2563EB'];
@@ -940,21 +965,22 @@ function renderChats() {
         ${esc(g.name[0].toUpperCase())}
       </div>
       <div class="ch-info">
-        <div class="ch-nm">${esc(g.name)} <span class="group-badge">группа</span></div>
-        <div class="ch-pr" style="color:var(--mu);font-size:.75rem">${g.memberCount||''} участников</div>
+        <div class="ch-nm">${esc(g.name)} <span class="group-badge">РіСЂСѓРїРїР°</span></div>
+        <div class="ch-pr" style="color:var(--mu);font-size:.75rem">${g.memberCount||''} СѓС‡Р°СЃС‚РЅРёРєРѕРІ</div>
       </div>
     </div>`;
   }).join('');
 
-  // Личные чаты
+  // Р›РёС‡РЅС‹Рµ С‡Р°С‚С‹
   const chatHtml = filteredChats.map(ch => {
     const on = active?.id === ch.id;
     const ini = ((ch.firstName?.[0]||'')+(ch.lastName?.[0]||'')).toUpperCase();
-    let prev = 'Нет сообщений';
+    let prev = 'РќРµС‚ СЃРѕРѕР±С‰РµРЅРёР№';
     if (ch.lastMessage) {
-      if (ch.lastMessage.voiceData || (ch.lastMessage.text === null && ch.lastMessage.voiceDur)) prev = '🎙 Голосовое';
-      else if (ch.lastMessage.images && JSON.parse(ch.lastMessage.images||'[]').length) prev = '📷 Фото';
-      else { const t = ch.lastMessage.text||(ch.lastMessage.encryptedText?'🔒 Зашифровано':''); prev = t?(t.length>34?t.slice(0,34)+'…':t):'Сообщение'; }
+      if (ch.lastMessage.voiceData || (ch.lastMessage.text === null && ch.lastMessage.voiceDur)) prev = 'рџЋ™ Р“РѕР»РѕСЃРѕРІРѕРµ';
+      else if (Array.isArray(ch.lastMessage.files) && ch.lastMessage.files.length) prev = 'рџ“Ћ Файл';
+      else if (Array.isArray(ch.lastMessage.images) ? ch.lastMessage.images.length : JSON.parse(ch.lastMessage.images||'[]').length) prev = 'рџ“· Р¤РѕС‚Рѕ';
+      else { const t = ch.lastMessage.text||(ch.lastMessage.encryptedText?'рџ”’ Р—Р°С€РёС„СЂРѕРІР°РЅРѕ':''); prev = t?(t.length>34?t.slice(0,34)+'вЂ¦':t):'РЎРѕРѕР±С‰РµРЅРёРµ'; }
     }
     const isOnline = !!E2E.peerPubs[ch.id];
     return `<div class="ch-item${on?' on':''}" onclick="openChat('${ch.id}')">
@@ -963,7 +989,7 @@ function renderChats() {
       </div>
       <div class="ch-info">
         <div class="ch-nm" style="display:flex;align-items:center">${esc(ch.firstName)} ${esc(ch.lastName||'')}${ch.isVerified?verifiedBadge(12):''}</div>
-        <div class="ch-pr">${ch.lastMessage?.fromId===ME?.id?'Вы: ':''}${esc(prev)}</div>
+        <div class="ch-pr">${ch.lastMessage?.fromId===ME?.id?'Р’С‹: ':''}${esc(prev)}</div>
       </div>
       <div class="ch-meta">
         <span class="ch-tm">${fmtT(ch.lastMessage?.createdAt)}</span>
@@ -973,7 +999,7 @@ function renderChats() {
   }).join('');
 
   if (!groupHtml && !chatHtml) {
-    el.innerHTML = '<div style="padding:18px;text-align:center;color:var(--mu);font-size:.8rem">Нет чатов</div>';
+    el.innerHTML = '<div style="padding:18px;text-align:center;color:var(--mu);font-size:.8rem">РќРµС‚ С‡Р°С‚РѕРІ</div>';
     return;
   }
   el.innerHTML = groupHtml + chatHtml;
@@ -988,9 +1014,9 @@ function bumpPreview(chatId, text) {
   }
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  OPEN CHAT
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 async function openChat(uid) {
   // Find or create chat entry
   let chat = allChats.find(c => c.id === uid);
@@ -1000,7 +1026,7 @@ async function openChat(uid) {
       chat = { id: u.id, firstName: u.firstName, lastName: u.lastName, username: u.username, avatarColor: u.avatarColor, unreadCount: 0 };
       allChats.unshift(chat);
       filteredChats = [...allChats];
-    } catch { toast('Пользователь не найден'); return; }
+    } catch { toast('РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ'); return; }
   }
   active = chat;
   chat.unreadCount = 0;
@@ -1028,7 +1054,7 @@ async function openChat(uid) {
 
 function updateEncLabel() {
   const has = active && !!E2E.peerPubs[active.id];
-  $('d-enc-lbl').textContent = has ? 'сквозное шифрование активно' : 'ключ получателя ожидается…';
+  $('d-enc-lbl').textContent = has ? 'СЃРєРІРѕР·РЅРѕРµ С€РёС„СЂРѕРІР°РЅРёРµ Р°РєС‚РёРІРЅРѕ' : 'РєР»СЋС‡ РїРѕР»СѓС‡Р°С‚РµР»СЏ РѕР¶РёРґР°РµС‚СЃСЏвЂ¦';
 }
 
 async function loadHistory(uid) {
@@ -1037,7 +1063,7 @@ async function loadHistory(uid) {
     msgs = [];
     for (const m of raw) {
       await decryptMsg(m);
-      // Convert voiceData (base64 data: URL) → blob URL for playback
+      // Convert voiceData (base64 data: URL) в†’ blob URL for playback
       if (m.voiceData && !m.voice) {
         try {
           if (m.voiceData.startsWith('data:')) {
@@ -1058,16 +1084,16 @@ async function loadHistory(uid) {
       msgs.push(m);
     }
     renderMsgs();
-  } catch (e) { toast('Ошибка загрузки: ' + e.message); }
+  } catch (e) { toast('РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё: ' + e.message); }
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  RENDER MESSAGES
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 function renderMsgs() {
   const el = $('msgs');
   if (!msgs.length) {
-    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:.84rem">Начните переписку</div>';
+    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:.84rem">РќР°С‡РЅРёС‚Рµ РїРµСЂРµРїРёСЃРєСѓ</div>';
     return;
   }
 
@@ -1089,14 +1115,30 @@ function renderMsgs() {
 
     const txt = m._display || m.text || '';
     let body = '';
-    if (txt === '[зашифровано]' || txt === '[не удалось расшифровать]') {
+    if (txt === '[Р·Р°С€РёС„СЂРѕРІР°РЅРѕ]' || txt === '[РЅРµ СѓРґР°Р»РѕСЃСЊ СЂР°СЃС€РёС„СЂРѕРІР°С‚СЊ]') {
       body += `<span style="color:var(--mu);font-style:italic">${txt}</span>`;
     } else if (txt) {
       body += `<span>${esc(txt).replace(/\n/g,'<br>')}</span>`;
     }
-    if (m._pnd) body += '<br><span style="font-size:.6rem;color:var(--mu2)">отправка…</span>';
+    if (m._pnd) body += '<br><span style="font-size:.6rem;color:var(--mu2)">РѕС‚РїСЂР°РІРєР°вЂ¦</span>';
     if (m.images?.length) {
       m.images.forEach(src => { body += `<img class="mbbl-img" src="${src}" onclick="openLb('${src}')" loading="lazy">`; });
+    }
+    if (m.files?.length) {
+      body += `<div class="mbbl-files">`;
+      m.files.forEach((f, i) => {
+        const n = esc(f?.name || `file_${i + 1}`);
+        const sz = fmtFileSize(f?.size || 0);
+        const href = escAttr(f?.data || '#');
+        body += `<a class="mbbl-file" href="${href}" download="${n}" target="_blank" rel="noopener noreferrer">
+          <span class="mbbl-file-ic">📎</span>
+          <span style="min-width:0;flex:1">
+            <span class="mbbl-file-nm">${n}</span>
+            <span class="mbbl-file-sz">${sz}</span>
+          </span>
+        </a>`;
+      });
+      body += `</div>`;
     }
     if (m.voice) {
       const dur = m.voice.dur || 0;
@@ -1123,7 +1165,7 @@ function renderMsgs() {
       <div>
         <div class="mbbl">${body}
           <div class="mftr">
-            ${m.edited?'<span style="font-size:.6rem;color:var(--mu2);margin-right:3px">изм.</span>':''}
+            ${m.edited?'<span style="font-size:.6rem;color:var(--mu2);margin-right:3px">РёР·Рј.</span>':''}
             <span class="mtm">${t}</span>${chk}
           </div>
           ${m._reactions?.length ? `<div class="msg-reacts">${m._reactions.map(r=>`<span class="msg-react${r.mine?' mine':''}" onclick="doMsgReact('${r.emoji}')">${r.emoji}<span class="rn">${r.n}</span></span>`).join('')}</div>` : ''}
@@ -1137,40 +1179,79 @@ function renderMsgs() {
 }
 function scrollToBottom(){const el=$('msgs');if(el)el.scrollTop=el.scrollHeight;}
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  SEND
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 async function send() {
   const ta = $('ta');
   const text = ta.value.trim();
-  // Если режим редактирования
+  // Р•СЃР»Рё СЂРµР¶РёРј СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
   if (editMsgId) {
     if (!text) { cancelEdit(); return; }
     await submitEdit(text);
     $('send-btn').disabled = false;
     return;
   }
-  if (!text && !pendImgs.length || !active) return;
+  if ((!text && !pendImgs.length && !pendFiles.length) || (!active && !activeGroup)) return;
   ta.value = ''; ta.style.height = 'auto';
   $('send-btn').disabled = true;
 
   const imgs = [...pendImgs];
+  const files = [...pendFiles];
   pendImgs = []; renderPendImgs();
+  pendFiles = []; renderPendFiles();
+
+  if (activeGroup && !active) {
+    const pndId = 'gpnd_' + Date.now();
+    const optimistic = {
+      id: pndId,
+      fromId: ME.id,
+      text: text || null,
+      _display: text || '',
+      images: imgs,
+      files,
+      createdAt: new Date().toISOString(),
+      author: {
+        id: ME.id,
+        firstName: ME.firstName,
+        lastName: ME.lastName,
+        avatarColor: ME.avatarColor
+      },
+      _pnd: true
+    };
+    msgs.push(optimistic);
+    renderGroupMsgs();
+    scrollToBottom();
+    try {
+      const saved = await API.r('/groups/' + activeGroup.id + '/messages', {
+        method:'POST',
+        body: JSON.stringify({ text: text || null, images: imgs, files })
+      });
+      const i = msgs.findIndex(m => m.id === pndId);
+      if (i !== -1) msgs[i] = { ...saved, _display: saved.text || '', _pnd: false };
+      renderGroupMsgs();
+    } catch (e) {
+      toast('Ошибка отправки: ' + (e?.message || e));
+      msgs = msgs.filter(m => m.id !== pndId);
+      renderGroupMsgs();
+    }
+    return;
+  }
 
   // Optimistic
   const opt = {
     id: 'pnd_' + Date.now(), fromId: ME.id, toId: active.id,
-    text, _display: text, images: imgs,
+    text, _display: text, images: imgs, files,
     createdAt: new Date().toISOString(), read: false, _pnd: true
   };
   msgs.push(opt);
   renderMsgs();
 
   try {
-    // Если WS ещё не готов — ждём до 5 сек (актуально после cold start на Render)
+    // Р•СЃР»Рё WS РµС‰С‘ РЅРµ РіРѕС‚РѕРІ вЂ” Р¶РґС‘Рј РґРѕ 5 СЃРµРє (Р°РєС‚СѓР°Р»СЊРЅРѕ РїРѕСЃР»Рµ cold start РЅР° Render)
     if (!wsReady) {
       await new Promise((res, rej) => {
-        const t = setTimeout(() => res(), 5000); // таймаут — продолжим без WS
+        const t = setTimeout(() => res(), 5000); // С‚Р°Р№РјР°СѓС‚ вЂ” РїСЂРѕРґРѕР»Р¶РёРј Р±РµР· WS
         const check = setInterval(() => { if (wsReady) { clearInterval(check); clearTimeout(t); res(); } }, 200);
       });
     }
@@ -1185,51 +1266,55 @@ async function send() {
         encryptedText: enc,
         iv,
         senderPublicKey: E2E.myPub,
-        images: imgs
+        images: imgs,
+        files
       }));
     } else if (wsReady) {
-      // Peer key not yet available — send plain via WS (will be encrypted once key arrives)
+      // Peer key not yet available вЂ” send plain via WS (will be encrypted once key arrives)
       WS.send(JSON.stringify({
         type: 'message',
         toId: active.id,
-        plainText: text,
-        images: imgs
+        plainText: text || (files.length ? '[файл]' : ''),
+        images: imgs,
+        files
       }));
     }
 
     // Always persist via REST (stores in DB, so history loads on refresh)
     let restExtra = {};
     if (peerPub && text) {
-      const enc = await E2E.encrypt(peerPub, text); // шифруем один раз
+      const enc = await E2E.encrypt(peerPub, text); // С€РёС„СЂСѓРµРј РѕРґРёРЅ СЂР°Р·
       restExtra = { encryptedText: enc.enc, iv: enc.iv, senderPublicKey: E2E.myPub };
     }
     if (replyTo) { restExtra.replyToId = replyTo.id; cancelReply(); }
-    const saved = await API.sendREST(active.id, text || '[изображение]', {
+    const fallbackText = files.length ? '[файл]' : '[РёР·РѕР±СЂР°Р¶РµРЅРёРµ]';
+    const saved = await API.sendREST(active.id, text || fallbackText, {
       ttl: _msgTtl > 0 ? _msgTtl : undefined,
       images: imgs,
+      files,
       ...restExtra
     });
 
     const i = msgs.findLastIndex(x => x._pnd);
-    if (i !== -1) msgs[i] = { ...saved, _display: text, images: imgs, _pnd: false };
+    if (i !== -1) msgs[i] = { ...saved, _display: text, images: imgs, files, _pnd: false };
     renderMsgs();
-    bumpPreview(active.id, text || '📷 Фото');
+    bumpPreview(active.id, text || (files.length ? 'рџ“Ћ Файл' : 'рџ“· Р¤РѕС‚Рѕ'));
 
     if (wsReady) WS.send(JSON.stringify({ type: 'typing', toId: active.id, isTyping: false }));
   } catch (e) {
-    toast('Ошибка: ' + (e?.message || e));
+    toast('РћС€РёР±РєР°: ' + (e?.message || e));
     msgs = msgs.filter(x => !x._pnd);
     renderMsgs();
   }
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  INPUT HELPERS
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 function onTaInput(ta) {
   ta.style.height = 'auto';
   ta.style.height = Math.min(ta.scrollHeight, 110) + 'px';
-  $('send-btn').disabled = ta.value.trim().length === 0 && pendImgs.length === 0;
+  $('send-btn').disabled = ta.value.trim().length === 0 && pendImgs.length === 0 && pendFiles.length === 0;
   if (wsReady && active) {
     WS.send(JSON.stringify({ type: 'typing', toId: active.id, isTyping: true }));
     clearTimeout(typTimer);
@@ -1247,32 +1332,72 @@ function attachImgs(inp) {
   inp.value = '';
 }
 
+function attachFiles(inp) {
+  Array.from(inp.files).forEach(async (f) => {
+    if (pendFiles.length >= 10) return;
+    if (f.size > 10 * 1024 * 1024) { toast(`Файл слишком большой: ${f.name}`); return; }
+    const data = await fileToDataUrl(f);
+    pendFiles.push({ name: f.name, type: f.type || 'application/octet-stream', size: f.size, data });
+    renderPendFiles();
+    $('send-btn').disabled = false;
+  });
+  inp.value = '';
+}
+
 function renderPendImgs() {
   $('inp-imgs').innerHTML = pendImgs.map((src, i) =>
-    `<div class="inp-img"><img src="${src}"><button class="inp-img-rm" onclick="rmImg(${i})">✕</button></div>`
+    `<div class="inp-img"><img src="${src}"><button class="inp-img-rm" onclick="rmImg(${i})">вњ•</button></div>`
+  ).join('');
+}
+
+function renderPendFiles() {
+  $('inp-files').innerHTML = pendFiles.map((f, i) =>
+    `<div class="inp-file">
+      <span class="inp-file-ic">📎</span>
+      <span class="inp-file-info">
+        <span class="inp-file-nm">${esc(f.name)}</span>
+        <span class="inp-file-sz">${fmtFileSize(f.size)}</span>
+      </span>
+      <button class="inp-file-rm" onclick="rmFile(${i})">×</button>
+    </div>`
   ).join('');
 }
 
 function rmImg(i) {
   pendImgs.splice(i, 1); renderPendImgs();
   const ta = $('ta');
-  $('send-btn').disabled = ta.value.trim().length === 0 && pendImgs.length === 0;
+  $('send-btn').disabled = ta.value.trim().length === 0 && pendImgs.length === 0 && pendFiles.length === 0;
 }
 
-// ══════════════════════════════════════════════════════
+function rmFile(i) {
+  pendFiles.splice(i, 1); renderPendFiles();
+  const ta = $('ta');
+  $('send-btn').disabled = ta.value.trim().length === 0 && pendImgs.length === 0 && pendFiles.length === 0;
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = (e) => resolve(e.target.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  KEY MODAL
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 function showKeyModal() {
   const peerHas = active && !!E2E.peerPubs[active.id];
-  const myShort = E2E.myPub.slice(0, 20) + '…';
-  const peerShort = peerHas ? E2E.peerPubs[active.id].slice(0, 20) + '…' : 'не получен';
-  toast(`🔑 Мой ключ: ${myShort}  |  ${peerHas ? '✓ E2E активно' : '⏳ Ожидаем ключ'}`);
+  const myShort = E2E.myPub.slice(0, 20) + 'вЂ¦';
+  const peerShort = peerHas ? E2E.peerPubs[active.id].slice(0, 20) + 'вЂ¦' : 'РЅРµ РїРѕР»СѓС‡РµРЅ';
+  toast(`рџ”‘ РњРѕР№ РєР»СЋС‡: ${myShort}  |  ${peerHas ? 'вњ“ E2E Р°РєС‚РёРІРЅРѕ' : 'вЏі РћР¶РёРґР°РµРј РєР»СЋС‡'}`);
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  EMOJI
-// ══════════════════════════════════════════════════════
-const EMOJIS = ['😊','🔥','💜','🚀','✨','🎉','💡','😂','🤔','👀','💪','❤️','🌟','😎','🥺','😭','👍','🤝','👻','🤖','😻','💯','🔮','⚡','🎯','🎊','🤩','😍','🙌','🦋'];
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+const EMOJIS = ['рџЉ','рџ”Ґ','рџ’њ','рџљЂ','вњЁ','рџЋ‰','рџ’Ў','рџ‚','рџ¤”','рџ‘Ђ','рџ’Є','вќ¤пёЏ','рџЊџ','рџЋ','рџҐє','рџ­','рџ‘Ќ','рџ¤ќ','рџ‘»','рџ¤–','рџ»','рџ’Ї','рџ”®','вљЎ','рџЋЇ','рџЋЉ','рџ¤©','рџЌ','рџ™Њ','рџ¦‹'];
 function buildEmo() {
   $('emo-pop').innerHTML = EMOJIS.map(e => `<button class="emo-it" onclick="addEmo('${e}')">${e}</button>`).join('');
 }
@@ -1285,38 +1410,45 @@ function addEmo(e) {
   onTaInput(ta); closeEmo();
 }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  LIGHTBOX
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 function openLb(src) { $('lb-img').src = src; $('lb').classList.add('on'); }
 function closeLb() { $('lb').classList.remove('on'); }
 
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 //  UTILS
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 const avbg = (i=0) => ['linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)','linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)','linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'][+i%6];
 function fmtT(iso) {
   if (!iso) return '';
   const d = new Date(iso), diff = Date.now() - d;
-  if (diff < 60000) return 'сейчас';
-  if (diff < 3600000) return Math.floor(diff/60000) + ' мин';
+  if (diff < 60000) return 'СЃРµР№С‡Р°СЃ';
+  if (diff < 3600000) return Math.floor(diff/60000) + ' РјРёРЅ';
   if (diff < 86400000) return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
   return d.toLocaleDateString('ru', { day:'numeric', month:'short' });
 }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/"/g,'&quot;'); }
+function fmtFileSize(bytes){
+  const n=Number(bytes)||0;
+  if(n<1024) return `${n} B`;
+  if(n<1024*1024) return `${(n/1024).toFixed(1)} KB`;
+  return `${(n/(1024*1024)).toFixed(1)} MB`;
+}
 function $(id) { return document.getElementById(id); }
 function toast(msg, dur=3000) {
   const el = $('toast-el');
   el.textContent = msg; el.classList.add('on');
   clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), dur);
 }
-// ══ VOICE MESSAGES — TELEGRAM STYLE ══════════════════════
+// в•ђв•ђ VOICE MESSAGES вЂ” TELEGRAM STYLE в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 let vmr=null, vaChunks=[], vTimer=null, vSecs=0, vAnimReq=null;
 let vLocked=false, vStream=null, vFinalBlob=null, vFinalSecs=0;
 let vHoldActive=false;
 let curAudio=null, curAudioId=null;
 
-// ── Waveform helpers ──────────────────────────────────────
+// в”Ђв”Ђ Waveform helpers в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 function mkWaveBars(container, count=36, maxH=22){
   container.innerHTML='';
   for(let i=0;i<count;i++){
@@ -1341,7 +1473,7 @@ function genStaticWave(container, count=40){
   }
 }
 
-// ── Hold to record ────────────────────────────────────────
+// в”Ђв”Ђ Hold to record в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 function vStartHold(e){
   e.preventDefault();
   if(vLocked||vmr)return;
@@ -1351,7 +1483,7 @@ function vStartHold(e){
 function vEndHold(e){
   if(!vHoldActive||vLocked)return;
   vHoldActive=false;
-  // Short tap (<0.5s) → cancel
+  // Short tap (<0.5s) в†’ cancel
   if(vSecs<1){cancelVoice();return;}
   stopAndSend();
 }
@@ -1386,7 +1518,7 @@ async function startVoiceRec(){
     },1000);
     vAnimReq=setInterval(()=>animWave($('v-rec-wave')),90);
   }catch(err){
-    toast('⚠️ Нет доступа к микрофону');
+    toast('вљ пёЏ РќРµС‚ РґРѕСЃС‚СѓРїР° Рє РјРёРєСЂРѕС„РѕРЅСѓ');
     resetVUI();
   }
 }
@@ -1441,7 +1573,7 @@ function cancelVoice(){
     vStream?.getTracks().forEach(t=>t.stop());
   }
   resetVUI();
-  toast('🗑 Запись отменена');
+  toast('рџ—‘ Р—Р°РїРёСЃСЊ РѕС‚РјРµРЅРµРЅР°');
 }
 
 function resetVUI(){
@@ -1474,9 +1606,9 @@ async function sendVoiceMsg(blob, dur){
       const i=msgs.findIndex(x=>x.id===pndId);
       if(i!==-1) msgs[i]={...res, voice:{url:objUrl,dur}, _pnd:false};
       renderMsgs();
-      bumpPreview(active.id,'🎙 Голосовое');
+      bumpPreview(active.id,'рџЋ™ Р“РѕР»РѕСЃРѕРІРѕРµ');
     }catch(e){
-      toast('Ошибка: '+(e?.message||String(e)));
+      toast('РћС€РёР±РєР°: '+(e?.message||String(e)));
       msgs=msgs.filter(x=>x.id!==pndId);
       renderMsgs();
     }
@@ -1484,7 +1616,7 @@ async function sendVoiceMsg(blob, dur){
   reader.readAsDataURL(blob);
 }
 
-// ── Playback ─────────────────────────────────────────────
+// в”Ђв”Ђ Playback в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
 function playVoice(id, src, dur){
   const playBtn=$('vp-'+id);
   const wform=document.getElementById('vw-'+id);
@@ -1504,7 +1636,7 @@ function playVoice(id, src, dur){
     document.querySelectorAll(`#vw-${curAudioId} .vm-wbar`).forEach(b=>b.classList.remove('played'));
   }
 
-  if(!src){toast('Аудио недоступно');return;}
+  if(!src){toast('РђСѓРґРёРѕ РЅРµРґРѕСЃС‚СѓРїРЅРѕ');return;}
   const a=new Audio(src);
   curAudio=a; curAudioId=id;
   if(playBtn)playBtn.innerHTML=pauseIco();
@@ -1521,15 +1653,15 @@ function playVoice(id, src, dur){
     if(durEl)durEl.textContent=fmtDur(dur);
     curAudio=null; curAudioId=null;
   };
-  a.onerror=()=>toast('Ошибка воспроизведения');
-  a.play().catch(()=>toast('Ошибка воспроизведения'));
+  a.onerror=()=>toast('РћС€РёР±РєР° РІРѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёСЏ');
+  a.play().catch(()=>toast('РћС€РёР±РєР° РІРѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёСЏ'));
 }
 
 function pIco(){return '<svg viewBox="0 0 24 24" width="14" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';}
 function pauseIco(){return '<svg viewBox="0 0 24 24" width="14" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';}
 function fmtDur(s){s=Math.round(s||0);return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
 
-// Новый чат - поиск пользователей
+// РќРѕРІС‹Р№ С‡Р°С‚ - РїРѕРёСЃРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 let newChatModal = null;
 function openNewChat() {
   if (document.getElementById('new-chat-modal')) return;
@@ -1539,12 +1671,12 @@ function openNewChat() {
   modal.innerHTML = `
     <div style="background:var(--s1);border:1px solid var(--br);border-radius:16px;padding:20px;width:100%;max-width:400px;max-height:70vh;display:flex;flex-direction:column;gap:12px">
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="font-family:'Syne',sans-serif;font-weight:800">Новый чат</div>
-        <button onclick="document.getElementById('new-chat-modal').remove()" style="background:var(--s3);border:1px solid var(--br2);border-radius:7px;width:28px;height:28px;cursor:pointer;color:var(--mu)">✕</button>
+        <div style="font-family:'Syne',sans-serif;font-weight:800">РќРѕРІС‹Р№ С‡Р°С‚</div>
+        <button onclick="document.getElementById('new-chat-modal').remove()" style="background:var(--s3);border:1px solid var(--br2);border-radius:7px;width:28px;height:28px;cursor:pointer;color:var(--mu)">вњ•</button>
       </div>
-      <input id="new-chat-q" placeholder="Поиск пользователей…" style="padding:10px 12px;background:var(--s2);border:1px solid var(--br2);border-radius:10px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none" oninput="searchNewChat(this.value)">
+      <input id="new-chat-q" placeholder="РџРѕРёСЃРє РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№вЂ¦" style="padding:10px 12px;background:var(--s2);border:1px solid var(--br2);border-radius:10px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none" oninput="searchNewChat(this.value)">
       <div id="new-chat-results" style="overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:6px">
-        <div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px">Введите имя или никнейм</div>
+        <div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px">Р’РІРµРґРёС‚Рµ РёРјСЏ РёР»Рё РЅРёРєРЅРµР№Рј</div>
       </div>
     </div>`;
   modal.addEventListener('click', e => { if(e.target===modal) modal.remove(); });
@@ -1555,11 +1687,11 @@ async function searchNewChat(q) {
   clearTimeout(newChatTimer);
   newChatTimer = setTimeout(async () => {
     const el = document.getElementById('new-chat-results');
-    if (!q.trim()) { el.innerHTML='<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px">Введите имя или никнейм</div>'; return; }
+    if (!q.trim()) { el.innerHTML='<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px">Р’РІРµРґРёС‚Рµ РёРјСЏ РёР»Рё РЅРёРєРЅРµР№Рј</div>'; return; }
     try {
       const data = await fetch('/api/users?q='+encodeURIComponent(q)+'&limit=10', {headers:{Authorization:'Bearer '+tok()}}).then(r=>r.json());
       const users = Array.isArray(data) ? data : [];
-      if (!users.length) { el.innerHTML='<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px">Не найдено</div>'; return; }
+      if (!users.length) { el.innerHTML='<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px">РќРµ РЅР°Р№РґРµРЅРѕ</div>'; return; }
       const AVA=['linear-gradient(135deg,#7C3AED,#2563EB)','linear-gradient(135deg,#DB2777,#7C3AED)','linear-gradient(135deg,#059669,#2563EB)','linear-gradient(135deg,#D97706,#DB2777)','linear-gradient(135deg,#06B6D4,#7C3AED)','linear-gradient(135deg,#7C3AED,#06B6D4)'];
       el.innerHTML = users.map(u => {
         const ini = ((u.firstName?.[0]||'')+(u.lastName?.[0]||'')).toUpperCase()||'?';
@@ -1568,7 +1700,7 @@ async function searchNewChat(q) {
           <div><div style="font-weight:600;font-size:.84rem">${u.firstName} ${u.lastName||''}</div><div style="font-size:.72rem;color:var(--mu)">@${u.username}</div></div>
         </div>`;
       }).join('');
-    } catch(e) { el.innerHTML='<div style="color:var(--er);font-size:.8rem;text-align:center;padding:20px">Ошибка</div>'; }
+    } catch(e) { el.innerHTML='<div style="color:var(--er);font-size:.8rem;text-align:center;padding:20px">РћС€РёР±РєР°</div>'; }
   }, 300);
 }
 function startChatWith(userId, name) {
@@ -1583,7 +1715,7 @@ function logout() {
 }
 </script>
 <script src="theme.js">
-// Мобиле: назад из чата в список
+// РњРѕР±РёР»Рµ: РЅР°Р·Р°Рґ РёР· С‡Р°С‚Р° РІ СЃРїРёСЃРѕРє
 function mobileBackToList(){
   if(window.innerWidth<=600){
     document.getElementById('d-view').style.display='none';
@@ -1596,31 +1728,31 @@ function mobileBackToList(){
 <nav class="mob-nav">
   <a class="mob-nav-btn " href="feed.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    <span>Лента</span>
+    <span>Р›РµРЅС‚Р°</span>
   </a>
   <a class="mob-nav-btn " href="explore.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <span>Поиск</span>
+    <span>РџРѕРёСЃРє</span>
   </a>
   <a class="mob-nav-btn active" href="messages.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span class="mob-nav-badge" id="mob-msg-badge"></span><span>Чаты</span>
+    <span class="mob-nav-badge" id="mob-msg-badge"></span><span>Р§Р°С‚С‹</span>
   </a>
   <a class="mob-nav-btn " href="profile.html">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>Профиль</span>
+    <span>РџСЂРѕС„РёР»СЊ</span>
   </a>
 </nav>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW зарегистрирован:', reg.scope))
-      .catch(err => console.warn('SW ошибка:', err));
+      .then(reg => console.log('SW Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ:', reg.scope))
+      .catch(err => console.warn('SW РѕС€РёР±РєР°:', err));
   });
 }
 
-// Галочка верификации
+// Р“Р°Р»РѕС‡РєР° РІРµСЂРёС„РёРєР°С†РёРё
 function verifiedBadge(size=14){
   return `<svg viewBox="0 0 28 28" width="${size}" height="${size}" style="vertical-align:middle;margin-left:3px;flex-shrink:0;display:inline-block">
     <defs>
@@ -1634,9 +1766,9 @@ function verifiedBadge(size=14){
   </svg>`;
 }
 
-// ══════════════════════════════════════════════════════
-//  КОНТЕКСТНОЕ МЕНЮ СООБЩЕНИЙ
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+//  РљРћРќРўР•РљРЎРўРќРћР• РњР•РќР® РЎРћРћР‘Р©Р•РќРР™
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 let ctxMsgId = null, ctxMsgMine = false, ctxMsgText = '';
 let replyTo = null, editMsgId = null;
 let pinnedMsg = null;
@@ -1647,13 +1779,13 @@ function showMsgCtx(e, msgId, mine, text) {
   const menu = document.getElementById('msg-ctx');
 
   const items = [
-    { icon: '↩️', label: 'Ответить', fn: `replyToMsg('${msgId}','${(text||'').replace(/'/g,"\\'")}')` },
-    mine ? { icon: '✏️', label: 'Редактировать', fn: `startEditMsg('${msgId}','${(text||'').replace(/'/g,"\\'")}')` } : null,
-    { icon: '📋', label: 'Копировать', fn: `copyMsg('${msgId}')` },
-    { icon: '📌', label: 'Закрепить', fn: `pinMsg('${msgId}')` },
-    { icon: '➡️', label: 'Переслать', fn: `openForward('${msgId}')` },
+    { icon: 'в†©пёЏ', label: 'РћС‚РІРµС‚РёС‚СЊ', fn: `replyToMsg('${msgId}','${(text||'').replace(/'/g,"\\'")}')` },
+    mine ? { icon: 'вњЏпёЏ', label: 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ', fn: `startEditMsg('${msgId}','${(text||'').replace(/'/g,"\\'")}')` } : null,
+    { icon: 'рџ“‹', label: 'РљРѕРїРёСЂРѕРІР°С‚СЊ', fn: `copyMsg('${msgId}')` },
+    { icon: 'рџ“Њ', label: 'Р—Р°РєСЂРµРїРёС‚СЊ', fn: `pinMsg('${msgId}')` },
+    { icon: 'вћЎпёЏ', label: 'РџРµСЂРµСЃР»Р°С‚СЊ', fn: `openForward('${msgId}')` },
     'sep',
-    mine ? { icon: '🗑️', label: 'Удалить', fn: `deleteMsg('${msgId}')`, red: true } : null,
+    mine ? { icon: 'рџ—‘пёЏ', label: 'РЈРґР°Р»РёС‚СЊ', fn: `deleteMsg('${msgId}')`, red: true } : null,
   ].filter(Boolean);
 
   menu.innerHTML = items.map(it => {
@@ -1661,7 +1793,7 @@ function showMsgCtx(e, msgId, mine, text) {
     return `<div class="msg-ctx-item${it.red?' red':''}" onclick="${it.fn};closeCtx()">${it.icon} ${it.label}</div>`;
   }).join('');
 
-  // Позиционирование
+  // РџРѕР·РёС†РёРѕРЅРёСЂРѕРІР°РЅРёРµ
   const x = Math.min(e.clientX, window.innerWidth - 200);
   const y = Math.min(e.clientY, window.innerHeight - 200);
   menu.style.cssText = `display:block;left:${x}px;top:${y}px`;
@@ -1673,13 +1805,13 @@ function closeCtx() {
   if (m) m.style.display = 'none';
 }
 
-// ── Ответить ──
+// в”Ђв”Ђ РћС‚РІРµС‚РёС‚СЊ в”Ђв”Ђ
 function replyToMsg(msgId, text) {
   replyTo = { id: msgId, text };
   const bar = document.getElementById('reply-bar');
   const author = msgs.find(m=>m.id===msgId);
-  document.getElementById('reply-bar-author').textContent = author?.fromId === ME.id ? 'Вы' : (active?.firstName||'');
-  document.getElementById('reply-bar-text').textContent = text || '🎙 Голосовое';
+  document.getElementById('reply-bar-author').textContent = author?.fromId === ME.id ? 'Р’С‹' : (active?.firstName||'');
+  document.getElementById('reply-bar-text').textContent = text || 'рџЋ™ Р“РѕР»РѕСЃРѕРІРѕРµ';
   bar.classList.add('show');
   document.getElementById('ta')?.focus();
 }
@@ -1689,12 +1821,12 @@ function cancelReply() {
   document.getElementById('reply-bar').classList.remove('show');
 }
 
-// ── Редактировать ──
+// в”Ђв”Ђ Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ в”Ђв”Ђ
 function startEditMsg(msgId, text) {
   editMsgId = msgId;
   const ta = document.getElementById('ta');
   if (ta) { ta.value = text; ta.focus(); ta.style.height = 'auto'; ta.style.height = ta.scrollHeight+'px'; }
-  document.getElementById('edit-bar-txt').textContent = 'Редактирование: ' + text.slice(0,40);
+  document.getElementById('edit-bar-txt').textContent = 'Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ: ' + text.slice(0,40);
   document.getElementById('edit-bar').classList.add('show');
 }
 
@@ -1714,34 +1846,34 @@ async function submitEdit(text) {
     cancelEdit();
     renderMsgs();
     return true;
-  } catch(e) { toast('Ошибка редактирования'); return false; }
+  } catch(e) { toast('РћС€РёР±РєР° СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ'); return false; }
 }
 
-// ── Копировать ──
+// в”Ђв”Ђ РљРѕРїРёСЂРѕРІР°С‚СЊ в”Ђв”Ђ
 function copyMsg(msgId) {
   const m = msgs.find(x=>x.id===msgId);
-  if (m) navigator.clipboard?.writeText(m._display||m.text||'').then(()=>toast('Скопировано'));
+  if (m) navigator.clipboard?.writeText(m._display||m.text||'').then(()=>toast('РЎРєРѕРїРёСЂРѕРІР°РЅРѕ'));
 }
 
-// ── Удалить ──
+// в”Ђв”Ђ РЈРґР°Р»РёС‚СЊ в”Ђв”Ђ
 async function deleteMsg(msgId) {
-  if (!confirm('Удалить сообщение?')) return;
+  if (!confirm('РЈРґР°Р»РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёРµ?')) return;
   try {
     await API.r('/messages/'+msgId, { method:'DELETE' });
     msgs = msgs.filter(x=>x.id!==msgId);
     renderMsgs();
-    toast('Сообщение удалено');
-  } catch(e) { toast('Ошибка'); }
+    toast('РЎРѕРѕР±С‰РµРЅРёРµ СѓРґР°Р»РµРЅРѕ');
+  } catch(e) { toast('РћС€РёР±РєР°'); }
 }
 
-// ── Закрепить ──
+// в”Ђв”Ђ Р—Р°РєСЂРµРїРёС‚СЊ в”Ђв”Ђ
 async function pinMsg(msgId) {
   try {
     await API.r('/messages/'+msgId+'/pin', { method:'POST' });
     const m = msgs.find(x=>x.id===msgId);
     if (m) showPinnedBar(m);
-    toast('📌 Сообщение закреплено');
-  } catch(e) { toast('Ошибка'); }
+    toast('рџ“Њ РЎРѕРѕР±С‰РµРЅРёРµ Р·Р°РєСЂРµРїР»РµРЅРѕ');
+  } catch(e) { toast('РћС€РёР±РєР°'); }
 }
 
 async function unpinMsg() {
@@ -1750,13 +1882,13 @@ async function unpinMsg() {
     await API.r('/messages/'+pinnedMsg.messageId+'/pin', { method:'DELETE' });
     pinnedMsg = null;
     document.getElementById('pinned-bar').classList.remove('show');
-    toast('Откреплено');
-  } catch(e) { toast('Ошибка'); }
+    toast('РћС‚РєСЂРµРїР»РµРЅРѕ');
+  } catch(e) { toast('РћС€РёР±РєР°'); }
 }
 
 function showPinnedBar(msg) {
   pinnedMsg = msg;
-  document.getElementById('pinned-bar-text').textContent = msg.text || '🎙 Голосовое';
+  document.getElementById('pinned-bar-text').textContent = msg.text || 'рџЋ™ Р“РѕР»РѕСЃРѕРІРѕРµ';
   document.getElementById('pinned-bar').classList.add('show');
 }
 
@@ -1775,16 +1907,16 @@ async function loadPinned() {
   } catch(e) {}
 }
 
-// ══════════════════════════════════════════════════════
-//  ГРУППЫ
-// ══════════════════════════════════════════════════════
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
+//  Р“Р РЈРџРџР«
+// в•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђв•ђ
 let groups = [], activeGroup = null;
 let grpSelectedMembers = new Set();
 
 async function loadGroups() {
   try {
     groups = await API.r('/groups');
-    renderChats(); // перерисуем список с группами
+    renderChats(); // РїРµСЂРµСЂРёСЃСѓРµРј СЃРїРёСЃРѕРє СЃ РіСЂСѓРїРїР°РјРё
   } catch(e) {}
 }
 
@@ -1815,8 +1947,8 @@ async function loadGroupCandidates() {
           <div style="font-size:.74rem;color:var(--mu)">@${esc(u.username)}</div>
         </div>
       </label>`;
-    }).join('') || '<div style="color:var(--mu);font-size:.8rem;padding:8px">Нет пользователей</div>';
-  } catch(e) { el.innerHTML = '<div style="color:var(--er);font-size:.8rem;padding:8px">Ошибка загрузки</div>'; }
+    }).join('') || '<div style="color:var(--mu);font-size:.8rem;padding:8px">РќРµС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№</div>';
+  } catch(e) { el.innerHTML = '<div style="color:var(--er);font-size:.8rem;padding:8px">РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё</div>'; }
 }
 
 function grpToggleMember(uid) {
@@ -1827,8 +1959,8 @@ function grpToggleMember(uid) {
 async function submitCreateGroup() {
   const name = document.getElementById('grp-name').value.trim();
   const desc = document.getElementById('grp-desc').value.trim();
-  if (!name) { toast('Введите название группы', 'err'); return; }
-  if (grpSelectedMembers.size === 0) { toast('Добавьте хотя бы одного участника', 'err'); return; }
+  if (!name) { toast('Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РіСЂСѓРїРїС‹', 'err'); return; }
+  if (grpSelectedMembers.size === 0) { toast('Р”РѕР±Р°РІСЊС‚Рµ С…РѕС‚СЏ Р±С‹ РѕРґРЅРѕРіРѕ СѓС‡Р°СЃС‚РЅРёРєР°', 'err'); return; }
   try {
     const g = await API.r('/groups', {
       method:'POST',
@@ -1837,40 +1969,40 @@ async function submitCreateGroup() {
     groups.unshift(g);
     closeCreateGroup();
     renderChats();
-    toast('✅ Группа «'+name+'» создана');
-  } catch(e) { toast('Ошибка: '+e.message, 'err'); }
+    toast('вњ… Р“СЂСѓРїРїР° В«'+name+'В» СЃРѕР·РґР°РЅР°');
+  } catch(e) { toast('РћС€РёР±РєР°: '+e.message, 'err'); }
 }
 
 async function openGroup(groupId) {
   activeGroup = groups.find(g=>g.id===groupId);
   if (!activeGroup) return;
-  active = null; // сбросить личный чат
+  active = null; // СЃР±СЂРѕСЃРёС‚СЊ Р»РёС‡РЅС‹Р№ С‡Р°С‚
 
-  // Показать диалог
+  // РџРѕРєР°Р·Р°С‚СЊ РґРёР°Р»РѕРі
   document.getElementById('d-empty').style.display = 'none';
   document.getElementById('d-view').style.display = 'flex';
   document.getElementById('pinned-bar').classList.remove('show');
 
-  // Шапка
+  // РЁР°РїРєР°
   const av = document.getElementById('d-av');
   av.textContent = activeGroup.name[0].toUpperCase();
   av.style.background = avbg(activeGroup.avatar||0);
   document.getElementById('d-nm').textContent = activeGroup.name;
-  document.getElementById('d-enc-lbl').textContent = `${activeGroup.memberCount||'?'} участников`;
+  document.getElementById('d-enc-lbl').textContent = `${activeGroup.memberCount||'?'} СѓС‡Р°СЃС‚РЅРёРєРѕРІ`;
 
-  // Загрузить сообщения
+  // Р—Р°РіСЂСѓР·РёС‚СЊ СЃРѕРѕР±С‰РµРЅРёСЏ
   try {
     const raw = await API.r('/groups/'+groupId+'/messages');
     msgs = raw.map(m=>({...m, _display:m.text||'', fromId:m.fromId, toId:'grp:'+groupId}));
     renderGroupMsgs();
-  } catch(e) { toast('Ошибка загрузки'); }
+  } catch(e) { toast('РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё'); }
   renderChats();
 }
 
 function renderGroupMsgs() {
   const el = document.getElementById('msgs');
   if (!msgs.length) {
-    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:.84rem">Нет сообщений</div>';
+    el.innerHTML = '<div style="flex:1;display:flex;align-items:center;justify-content:center;color:var(--mu);font-size:.84rem">РќРµС‚ СЃРѕРѕР±С‰РµРЅРёР№</div>';
     return;
   }
   let html = '', lastDate = '';
@@ -1881,11 +2013,30 @@ function renderGroupMsgs() {
     const t = new Date(m.createdAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
     const ini = ((m.author?.firstName?.[0]||'')+(m.author?.lastName?.[0]||'')).toUpperCase();
     const txt = esc(m.text||'').replace(/\n/g,'<br>');
+    let body = txt ? `<span>${txt}</span>` : '';
+    if (m.images?.length) {
+      m.images.forEach(src => { body += `<img class="mbbl-img" src="${src}" onclick="openLb('${src}')" loading="lazy">`; });
+    }
+    if (m.files?.length) {
+      body += `<div class="mbbl-files">`;
+      m.files.forEach((f, i) => {
+        const n = esc(f?.name || `file_${i + 1}`);
+        const href = escAttr(f?.data || '#');
+        body += `<a class="mbbl-file" href="${href}" download="${n}" target="_blank" rel="noopener noreferrer">
+          <span class="mbbl-file-ic">📎</span>
+          <span style="min-width:0;flex:1">
+            <span class="mbbl-file-nm">${n}</span>
+            <span class="mbbl-file-sz">${fmtFileSize(f?.size || 0)}</span>
+          </span>
+        </a>`;
+      });
+      body += `</div>`;
+    }
     html += `<div class="mrow${mine?' me':''}" id="msg-${m.id}" oncontextmenu="showMsgCtx(event,'${m.id}',${mine},'${(m.text||'').replace(/'/g,"\\'")}')">
       ${!mine?`<div class="sm-av" style="background:${avbg(m.author?.avatarColor||0)}">${ini}</div>`:''}
       <div>
         ${!mine?`<div style="font-size:.7rem;color:var(--vl);margin-bottom:2px;padding-left:2px">${esc(m.author?.firstName||'')} ${esc(m.author?.lastName||'')}</div>`:''}
-        <div class="mbbl">${txt?`<span>${txt}</span>`:''}
+        <div class="mbbl">${body}
           <div class="mftr"><span class="mtm">${t}</span></div>
         </div>
       </div>
@@ -1895,7 +2046,7 @@ function renderGroupMsgs() {
   el.scrollTop = el.scrollHeight;
 }
 
-// ══ РЕАКЦИИ НА СООБЩЕНИЯ ══
+// в•ђв•ђ Р Р•РђРљР¦РР РќРђ РЎРћРћР‘Р©Р•РќРРЇ в•ђв•ђ
 let _reactMsgId = null;
 function showMsgReactPicker(msgId, e) {
   _reactMsgId = msgId;
@@ -1914,13 +2065,13 @@ async function doMsgReact(emoji) {
   if (!_reactMsgId) return;
   try {
     const res = await API.r('/messages/'+_reactMsgId+'/react', {method:'POST', body:JSON.stringify({emoji})});
-    // Обновить локально
+    // РћР±РЅРѕРІРёС‚СЊ Р»РѕРєР°Р»СЊРЅРѕ
     const msg = msgs.find(m => m.id === _reactMsgId);
     if (msg) { msg._reactions = res.reactions; renderMsgs(); }
-  } catch(e) { toast('Ошибка реакции'); }
+  } catch(e) { toast('РћС€РёР±РєР° СЂРµР°РєС†РёРё'); }
 }
 
-// ══ ФОРВАРД ══
+// в•ђв•ђ Р¤РћР Р’РђР Р” в•ђв•ђ
 let _fwdMsgId = null;
 function openForward(msgId) {
   _fwdMsgId = msgId;
@@ -1958,13 +2109,14 @@ async function sendForward(toId) {
   closeFwd();
   if (!msg) return;
   try {
-    const fwdText = '↩ ' + (msg._display || msg.text || '[медиа]');
-    await API.r('/messages', {method:'POST', body:JSON.stringify({toId, text: fwdText, images: msg.images||[]})});
-    toast('✅ Сообщение переслано');
-  } catch(e) { toast('Ошибка пересылки'); }
+    const fallback = msg.files?.length ? '[файл]' : '[РјРµРґРёР°]';
+    const fwdText = 'в†© ' + (msg._display || msg.text || fallback);
+    await API.r('/messages', {method:'POST', body:JSON.stringify({toId, text: fwdText, images: msg.images||[], files: msg.files||[]})});
+    toast('вњ… РЎРѕРѕР±С‰РµРЅРёРµ РїРµСЂРµСЃР»Р°РЅРѕ');
+  } catch(e) { toast('РћС€РёР±РєР° РїРµСЂРµСЃС‹Р»РєРё'); }
 }
 
-// ══ ПОИСК В ЧАТЕ ══
+// в•ђв•ђ РџРћРРЎРљ Р’ Р§РђРўР• в•ђв•ђ
 let _searchResults = [], _searchIdx = 0;
 function toggleMsgSearch() {
   const bar = document.getElementById('msg-search-bar');
@@ -1986,9 +2138,10 @@ function searchInChat(q) {
   const ql = q.toLowerCase();
   msgs.forEach(m => {
     const txt = (m._display || m.text || '').toLowerCase();
-    if (txt.includes(ql)) _searchResults.push(m.id);
+    const fileNames = (m.files || []).map(f => (f.name || '').toLowerCase()).join(' ');
+    if (txt.includes(ql) || fileNames.includes(ql)) _searchResults.push(m.id);
   });
-  document.getElementById('msg-search-cnt').textContent = _searchResults.length ? `1/${_searchResults.length}` : 'Не найдено';
+  document.getElementById('msg-search-cnt').textContent = _searchResults.length ? `1/${_searchResults.length}` : 'РќРµ РЅР°Р№РґРµРЅРѕ';
   if (_searchResults.length) { _searchIdx = 0; highlightAndScroll(); }
 }
 function navSearchResult(dir) {
@@ -2015,7 +2168,7 @@ function clearSearchHighlights() {
   });
 }
 
-// ══ САМОУДАЛЯЮЩИЕСЯ СООБЩЕНИЯ ══
+// в•ђв•ђ РЎРђРњРћРЈР”РђР›РЇР®Р©РР•РЎРЇ РЎРћРћР‘Р©Р•РќРРЇ в•ђв•ђ
 let _msgTtl = 0;
 function toggleTtlPicker() {
   const p = document.getElementById('ttl-picker');
@@ -2027,12 +2180,12 @@ function setTtl(seconds) {
   if (btn) btn.style.color = seconds > 0 ? 'var(--v)' : 'var(--mu)';
   const p = document.getElementById('ttl-picker');
   if (p) p.style.display = 'none';
-  const labels = {60:'1м', 300:'5м', 3600:'1ч', 86400:'1д', 0:''};
-  if (btn) btn.textContent = seconds > 0 ? '⏱'+labels[seconds] : '⏱';
-  toast(seconds > 0 ? `⏱ Сообщение удалится через ${labels[seconds]}` : 'Самоудаление выкл');
+  const labels = {60:'1Рј', 300:'5Рј', 3600:'1С‡', 86400:'1Рґ', 0:''};
+  if (btn) btn.textContent = seconds > 0 ? 'вЏ±'+labels[seconds] : 'вЏ±';
+  toast(seconds > 0 ? `вЏ± РЎРѕРѕР±С‰РµРЅРёРµ СѓРґР°Р»РёС‚СЃСЏ С‡РµСЂРµР· ${labels[seconds]}` : 'РЎР°РјРѕСѓРґР°Р»РµРЅРёРµ РІС‹РєР»');
 }
 
-// ══ ИНФО ПАНЕЛЬ ЧАТА ══
+// в•ђв•ђ РРќР¤Рћ РџРђРќР•Р›Р¬ Р§РђРўРђ в•ђв•ђ
 let _chatInfoOpen = false;
 function toggleChatInfo() {
   _chatInfoOpen = !_chatInfoOpen;
@@ -2048,51 +2201,51 @@ function toggleChatInfo() {
     const st = document.getElementById('ci-status');
     if (st) st.textContent = active.status || '';
     const blkLbl = document.getElementById('block-btn-lbl');
-    if (blkLbl) blkLbl.textContent = active._blocked ? 'Разблокировать' : 'Заблокировать';
+    if (blkLbl) blkLbl.textContent = active._blocked ? 'Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ' : 'Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ';
   }
 }
 
 async function clearChatHistory() {
-  if (!active || !confirm('Очистить всю переписку?')) return;
+  if (!active || !confirm('РћС‡РёСЃС‚РёС‚СЊ РІСЃСЋ РїРµСЂРµРїРёСЃРєСѓ?')) return;
   try {
     await API.r('/chats/'+active.id+'/clear', {method:'DELETE'});
     msgs = []; renderMsgs();
     bumpPreview(active.id, '');
-    toast('✅ Переписка очищена');
-  } catch(e) { toast('Ошибка'); }
+    toast('вњ… РџРµСЂРµРїРёСЃРєР° РѕС‡РёС‰РµРЅР°');
+  } catch(e) { toast('РћС€РёР±РєР°'); }
 }
 
 async function blockUser() {
   if (!active) return;
   const blocked = active._blocked;
-  if (!blocked && !confirm(`${blocked?'Разблокировать':'Заблокировать'} @${active.username}?`)) return;
+  if (!blocked && !confirm(`${blocked?'Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ':'Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ'} @${active.username}?`)) return;
   try {
     const res = await API.r('/users/'+active.id+'/block', {method:'POST'});
     active._blocked = res.blocked;
     const lbl = document.getElementById('block-btn-lbl');
-    if (lbl) lbl.textContent = res.blocked ? 'Разблокировать' : 'Заблокировать';
-    toast(res.blocked ? '🚫 Пользователь заблокирован' : '✅ Разблокирован');
-  } catch(e) { toast('Ошибка'); }
+    if (lbl) lbl.textContent = res.blocked ? 'Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ' : 'Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ';
+    toast(res.blocked ? 'рџљ« РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ' : 'вњ… Р Р°Р·Р±Р»РѕРєРёСЂРѕРІР°РЅ');
+  } catch(e) { toast('РћС€РёР±РєР°'); }
 }
 </script>
 
-<!-- Контекстное меню сообщения -->
+<!-- РљРѕРЅС‚РµРєСЃС‚РЅРѕРµ РјРµРЅСЋ СЃРѕРѕР±С‰РµРЅРёСЏ -->
 <div id="msg-ctx" class="msg-ctx" style="display:none" onmouseleave="closeCtx()"></div>
-<div id="msg-react-picker" class="msg-react-picker" onmouseleave="closeMsgReactPicker()"><span class="msg-react-opt" onclick="doMsgReact('❤️')">❤️</span><span class="msg-react-opt" onclick="doMsgReact('😂')">😂</span><span class="msg-react-opt" onclick="doMsgReact('🔥')">🔥</span><span class="msg-react-opt" onclick="doMsgReact('👍')">👍</span><span class="msg-react-opt" onclick="doMsgReact('😮')">😮</span><span class="msg-react-opt" onclick="doMsgReact('😢')">😢</span></div>
+<div id="msg-react-picker" class="msg-react-picker" onmouseleave="closeMsgReactPicker()"><span class="msg-react-opt" onclick="doMsgReact('вќ¤пёЏ')">вќ¤пёЏ</span><span class="msg-react-opt" onclick="doMsgReact('рџ‚')">рџ‚</span><span class="msg-react-opt" onclick="doMsgReact('рџ”Ґ')">рџ”Ґ</span><span class="msg-react-opt" onclick="doMsgReact('рџ‘Ќ')">рџ‘Ќ</span><span class="msg-react-opt" onclick="doMsgReact('рџ®')">рџ®</span><span class="msg-react-opt" onclick="doMsgReact('рџў')">рџў</span></div>
 
-<!-- Создать группу -->
+<!-- РЎРѕР·РґР°С‚СЊ РіСЂСѓРїРїСѓ -->
 <div class="grp-modal" id="grp-modal">
   <div class="grp-box">
-    <div class="grp-title">👥 Создать группу</div>
-    <input class="grp-inp" id="grp-name" placeholder="Название группы" maxlength="50">
-    <input class="grp-inp" id="grp-desc" placeholder="Описание (необязательно)" maxlength="120">
-    <div style="font-size:.78rem;color:var(--mu);font-weight:600;margin-bottom:2px">Участники</div>
+    <div class="grp-title">рџ‘Ґ РЎРѕР·РґР°С‚СЊ РіСЂСѓРїРїСѓ</div>
+    <input class="grp-inp" id="grp-name" placeholder="РќР°Р·РІР°РЅРёРµ РіСЂСѓРїРїС‹" maxlength="50">
+    <input class="grp-inp" id="grp-desc" placeholder="РћРїРёСЃР°РЅРёРµ (РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ)" maxlength="120">
+    <div style="font-size:.78rem;color:var(--mu);font-weight:600;margin-bottom:2px">РЈС‡Р°СЃС‚РЅРёРєРё</div>
     <div class="grp-members" id="grp-members-list">
-      <div style="color:var(--mu);font-size:.8rem;padding:8px">Загрузка...</div>
+      <div style="color:var(--mu);font-size:.8rem;padding:8px">Р—Р°РіСЂСѓР·РєР°...</div>
     </div>
     <div class="grp-btns">
-      <button class="grp-btn grp-btn-cancel" onclick="closeCreateGroup()">Отмена</button>
-      <button class="grp-btn grp-btn-ok" onclick="submitCreateGroup()">Создать</button>
+      <button class="grp-btn grp-btn-cancel" onclick="closeCreateGroup()">РћС‚РјРµРЅР°</button>
+      <button class="grp-btn grp-btn-ok" onclick="submitCreateGroup()">РЎРѕР·РґР°С‚СЊ</button>
     </div>
   </div>
 </div>
@@ -2101,30 +2254,33 @@ async function blockUser() {
 <!-- Forward modal -->
 <div id="fwd-modal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.6);align-items:center;justify-content:center">
   <div style="background:var(--s1);border-radius:20px;padding:20px;width:100%;max-width:360px;margin:16px">
-    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;margin-bottom:14px">Переслать в...</div>
-    <input id="fwd-search" placeholder="Поиск чата..." oninput="filterFwdChats(this.value)" style="width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;margin-bottom:10px">
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem;margin-bottom:14px">РџРµСЂРµСЃР»Р°С‚СЊ РІ...</div>
+    <input id="fwd-search" placeholder="РџРѕРёСЃРє С‡Р°С‚Р°..." oninput="filterFwdChats(this.value)" style="width:100%;background:var(--s2);border:1px solid var(--br2);border-radius:10px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:.84rem;outline:none;margin-bottom:10px">
     <div id="fwd-list" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
-    <button onclick="closeFwd()" style="width:100%;margin-top:12px;padding:10px;border-radius:12px;border:1px solid var(--br);background:none;color:var(--mu);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">Отмена</button>
+    <button onclick="closeFwd()" style="width:100%;margin-top:12px;padding:10px;border-radius:12px;border:1px solid var(--br);background:none;color:var(--mu);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700">РћС‚РјРµРЅР°</button>
   </div>
 </div>
 
 <!-- Chat info panel -->
 <div id="chat-info-panel" style="display:none;position:absolute;top:0;right:0;bottom:0;width:260px;background:var(--s1);border-left:1px solid var(--br);z-index:100;flex-direction:column;padding:20px 16px;gap:8px;overflow-y:auto">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem">Информация</div>
-    <button onclick="toggleChatInfo()" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:1.1rem">✕</button>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.9rem">РРЅС„РѕСЂРјР°С†РёСЏ</div>
+    <button onclick="toggleChatInfo()" style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:1.1rem">вњ•</button>
   </div>
   <div id="ci-ava" style="width:64px;height:64px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:#fff"></div>
   <div id="ci-name" style="text-align:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem"></div>
   <div id="ci-status" style="text-align:center;font-size:.75rem;color:var(--mu);margin-bottom:8px"></div>
   <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px">
     <div onclick="clearChatHistory()" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;font-size:.84rem;transition:background .13s" onmouseover="this.style.background='var(--s3)'" onmouseout="this.style.background=''">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>Очистить историю
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>РћС‡РёСЃС‚РёС‚СЊ РёСЃС‚РѕСЂРёСЋ
     </div>
     <div onclick="blockUser()" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;font-size:.84rem;color:var(--er);transition:background .13s" onmouseover="this.style.background='rgba(248,113,113,.08)'" onmouseout="this.style.background=''">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg><span id="block-btn-lbl">Заблокировать</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg><span id="block-btn-lbl">Р—Р°Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ</span>
     </div>
   </div>
 </div>
 </body>
 </html>
+
+
+
