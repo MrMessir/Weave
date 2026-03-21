@@ -1282,8 +1282,20 @@ app.get('/feed.xml',(req,res)=>{
 
 app.get('*',(req,res)=>{
   if(req.path.startsWith('/api')) return res.status(404).json({error:'Not found'});
-  // Для несуществующих страниц — редирект на index
-  res.sendFile(path.join(__dirname,'..','frontend','index.html'));
+  const fs=require('fs');
+  const filePath=require('path').join(__dirname,'..','frontend',req.path);
+  // Если файл существует — отдать его (это уже сделал express.static, но catchall не должен его перебивать)
+  // Для HTML страниц — отдать напрямую
+  if(req.path.startsWith('/pages/') && fs.existsSync(filePath)){
+    return res.sendFile(filePath);
+  }
+  // Для корневых маршрутов — index.html (SPA редирект)
+  if(!req.path.includes('.') || req.path.endsWith('.html')){
+    const indexPath=require('path').join(__dirname,'..','frontend','index.html');
+    return res.sendFile(indexPath);
+  }
+  // Для всего остального — 404
+  res.status(404).json({error:'Not found'});
 });
 
 // WEBSOCKET

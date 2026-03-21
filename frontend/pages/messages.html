@@ -1211,10 +1211,10 @@ function renderChats() {
     let prev = 'Нет сообщений';
     if (ch.lastMessage) {
       if (ch.lastMessage.voiceData || (ch.lastMessage.text === null && ch.lastMessage.voiceDur)) prev = '🎙 Голосовое';
-      else if (ch.lastMessage.images && JSON.parse(ch.lastMessage.images||'[]').length) prev = '📷 Фото';
+      else if (ch.lastMessage.images && (Array.isArray(ch.lastMessage.images)?ch.lastMessage.images:(JSON.parse(ch.lastMessage.images||'[]'))).length) prev = '📷 Фото';
       else { const t = ch.lastMessage.text||(ch.lastMessage.encryptedText?'🔒 Зашифровано':''); prev = t?(t.length>34?t.slice(0,34)+'…':t):'Сообщение'; }
     }
-    const isOnline = !!E2E.peerPubs[ch.id];
+    const isOnline = onlineUsers.has(ch.id) || !!ch.online;
     return `<div class="ch-item${on?' on':''}" onclick="openChat('${ch.id}')">
       <div class="ch-av" style="background:${avbg(ch.avatarColor)}">${esc(ini)}
         <span class="ch-odot" style="background:${isOnline?'var(--gn)':'var(--mu2)'}"></span>
@@ -1936,7 +1936,8 @@ function logout() {
   sessionStorage.removeItem('weave_token'); location.href = 'login.html';
 }
 </script>
-<script src="theme.js">
+<script src="theme.js"></script>
+<script>
 // Мобиле: назад из чата в список
 function mobileBackToList(){
   if(window.innerWidth<=600){

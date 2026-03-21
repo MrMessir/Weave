@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="mobile-web-app-capable" content="yes">
+  <!-- iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Weave">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="apple-touch-startup-image" href="/icons/icon-512.png">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
+  <link rel="shortcut icon" href="/icons/icon-32.png">
+  <title>Weave — Вход</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --violet:   #7C3AED;
+      --violet-l: #A78BFA;
+      --blue:     #2563EB;
+      --blue-l:   #60A5FA;
+      --cyan:     #06B6D4;
+      --bg:       #09090F;
+      --card:     #14142A;
+      --border:   rgba(124,58,237,.25);
+      --text:     #E8E4FF;
+      --muted:    #6B6B8F;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .blob {
+      position: fixed; border-radius: 50%;
+      filter: blur(90px); opacity: .35;
+      animation: drift 12s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    .blob-1 { width: 480px; height: 480px; background: var(--blue);   top: -140px; right: -100px; animation-delay: 0s; }
+    .blob-2 { width: 380px; height: 380px; background: var(--violet); bottom: -80px; left: -80px;  animation-delay: 4s; }
+    .blob-3 { width: 220px; height: 220px; background: var(--cyan);   top: 40%; left: 20%;         animation-delay: 7s; }
+
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(25px, 18px) scale(1.07); }
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(167,139,250,.15) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    .card {
+      width: min(460px, 94vw);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 48px 44px;
+      box-shadow: 0 0 80px rgba(124,58,237,.25);
+      position: relative; z-index: 1;
+      animation: fadeUp .6s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(36px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.7rem; font-weight: 800;
+      background: linear-gradient(135deg, #C4B5FD, #7DD3FC);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 28px;
+      display: inline-block;
+    }
+    .logo span { opacity: .6; }
+
+    .form-head { margin-bottom: 28px; }
+    .form-head h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 6px;
+    }
+    .form-head p { font-size: .88rem; color: var(--muted); }
+    .form-head p a {
+      color: var(--violet-l); text-decoration: none; font-weight: 500; transition: color .2s;
+    }
+    .form-head p a:hover { color: var(--cyan); }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: .78rem; font-weight: 500;
+      color: var(--muted); margin-bottom: 7px;
+      letter-spacing: .04em; text-transform: uppercase;
+    }
+    .input-wrap { position: relative; }
+    .input-wrap svg.field-icon {
+      position: absolute; left: 14px; top: 50%;
+      transform: translateY(-50%); color: var(--muted);
+      width: 16px; height: 16px; pointer-events: none; transition: color .2s;
+    }
+    input[type=text], input[type=password], input[type=email] {
+      width: 100%; padding: 12px 14px 12px 40px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: .9rem;
+      outline: none; transition: border-color .25s, box-shadow .25s, background .25s;
+    }
+    input:focus {
+      border-color: var(--violet-l);
+      background: rgba(124,58,237,.08);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.18);
+    }
+    input::placeholder { color: rgba(107,107,143,.6); }
+
+    .eye-btn {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 2px; transition: color .2s;
+    }
+    .eye-btn:hover { color: var(--violet-l); }
+
+    .row-extra {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .remember { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .remember input[type=checkbox] { display: none; }
+    .check-box {
+      width: 17px; height: 17px;
+      border: 1.5px solid var(--border); border-radius: 5px;
+      display: grid; place-items: center; transition: background .2s, border-color .2s;
+    }
+    .check-box svg { display: none; width: 10px; height: 10px; color: #fff; }
+    .remember input:checked ~ .check-box { background: var(--violet); border-color: var(--violet); }
+    .remember input:checked ~ .check-box svg { display: block; }
+    .remember span { font-size: .82rem; color: var(--muted); }
+    .forgot { font-size: .82rem; color: var(--violet-l); text-decoration: none; transition: color .2s; }
+    .forgot:hover { color: var(--cyan); }
+
+    .btn-login {
+      width: 100%; padding: 13px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, var(--violet) 0%, var(--blue) 100%);
+      color: #fff; font-family: 'Syne', sans-serif;
+      font-size: .95rem; font-weight: 600; letter-spacing: .02em;
+      cursor: pointer; position: relative; overflow: hidden;
+      transition: transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(124,58,237,.4);
+    }
+    .btn-login::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+      opacity: 0; transition: opacity .2s;
+    }
+    .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(124,58,237,.55); }
+    .btn-login:hover::after { opacity: 1; }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+    .divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+    .divider span { font-size: .78rem; color: var(--muted); }
+
+    .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-social {
+      padding: 10px; background: rgba(255,255,255,.04);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: .82rem; font-weight: 500; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .2s, border-color .2s;
+    }
+    .btn-social:hover { background: rgba(124,58,237,.12); border-color: var(--violet-l); }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+    .shake { animation: shake .35s ease; }
+
+    .toast {
+      position: fixed; bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      padding: 13px 26px; border-radius: 14px;
+      font-family: 'Syne', sans-serif; font-weight: 600; font-size: .9rem;
+      color: #fff; opacity: 0;
+      transition: all .4s cubic-bezier(.22,1,.36,1);
+      z-index: 999; white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: linear-gradient(135deg,#059669,#0891b2); }
+    .toast.error   { background: linear-gradient(135deg,#DC2626,#9333EA); }
+
+    @media (max-width: 500px) {
+      .card { padding: 32px 22px; }
+    }
+  </style>
+<script src="theme.js"></script>
+<script>
+(function(){
+  try{
+    var p=JSON.parse(localStorage.getItem('weave_prefs')||'{}');
+    var t=p.theme||'light';
+    if(t==='light') document.documentElement.classList.add('light');
+    if(t==='amoled') document.documentElement.classList.add('amoled');
+  }catch(e){}
+})();
+</script>
+</head>
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="card">
+    <div class="logo">Weave<span>.</span></div>
+
+    <div class="form-head">
+      <h1>С возвращением 👋</h1>
+      <p>Нет аккаунта? <a href="weave-register.html">Зарегистрироваться</a></p>
+    </div>
+
+    <form id="login-form" onsubmit="handleLogin(event)" autocomplete="off">
+
+      <div class="field">
+        <label>Email или никнейм</label>
+        <div class="input-wrap">
+          <input type="text" id="identifier" placeholder="you@example.com или @username" required/>
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Пароль</label>
+        <div class="input-wrap">
+          <input type="password" id="password" placeholder="Ваш пароль" required/>
+          <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <button type="button" class="eye-btn" onclick="togglePassword()" aria-label="Показать пароль">
+            <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="row-extra">
+        <label class="remember">
+          <input type="checkbox" id="remember"/>
+          <div class="check-box">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="1.5,6 4.5,9 10.5,3"/>
+            </svg>
+          </div>
+          <span>Запомнить меня</span>
+        </label>
+        <a href="#" class="forgot" href='forgot-password.html'>Забыли пароль?</a>
+      </div>
+
+      <button type="submit" class="btn-login" id="login-btn">Войти в Weave</button>
+
+      <div class="divider"><hr/><span>или войти через</span><hr/></div>
+
+      <div class="social-row">
+        <button type="button" class="btn-social" href='forgot-password.html'>
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+          </svg>
+          Google
+        </button>
+        <button type="button" class="btn-social" href='forgot-password.html'>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+          </svg>
+          GitHub
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ==================== API КЛИЕНТ ====================
+    const API = {
+      baseURL: '/api',
+      
+      async request(endpoint, options = {}) {
+        try {
+          const res = await fetch(`${this.baseURL}${endpoint}`, {
+            ...options,
+            headers: {
+              'Content-Type': 'application/json',
+              ...options.headers
+            }
+          });
+          
+          const data = await res.json().catch(() => ({}));
+          
+          if (!res.ok) {
+            throw new Error(data.error || `Ошибка ${res.status}`);
+          }
+          
+          return data;
+        } catch (error) {
+          console.error('API Error:', error);
+          throw error;
+        }
+      },
+      
+      async login(identifier, password) {
+        return this.request('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ identifier, password })
+        });
+      }
+    };
+
+    // ==================== УТИЛИТЫ ====================
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = `toast ${type}`;
+      requestAnimationFrame(() => t.classList.add('show'));
+      setTimeout(() => { t.classList.remove('show'); }, 3200);
+    }
+
+    function showFieldError(inputId, msg) {
+      clearFieldError(inputId);
+      const input = document.getElementById(inputId);
+      const wrap = input.closest('.field');
+      input.style.borderColor = '#F87171';
+      input.style.boxShadow = '0 0 0 3px rgba(248,113,113,.15)';
+      const err = document.createElement('div');
+      err.className = 'field-error';
+      err.style.cssText = 'color:#F87171;font-size:.75rem;margin-top:5px;display:flex;align-items:center;gap:4px;';
+      err.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>${msg}`;
+      wrap.appendChild(err);
+    }
+
+    function clearFieldError(inputId) {
+      const input = document.getElementById(inputId);
+      const wrap = input?.closest('.field');
+      wrap?.querySelector('.field-error')?.remove();
+      if (input) { 
+        input.style.borderColor = ''; 
+        input.style.boxShadow = ''; 
+      }
+    }
+
+    function togglePassword() {
+      const inp = document.getElementById('password');
+      const icon = document.getElementById('eye-icon');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+      } else {
+        inp.type = 'password';
+        icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+      }
+    }
+
+    // ==================== ОБРАБОТЧИК ВХОДА ====================
+    async function handleLogin(e) {
+      e.preventDefault();
+      
+      clearFieldError('identifier');
+      clearFieldError('password');
+
+      const identifier = document.getElementById('identifier').value.trim();
+      const password = document.getElementById('password').value;
+      const remember = document.getElementById('remember').checked;
+
+      if (!identifier) return showFieldError('identifier', 'Введите email или никнейм');
+      if (!password) return showFieldError('password', 'Введите пароль');
+
+      const btn = document.getElementById('login-btn');
+      const originalText = btn.textContent;
+      btn.textContent = 'Входим...';
+      btn.disabled = true;
+
+      try {
+        const data = await API.login(identifier, password);
+        
+        // Сохраняем токен
+        if (remember) {
+          localStorage.setItem('weave_token', data.token);
+        } else {
+          sessionStorage.setItem('weave_token', data.token);
+        }
+        
+        // Сохраняем данные пользователя
+        localStorage.setItem('weave_current_user', JSON.stringify(data.user));
+        
+        btn.innerHTML = '✓ Успешно!';
+        btn.style.background = 'linear-gradient(135deg,#059669,#0891b2)';
+        
+        showToast(`👋 Привет, ${data.user.firstName}!`, 'success');
+        
+        // Переход на ленту
+        setTimeout(() => {
+          window.location.href = 'feed.html';
+        }, 1200);
+        
+      } catch (error) {
+        console.error('Login error:', error);
+        btn.textContent = originalText;
+        btn.disabled = false;
+        
+        if (error.message.includes('401')) {
+          showFieldError('identifier', 'Неверный email/никнейм или пароль');
+          showFieldError('password', '');
+        } else if (error.message.includes('Failed to fetch')) {
+          showToast('❌ Сервер не доступен. Запустите backend!', 'error');
+        } else {
+          showToast('❌ ' + error.message, 'error');
+        }
+        
+        document.getElementById('login-form').classList.add('shake');
+        setTimeout(() => document.getElementById('login-form').classList.remove('shake'), 400);
+      }
+    }
+
+    function handleForgot(e) {
+      e.preventDefault();
+      const identifier = document.getElementById('identifier').value.trim();
+      if (!identifier) {
+        showFieldError('identifier', 'Введите email для восстановления');
+        return;
+      }
+      showToast('📨 Функция восстановления будет позже', 'success');
+    }
+
+    // Очистка ошибок при вводе
+    ['identifier', 'password'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => clearFieldError(id));
+    });
+
+    // Автозаполнение из сессии
+    window.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('weave_token');
+      if (token) {
+        document.getElementById('remember').checked = true;
+      }
+    });
+  </script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW зарегистрирован:', reg.scope))
+      .catch(err => console.warn('SW ошибка:', err));
+  });
+}
+
+// Показать сообщение после верификации
+const vp = new URLSearchParams(location.search);
+if(vp.get('verified')==='ok') {
+  setTimeout(()=>{const el=document.getElementById('toast');if(el){el.textContent='✅ Email подтверждён! Добро пожаловать.';el.style.display='block';setTimeout(()=>el.style.display='none',4000);}},300);
+}
+if(vp.get('verified')==='expired') {
+  setTimeout(()=>{const el=document.getElementById('toast');if(el){el.textContent='⚠️ Ссылка устарела. Войди и запроси новое письмо.';el.style.display='block';setTimeout(()=>el.style.display='none',5000);}},300);
+}
+</script>
+</body>
+</html>
