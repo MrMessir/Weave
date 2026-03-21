@@ -125,7 +125,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS comments (id TEXT PRIMARY KEY,postId TEXT NOT NULL,authorId TEXT NOT NULL,text TEXT NOT NULL,parentId TEXT,createdAt TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS stories (id TEXT PRIMARY KEY,authorId TEXT NOT NULL,slides TEXT DEFAULT '[]',createdAt TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS story_views (storyId TEXT NOT NULL,userId TEXT NOT NULL,PRIMARY KEY(storyId,userId));
-  CREATE TABLE IF NOT EXISTS messages (id TEXT PRIMARY KEY,fromId TEXT NOT NULL,toId TEXT NOT NULL,text TEXT,images TEXT DEFAULT '[]',files TEXT DEFAULT '[]',voiceData TEXT,voiceDur REAL DEFAULT 0,encryptedText TEXT,iv TEXT,senderPublicKey TEXT,read INTEGER DEFAULT 0,createdAt TEXT NOT NULL);
+  CREATE TABLE IF NOT EXISTS messages (id TEXT PRIMARY KEY,fromId TEXT NOT NULL,toId TEXT NOT NULL,text TEXT,images TEXT DEFAULT '[]',voiceData TEXT,voiceDur REAL DEFAULT 0,encryptedText TEXT,iv TEXT,senderPublicKey TEXT,read INTEGER DEFAULT 0,createdAt TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS follows (followerId TEXT NOT NULL,followingId TEXT NOT NULL,PRIMARY KEY(followerId,followingId));
   CREATE INDEX IF NOT EXISTS idx_posts_author ON posts(authorId);
   CREATE INDEX IF NOT EXISTS idx_msg_from ON messages(fromId);
@@ -168,13 +168,22 @@ try{db.exec(`ALTER TABLE posts ADD COLUMN track TEXT DEFAULT NULL`)}catch{}
 try{db.exec(`CREATE TABLE IF NOT EXISTS admin_logs (id TEXT PRIMARY KEY,adminId TEXT NOT NULL,action TEXT NOT NULL,targetId TEXT,targetType TEXT,detail TEXT DEFAULT '',createdAt TEXT NOT NULL)`)}catch{}
 try{db.exec(`CREATE TABLE IF NOT EXISTS groups (id TEXT PRIMARY KEY,name TEXT NOT NULL,avatar INTEGER DEFAULT 0,description TEXT DEFAULT '',ownerId TEXT NOT NULL,createdAt TEXT NOT NULL)`)}catch{}
 try{db.exec(`CREATE TABLE IF NOT EXISTS group_members (groupId TEXT NOT NULL,userId TEXT NOT NULL,role TEXT DEFAULT 'member',joinedAt TEXT NOT NULL,PRIMARY KEY(groupId,userId))`)}catch{}
-try{db.exec(`CREATE TABLE IF NOT EXISTS group_messages (id TEXT PRIMARY KEY,groupId TEXT NOT NULL,fromId TEXT NOT NULL,text TEXT,images TEXT DEFAULT '[]',files TEXT DEFAULT '[]',voiceData TEXT,voiceDur REAL DEFAULT 0,createdAt TEXT NOT NULL)`)}catch{}
+try{db.exec(`CREATE TABLE IF NOT EXISTS group_messages (id TEXT PRIMARY KEY,groupId TEXT NOT NULL,fromId TEXT NOT NULL,text TEXT,images TEXT DEFAULT '[]',voiceData TEXT,voiceDur REAL DEFAULT 0,createdAt TEXT NOT NULL)`)}catch{}
 try{db.exec(`CREATE TABLE IF NOT EXISTS pinned_messages (chatKey TEXT NOT NULL,messageId TEXT NOT NULL,pinnedBy TEXT NOT NULL,pinnedAt TEXT NOT NULL,PRIMARY KEY(chatKey))`)}catch{}
 try{db.exec(`ALTER TABLE messages ADD COLUMN deleted INTEGER DEFAULT 0`)}catch{}
 try{db.exec(`ALTER TABLE messages ADD COLUMN edited INTEGER DEFAULT 0`)}catch{}
 try{db.exec(`ALTER TABLE messages ADD COLUMN replyToId TEXT DEFAULT NULL`)}catch{}
-try{db.exec(`ALTER TABLE messages ADD COLUMN files TEXT DEFAULT '[]'`)}catch{}
-try{db.exec(`ALTER TABLE group_messages ADD COLUMN files TEXT DEFAULT '[]'`)}catch{}
+
+try{db.exec(`ALTER TABLE messages ADD COLUMN fileUrl TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN fileName TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN fileSize INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN fileType TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN forwardFromId TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN forwardFromName TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN sticker TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN replyToId TEXT DEFAULT NULL`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN edited INTEGER DEFAULT 0`)}catch{}
+try{db.exec(`ALTER TABLE messages ADD COLUMN deleted INTEGER DEFAULT 0`)}catch{}
 
 const S = {
   insUser:   db.prepare(`INSERT INTO users(id,firstName,lastName,username,email,password,avatarColor,bio,website,isAdmin,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?)`),
@@ -206,7 +215,7 @@ const S = {
   addSView:  db.prepare(`INSERT OR IGNORE INTO story_views(storyId,userId)VALUES(?,?)`),
   cntSViews: db.prepare(`SELECT COUNT(*) as n FROM story_views WHERE storyId=?`),
   hasSView:  db.prepare(`SELECT 1 FROM story_views WHERE storyId=? AND userId=?`),
-  insMsg:    db.prepare(`INSERT INTO messages(id,fromId,toId,text,images,files,voiceData,voiceDur,encryptedText,iv,senderPublicKey,ttl,replyToId,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`),
+  insMsg:    db.prepare(`INSERT INTO messages(id,fromId,toId,text,images,voiceData,voiceDur,encryptedText,iv,senderPublicKey,ttl,createdAt)VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`),
   markRead:  db.prepare(`UPDATE messages SET read=1 WHERE fromId=? AND toId=? AND read=0`),
   addFollow: db.prepare(`INSERT OR IGNORE INTO follows(followerId,followingId)VALUES(?,?)`),
   rmFollow:  db.prepare(`DELETE FROM follows WHERE followerId=? AND followingId=?`),
@@ -223,31 +232,6 @@ const S = {
 };
 
 const safeJ = (s,d=[])=>{try{return JSON.parse(s||'')}catch{return d}};
-const MAX_ATTACHMENT_COUNT = 10;
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
-
-function normalizeMsgFiles(rawFiles){
-  if(!Array.isArray(rawFiles)) return [];
-  return rawFiles
-    .slice(0, MAX_ATTACHMENT_COUNT)
-    .map((f)=>{
-      if(!f || typeof f!=='object') return null;
-      const name = String(f.name || 'file').slice(0, 160);
-      const type = String(f.type || 'application/octet-stream').slice(0, 120);
-      const data = typeof f.data === 'string' ? f.data : '';
-      const size = Number(f.size || 0);
-      if(!data.startsWith('data:') || data.length > 16 * 1024 * 1024) return null;
-      if(size > MAX_FILE_SIZE_BYTES) return null;
-      return { name, type, size, data };
-    })
-    .filter(Boolean);
-}
-
-function isBlockedEither(a,b){
-  if(!a || !b) return false;
-  return !!db.prepare(`SELECT 1 FROM blocked_users WHERE (blockerId=? AND blockedId=?) OR (blockerId=? AND blockedId=?) LIMIT 1`)
-    .get(a,b,b,a);
-}
 function pub(u){
   if(!u)return null;
   const{password,...r}=u;
@@ -665,74 +649,61 @@ app.post('/api/stories/:id/view',auth,(req,res)=>{S.addSView.run(req.params.id,r
 // MESSAGES
 app.get('/api/chats',auth,(req,res)=>{
   const uid=req.userId;
-  const partners=db.prepare(`SELECT DISTINCT CASE WHEN fromId=? THEN toId ELSE fromId END as pid FROM messages WHERE fromId=? OR toId=?`).all(uid,uid,uid).map(r=>r.pid);
+  const partners=db.prepare(`SELECT DISTINCT CASE WHEN fromId=? THEN toId ELSE fromId END as pid FROM messages WHERE fromId=? OR toId=? AND deleted=0`).all(uid,uid,uid).map(r=>r.pid);
   const chats=partners.map(pid=>{
-    const u=S.getById.get(pid);
-    const last=db.prepare(`SELECT * FROM messages WHERE((fromId=? AND toId=?)OR(fromId=? AND toId=?))ORDER BY createdAt DESC LIMIT 1`).get(uid,pid,pid,uid);
-    const unread=db.prepare(`SELECT COUNT(*) as n FROM messages WHERE fromId=? AND toId=? AND read=0`).get(pid,uid).n;
-    return{id:pid,firstName:u?.firstName,lastName:u?.lastName,username:u?.username,avatarColor:u?.avatarColor,isVerified:!!u?.isVerified,lastMessage:last?{...last,images:safeJ(last.images),files:safeJ(last.files)}:null,unreadCount:unread};
-  }).sort((a,b)=>new Date(b.lastMessage?.createdAt||0)-new Date(a.lastMessage?.createdAt||0));
+    const u=S.getById.get(pid);if(!u)return null;
+    const last=db.prepare(`SELECT * FROM messages WHERE((fromId=? AND toId=?)OR(fromId=? AND toId=?)) AND deleted=0 ORDER BY createdAt DESC LIMIT 1`).get(uid,pid,pid,uid);
+    const unread=db.prepare(`SELECT COUNT(*) as n FROM messages WHERE fromId=? AND toId=? AND read=0 AND deleted=0`).get(pid,uid).n;
+    return{
+      id:pid,firstName:u.firstName,lastName:u.lastName,username:u.username,
+      avatarColor:u.avatarColor,avatarUrl:u.avatarUrl||null,
+      isVerified:!!u.isVerified,status:u.status||null,
+      online:wsClients.has(pid),
+      lastMessage:last?{...last,images:safeJ(last.images)}:null,
+      unreadCount:unread
+    };
+  }).filter(Boolean).sort((a,b)=>new Date(b.lastMessage?.createdAt||0)-new Date(a.lastMessage?.createdAt||0));
   res.json(chats);
 });
 app.get('/api/messages/:userId',auth,(req,res)=>{
   const uid=req.userId,oid=req.params.userId;
-  const rows=db.prepare(`SELECT * FROM messages WHERE(fromId=? AND toId=?)OR(fromId=? AND toId=?)ORDER BY createdAt ASC`).all(uid,oid,oid,uid);
+  const limit=parseInt(req.query.limit)||50;
+  const before=req.query.before;
+  let rows;
+  if(before){
+    rows=db.prepare(`SELECT * FROM messages WHERE((fromId=? AND toId=?)OR(fromId=? AND toId=?)) AND createdAt<? AND deleted=0 ORDER BY createdAt DESC LIMIT ?`).all(uid,oid,oid,uid,before,limit).reverse();
+  }else{
+    rows=db.prepare(`SELECT * FROM messages WHERE((fromId=? AND toId=?)OR(fromId=? AND toId=?)) AND deleted=0 ORDER BY createdAt DESC LIMIT ?`).all(uid,oid,oid,uid,limit).reverse();
+  }
   S.markRead.run(oid,uid);
-  res.json(rows.map(r=>({...r,images:safeJ(r.images),files:safeJ(r.files),track:r.track?safeJ(r.track):null,read:!!r.read})));
+  // Уведомить отправителя что прочли
+  const sws=wsClients.get(oid);
+  if(sws?.readyState===1)sws.send(JSON.stringify({type:'read_receipt',byUserId:uid}));
+  res.json({
+    messages:rows.map(r=>({...r,images:safeJ(r.images),read:!!r.read})),
+    hasMore:rows.length===limit,
+    oldest:rows[0]?.createdAt||null
+  });
 });
 app.post('/api/messages',auth,(req,res)=>{
-  const{toId,text,images=[],files=[],encryptedText,iv,senderPublicKey,voiceData,voiceDur,ttl=0,replyToId=null}=req.body;
+  const{toId,text,images=[],encryptedText,iv,senderPublicKey,voiceData,voiceDur,
+        fileUrl,fileName,fileSize,fileType,forwardFromId,forwardFromName,sticker,replyToId}=req.body;
   if(!toId)return res.status(400).json({error:'toId required'});
-  if(isBlockedEither(req.userId,toId))return res.status(403).json({error:'Чат недоступен: один из пользователей в блоке'});
-  const safeFiles=normalizeMsgFiles(files);
-  const ttlNum=Math.max(0,Number(ttl)||0);
-  const now=new Date().toISOString();
-  const id=uuid();
-  S.insMsg.run(
-    id,req.userId,toId,text||null,JSON.stringify(images),JSON.stringify(safeFiles),
-    voiceData||null,voiceDur||0,encryptedText||null,iv||null,senderPublicKey||null,ttlNum,replyToId||null,now
-  );
-  if(ttlNum>0) setTimeout(()=>{try{db.prepare('DELETE FROM messages WHERE id=?').run(id);}catch{}},ttlNum*1000);
+  const id=uuid();const now=new Date().toISOString();
+  db.prepare(`INSERT INTO messages(id,fromId,toId,text,images,voiceData,voiceDur,encryptedText,iv,senderPublicKey,ttl,fileUrl,fileName,fileSize,fileType,forwardFromId,forwardFromName,sticker,replyToId,createdAt)
+    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+    .run(id,req.userId,toId,text||null,JSON.stringify(images),voiceData||null,voiceDur||0,
+         encryptedText||null,iv||null,senderPublicKey||null,0,
+         fileUrl||null,fileName||null,fileSize||0,fileType||null,
+         forwardFromId||null,forwardFromName||null,sticker||null,replyToId||null,now);
   const msg=db.prepare(`SELECT * FROM messages WHERE id=?`).get(id);
-  res.status(201).json({...msg,images:safeJ(msg.images),files:safeJ(msg.files),read:!!msg.read});
-});
-app.get('/api/messages/search/:userId',auth,(req,res)=>{
-  const uid=req.userId,oid=req.params.userId,q=String(req.query.q||'').trim();
-  if(!q) return res.json([]);
-  const lk=`%${q}%`;
-  const rows=db.prepare(`SELECT * FROM messages WHERE ((fromId=? AND toId=?) OR (fromId=? AND toId=?)) AND (LOWER(COALESCE(text,'')) LIKE LOWER(?) OR LOWER(COALESCE(files,'')) LIKE LOWER(?)) ORDER BY createdAt ASC LIMIT 200`)
-    .all(uid,oid,oid,uid,lk,lk);
-  res.json(rows.map(r=>({...r,images:safeJ(r.images),files:safeJ(r.files),read:!!r.read})));
-});
-app.post('/api/messages/:id/react',auth,(req,res)=>{
-  const msg=db.prepare(`SELECT * FROM messages WHERE id=?`).get(req.params.id);
-  if(!msg)return res.status(404).json({error:'Сообщение не найдено'});
-  if(msg.fromId!==req.userId && msg.toId!==req.userId)return res.status(403).json({error:'Нет доступа'});
-  const emoji=String(req.body?.emoji||'').trim().slice(0,8);
-  if(!emoji)return res.status(400).json({error:'emoji required'});
-  const existing=db.prepare(`SELECT emoji FROM message_reactions WHERE msgId=? AND userId=?`).get(req.params.id,req.userId);
-  if(existing?.emoji===emoji) db.prepare(`DELETE FROM message_reactions WHERE msgId=? AND userId=?`).run(req.params.id,req.userId);
-  else db.prepare(`INSERT OR REPLACE INTO message_reactions(msgId,userId,emoji,createdAt)VALUES(?,?,?,?)`).run(req.params.id,req.userId,emoji,new Date().toISOString());
-  const my=db.prepare(`SELECT emoji FROM message_reactions WHERE msgId=? AND userId=?`).get(req.params.id,req.userId);
-  const rows=db.prepare(`SELECT emoji,COUNT(*) as n FROM message_reactions WHERE msgId=? GROUP BY emoji`).all(req.params.id);
-  res.json({reactions:rows.map(r=>({...r,mine:r.emoji===my?.emoji}))});
-});
-app.delete('/api/chats/:userId/clear',auth,(req,res)=>{
-  const uid=req.userId,oid=req.params.userId;
-  db.prepare(`DELETE FROM messages WHERE (fromId=? AND toId=?) OR (fromId=? AND toId=?)`).run(uid,oid,oid,uid);
-  db.prepare(`DELETE FROM pinned_messages WHERE chatKey=?`).run([uid,oid].sort().join('_'));
-  res.json({success:true});
-});
-app.post('/api/users/:id/block',auth,(req,res)=>{
-  const otherId=req.params.id;
-  if(otherId===req.userId)return res.status(400).json({error:'Нельзя заблокировать себя'});
-  const exists=db.prepare(`SELECT 1 FROM blocked_users WHERE blockerId=? AND blockedId=?`).get(req.userId,otherId);
-  if(exists){
-    db.prepare(`DELETE FROM blocked_users WHERE blockerId=? AND blockedId=?`).run(req.userId,otherId);
-    return res.json({blocked:false});
-  }
-  db.prepare(`INSERT OR IGNORE INTO blocked_users(blockerId,blockedId,createdAt)VALUES(?,?,?)`).run(req.userId,otherId,new Date().toISOString());
-  res.json({blocked:true});
+  const payload={...msg,images:safeJ(msg.images),read:false};
+  // WebSocket доставка
+  const rws=wsClients.get(toId);
+  if(rws?.readyState===1)rws.send(JSON.stringify({type:'message',message:payload}));
+  // Уведомление
+  try{createNotif(toId,'message',req.userId,id,text||fileName||'📎 Файл');}catch(e){}
+  res.status(201).json(payload);
 });
 
 // USERS
@@ -1065,23 +1036,22 @@ app.get('/api/groups/:id/messages',auth,(req,res)=>{
   const member=db.prepare(`SELECT 1 FROM group_members WHERE groupId=? AND userId=?`).get(req.params.id,req.userId);
   if(!member)return res.status(403).json({error:'Не участник'});
   const rows=db.prepare(`SELECT gm.*,u.firstName,u.lastName,u.username,u.avatarColor,u.avatarUrl FROM group_messages gm JOIN users u ON u.id=gm.fromId WHERE gm.groupId=? ORDER BY gm.createdAt ASC`).all(req.params.id);
-  res.json(rows.map(r=>({...r,images:JSON.parse(r.images||'[]'),files:safeJ(r.files),author:{id:r.fromId,firstName:r.firstName,lastName:r.lastName,username:r.username,avatarColor:r.avatarColor,avatarUrl:r.avatarUrl||null}})));
+  res.json(rows.map(r=>({...r,images:JSON.parse(r.images||'[]'),author:{id:r.fromId,firstName:r.firstName,lastName:r.lastName,username:r.username,avatarColor:r.avatarColor,avatarUrl:r.avatarUrl||null}})));
 });
 
 // Отправить сообщение в группу
 app.post('/api/groups/:id/messages',auth,(req,res)=>{
   const member=db.prepare(`SELECT 1 FROM group_members WHERE groupId=? AND userId=?`).get(req.params.id,req.userId);
   if(!member)return res.status(403).json({error:'Не участник'});
-  const{text,images=[],files=[]}=req.body;
-  const safeFiles=normalizeMsgFiles(files);
+  const{text,images=[]}=req.body;
   const id=uuid(),now=new Date().toISOString();
-  db.prepare(`INSERT INTO group_messages(id,groupId,fromId,text,images,files,createdAt)VALUES(?,?,?,?,?,?,?)`).run(id,req.params.id,req.userId,text||null,JSON.stringify(images),JSON.stringify(safeFiles),now);
+  db.prepare(`INSERT INTO group_messages(id,groupId,fromId,text,images,createdAt)VALUES(?,?,?,?,?,?)`).run(id,req.params.id,req.userId,text||null,JSON.stringify(images),now);
   const saved=db.prepare(`SELECT gm.*,u.firstName,u.lastName,u.username,u.avatarColor FROM group_messages gm JOIN users u ON u.id=gm.fromId WHERE gm.id=?`).get(id);
   // Уведомить участников через WS
   const members=db.prepare(`SELECT userId FROM group_members WHERE groupId=? AND userId!=?`).all(req.params.id,req.userId);
-  const payload=JSON.stringify({type:'group_message',groupId:req.params.id,message:{...saved,images:JSON.parse(saved.images||'[]'),files:safeJ(saved.files)}});
+  const payload=JSON.stringify({type:'group_message',groupId:req.params.id,message:{...saved,images:JSON.parse(saved.images||'[]')}});
   members.forEach(m=>{const ws=wsClients.get(m.userId);if(ws?.readyState===1)ws.send(payload);});
-  res.status(201).json({...saved,images:JSON.parse(saved.images||'[]'),files:safeJ(saved.files)});
+  res.status(201).json({...saved,images:JSON.parse(saved.images||'[]')});
 });
 
 // ══ ЗАКРЕПЛЁННЫЕ СООБЩЕНИЯ ══
@@ -1103,8 +1073,7 @@ app.delete('/api/messages/:id/pin',auth,(req,res)=>{
 
 app.get('/api/chats/:userId/pinned',auth,(req,res)=>{
   const chatKey=[req.userId,req.params.userId].sort().join('_');
-  const pin=db.prepare(`SELECT pm.*,m.text,m.images,m.files,m.createdAt as msgDate,u.firstName,u.lastName FROM pinned_messages pm JOIN messages m ON m.id=pm.messageId JOIN users u ON u.id=pm.pinnedBy WHERE pm.chatKey=?`).get(chatKey);
-  if(pin) pin.files=safeJ(pin.files);
+  const pin=db.prepare(`SELECT pm.*,m.text,m.images,m.createdAt as msgDate,u.firstName,u.lastName FROM pinned_messages pm JOIN messages m ON m.id=pm.messageId JOIN users u ON u.id=pm.pinnedBy WHERE pm.chatKey=?`).get(chatKey);
   res.json(pin||null);
 });
 
@@ -1221,13 +1190,12 @@ app.get('/api/music/search',async(req,res)=>{
 
 // SEARCH
 app.get('/api/search',(req,res)=>{
-  const{type='all'}=req.query;
-  const q=String(req.query.q||'').trim();
-  if(!q)return res.json({users:[],posts:[],tags:[]});
+  const{q,type='all'}=req.query;
+  if(q&&q.length<1)return res.json({users:[],posts:[],tags:[]});
   const lk=`%${q}%`;const result={};
   if(type==='all'||type==='users')result.users=db.prepare(`SELECT id,firstName,lastName,username,avatarColor,bio,isVerified FROM users WHERE firstName LIKE? OR lastName LIKE? OR username LIKE? LIMIT 10`).all(lk,lk,lk).map(r=>({...r,isVerified:!!r.isVerified}));
   if(type==='all'||type==='posts')result.posts=db.prepare(`SELECT * FROM posts WHERE text LIKE? ORDER BY createdAt DESC LIMIT 10`).all(lk).map(r=>enrichPost(r,null));
-  if(type==='all'||type==='tags'){const tags=new Set();db.prepare(`SELECT text FROM posts`).all().forEach(r=>{r.text?.match(/#(\w+)/g)?.forEach(t=>{if(t.toLowerCase().includes(q.toLowerCase()))tags.add(t)})});result.tags=[...tags].slice(0,10)}
+  if(type==='all'||type==='tags'){const tags=new Set();db.prepare(`SELECT text FROM posts`).all().forEach(r=>{r.text.match(/#(\w+)/g)?.forEach(t=>{if(t.toLowerCase().includes(q.toLowerCase()))tags.add(t)})});result.tags=[...tags].slice(0,10)}
   res.json(result);
 });
 
@@ -1329,32 +1297,46 @@ wss.on('connection',(ws)=>{
       if(!row){ws.send(JSON.stringify({type:'error',error:'Unauthorized'}));return}
       uid=row.userId;wsClients.set(uid,ws);
       if(msg.publicKey)userPubKeys.set(uid,msg.publicKey);
-      ws.send(JSON.stringify({type:'auth_ok',userId:uid}));return;
+      ws.send(JSON.stringify({type:'auth_ok',userId:uid}));
+      // Presence: уведомить собеседников что онлайн + получить их статус
+      try{
+        const pids=db.prepare(`SELECT DISTINCT CASE WHEN fromId=? THEN toId ELSE fromId END as pid FROM messages WHERE fromId=? OR toId=?`).all(uid,uid,uid).map(r=>r.pid);
+        const onlineList=[];
+        pids.forEach(pid=>{
+          const pw=wsClients.get(pid);
+          if(pw?.readyState===1){pw.send(JSON.stringify({type:'presence',userId:uid,online:true}));onlineList.push(pid);}
+        });
+        if(onlineList.length)ws.send(JSON.stringify({type:'presence_list',online:onlineList}));
+      }catch(e){}
+      return;
     }
     if(!uid)return;
     if(msg.type==='get_pubkey'){ws.send(JSON.stringify({type:'pubkey_response',userId:msg.userId,publicKey:userPubKeys.get(msg.userId)||null}));return}
     if(msg.type==='message'){
-      const{toId,encryptedText,iv,senderPublicKey,plainText,images=[],files=[],voiceData,voiceDur,replyToId=null}=msg;
+      const{toId,encryptedText,iv,senderPublicKey,plainText,images=[],voiceData,voiceDur}=msg;
       if(!toId)return;
-      if(isBlockedEither(uid,toId)){ws.send(JSON.stringify({type:'error',error:'Chat blocked'}));return}
       const id=uuid();const now=new Date().toISOString();
       const ttlVal=msg.ttl||0;
-      const safeFiles=normalizeMsgFiles(files);
-      S.insMsg.run(
-        id,uid,toId,plainText||null,JSON.stringify(images),JSON.stringify(safeFiles),
-        voiceData||null,voiceDur||0,encryptedText||null,iv||null,senderPublicKey||null,ttlVal,replyToId,now
-      );
+      S.insMsg.run(id,uid,toId,plainText||null,JSON.stringify(images),voiceData||null,voiceDur||0,encryptedText||null,iv||null,senderPublicKey||null,ttlVal,now);
       if(ttlVal>0) setTimeout(()=>{try{db.prepare('DELETE FROM messages WHERE id=?').run(id);}catch{}},ttlVal*1000);
       const saved=db.prepare(`SELECT * FROM messages WHERE id=?`).get(id);
-      const payload={...saved,images:safeJ(saved.images),files:safeJ(saved.files),read:false};
+      const payload={...saved,images:safeJ(saved.images),read:false};
       const rws=wsClients.get(toId);if(rws?.readyState===WebSocket.OPEN)rws.send(JSON.stringify({type:'message',message:payload}));
       ws.send(JSON.stringify({type:'message_sent',message:payload}));return;
     }
     if(msg.type==='typing'){const rws=wsClients.get(msg.toId);if(rws?.readyState===WebSocket.OPEN)rws.send(JSON.stringify({type:'typing',fromId:uid,isTyping:msg.isTyping}));return}
     if(msg.type==='read'){S.markRead.run(msg.fromId,uid);const sws=wsClients.get(msg.fromId);if(sws?.readyState===WebSocket.OPEN)sws.send(JSON.stringify({type:'read_receipt',byUserId:uid}))}
   });
-  ws.on('close',()=>{if(uid)wsClients.delete(uid)});
-  ws.on('error',()=>{if(uid)wsClients.delete(uid)});
+  ws.on('close',()=>{
+    if(uid){
+      wsClients.delete(uid);
+      try{
+        const pids=db.prepare(`SELECT DISTINCT CASE WHEN fromId=? THEN toId ELSE fromId END as pid FROM messages WHERE fromId=? OR toId=?`).all(uid,uid,uid).map(r=>r.pid);
+        pids.forEach(pid=>{const pw=wsClients.get(pid);if(pw?.readyState===1)pw.send(JSON.stringify({type:'presence',userId:uid,online:false}));});
+      }catch(e){}
+    }
+  });
+  ws.on('error',()=>{if(uid){wsClients.delete(uid);}});
 });
 
 seed().then(()=>{
@@ -1367,4 +1349,3 @@ seed().then(()=>{
     console.log(`👑 Admin: gadji4913@gmail.com / admin2024 (@daneda)\n`);
   });
 }).catch(e=>{console.error('Ошибка:',e);process.exit(1)});
-
